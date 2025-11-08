@@ -10,6 +10,8 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp: BasePart = character:WaitForChild("HumanoidRootPart")
 local humanoid: Humanoid = character:WaitForChild("Humanoid")
 
+local turningCircle: Part = workspace:WaitForChild("TurningCirclePart")
+
 local depthOfField: DepthOfFieldEffect = Lighting:FindFirstChild("DepthOfField")
 
 depthOfField.FarIntensity = 1
@@ -39,7 +41,7 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 	depthOfField.Enabled = true
 
 	self.cameraConn = RunService.RenderStepped:Connect(function(dt: number)
-		camera.CFrame = camera.CFrame:Lerp(cameraCFrame, dt * 4)
+		camera.CFrame = camera.CFrame:Lerp(cameraCFrame, dt * 5)
 		depthOfField.InFocusRadius = (cameraCFrame.Position - camera.CFrame.Position).Magnitude + 10
 
 		if (camera.CFrame.Position - cameraCFrame.Position).Magnitude < 0.05 then
@@ -52,16 +54,14 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 
 	local direction = Vector3.new((hrp.Position - target.Position).X, 0, (hrp.Position - target.Position).Z)
 
+	turningCircle.Position = target.Position + direction.Unit * 4 + Vector3.new(0, -target.Size.Y / 2 + 0.05, 0)
+
 	self.networker:fire("walkTo", humanoid, target.Position + direction.Unit * 7)
 
 	self.moveToConn = humanoid.MoveToFinished:Connect(function()
 		if self.moveToConn then
 			self.moveToConn:Disconnect()
 		end
-		task.defer(function()
-			task.wait(0.01)
-			hrp.Anchored = true
-		end)
 
 		self.turnConn = RunService.RenderStepped:Connect(function(dt: number)
 			hrp.CFrame = hrp.CFrame:Lerp(
@@ -82,25 +82,27 @@ end
 
 function MiningFXService.stopMining(self: MiningFXService)
 	Controls:Enable()
-	hrp.Anchored = false
-	camera.CameraType = Enum.CameraType.Custom
+
 	depthOfField.Enabled = false
 
+	-- Clean up connections
 	if self.cameraConn then
-		print("DISCONNECT CAMERA")
 		self.cameraConn:Disconnect()
 		self.cameraConn = nil
 	end
 	if self.turnConn then
-		print("DISCONNECT TURN")
 		self.turnConn:Disconnect()
 		self.turnConn = nil
 	end
 	if self.moveToConn then
-		print("DISCONNECT MOVE")
 		self.moveToConn:Disconnect()
 		self.moveToConn = nil
 	end
+
+	local cameraCFrame = workspace.Camera.CFrame
+	workspace.Camera.CameraType = Enum.CameraType.Custom
+	RunService.RenderStepped:Wait()
+	workspace.Camera.CFrame = cameraCFrame
 end
 
 function MiningFXService.getCameraCFrame(self: MiningFXService, target: BasePart): CFrame
@@ -112,7 +114,7 @@ function MiningFXService.getCameraCFrame(self: MiningFXService, target: BasePart
 	local cameraPos = target.Position
 		+ direction * distance
 		+ Vector3.new(0, height, 0)
-		+ (rightDirection * distance / 2)
+		+ (rightDirection * distance / 1.5)
 
 	local cf = CFrame.new(cameraPos, target.Position - rightDirection * distance / 3 + Vector3.new(0, -2, 0))
 	return cf

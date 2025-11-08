@@ -2,41 +2,54 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 
--- A lightweight, smooth spring-like interpolator
 local function useSpring(initialGoal: number | UDim2, config: { speed: number }?)
 	local speed = (config and config.speed) or 12.5
 	local value, setValue = React.useState(initialGoal)
 	local goal, setGoal = React.useState(initialGoal)
 
-	local callbacksRef = React.useRef({}) -- store onComplete callbacks
+	local callbacksRef = React.useRef({})
 	local completedRef = React.useRef(false)
 
-	-- Heartbeat spring update
+	-- Refs to keep the latest values available to the heartbeat and snap
+	local valueRef = React.useRef(value)
+	local goalRef = React.useRef(goal)
+	local connectionRef = React.useRef(nil)
+
 	React.useEffect(function()
-		local connection
-		connection = RunService.Heartbeat:Connect(function(dt)
-			local newValue = value
+		valueRef.current = value
+	end, { value })
+
+	React.useEffect(function()
+		goalRef.current = goal
+	end, { goal })
+
+	-- Heartbeat spring update (uses refs so the connection can be long-lived)
+	React.useEffect(function()
+		local connection = RunService.Heartbeat:Connect(function(dt)
+			local curValue = valueRef.current
+			local curGoal = goalRef.current
+			local newValue = curValue
 			local done = false
 
-			if typeof(value) == "number" and typeof(goal) == "number" then
-				if math.abs(value - goal) < 0.001 then
-					newValue = goal
+			if typeof(curValue) == "number" and typeof(curGoal) == "number" then
+				if math.abs(curValue - curGoal) < 0.001 then
+					newValue = curGoal
 					done = true
 				else
 					local factor = math.clamp(dt * speed, 0, 1)
-					newValue = value + (goal - value) * factor
+					newValue = curValue + (curGoal - curValue) * factor
 				end
-			elseif typeof(value) == "UDim2" and typeof(goal) == "UDim2" then
-				local dxScale = goal.X.Scale - value.X.Scale
-				local dyScale = goal.Y.Scale - value.Y.Scale
-				local dxOffset = goal.X.Offset - value.X.Offset
-				local dyOffset = goal.Y.Offset - value.Y.Offset
+			elseif typeof(curValue) == "UDim2" and typeof(curGoal) == "UDim2" then
+				local dxScale = curGoal.X.Scale - curValue.X.Scale
+				local dyScale = curGoal.Y.Scale - curValue.Y.Scale
+				local dxOffset = curGoal.X.Offset - curValue.X.Offset
+				local dyOffset = curGoal.Y.Offset - curValue.Y.Offset
 
 				local factor = math.clamp(dt * speed, 0, 1)
-				local newXScale = value.X.Scale + dxScale * factor
-				local newYScale = value.Y.Scale + dyScale * factor
-				local newXOffset = value.X.Offset + dxOffset * factor
-				local newYOffset = value.Y.Offset + dyOffset * factor
+				local newXScale = curValue.X.Scale + dxScale * factor
+				local newYScale = curValue.Y.Scale + dyScale * factor
+				local newXOffset = curValue.X.Offset + dxOffset * factor
+				local newYOffset = curValue.Y.Offset + dyOffset * factor
 
 				newValue = UDim2.new(newXScale, newXOffset, newYScale, newYOffset)
 
@@ -46,11 +59,15 @@ local function useSpring(initialGoal: number | UDim2, config: { speed: number }?
 					and math.abs(dyOffset) < 0.5
 			else
 				-- fallback: different types, snap
-				newValue = goal
+				newValue = curGoal
 				done = true
 			end
 
-			setValue(newValue)
+			-- only update if changed (reduces needless setState)
+			if newValue ~= curValue then
+				valueRef.current = newValue
+				setValue(newValue)
+			end
 
 			-- handle callbacks
 			if done and not completedRef.current then
@@ -58,25 +75,40 @@ local function useSpring(initialGoal: number | UDim2, config: { speed: number }?
 				for _, fn in ipairs(callbacksRef.current) do
 					fn()
 				end
-				callbacksRef.current = {} -- clear after firing
+				callbacksRef.current = {}
 			elseif not done then
 				completedRef.current = false
 			end
 		end)
 
-		return function()
-			connection:Disconnect()
-		end
-	end, { goal, speed, value })
+		-- expose the connection so snap() can disconnect it immediately
+		connectionRef.current = connection
 
-	-- onComplete registration
+		return function()
+			if connectionRef.current then
+				connectionRef.current:Disconnect()
+				connectionRef.current = nil
+			end
+		end
+	end, { goal, speed })
+
 	local function onComplete(fn)
 		table.insert(callbacksRef.current, fn)
 	end
 
-	-- snap immediately to goal
+	-- snap immediately to goal AND stop the heartbeat so it won't overwrite the snap
 	local function snap()
-		setValue(goal)
+		-- disconnect any running heartbeat connection immediately
+		if connectionRef.current then
+			connectionRef.current:Disconnect()
+			connectionRef.current = nil
+		end
+
+		-- update ref + state instantly
+		valueRef.current = goalRef.current
+		setValue(goalRef.current)
+
+		-- mark completed and fire callbacks
 		completedRef.current = true
 		for _, fn in ipairs(callbacksRef.current) do
 			fn()

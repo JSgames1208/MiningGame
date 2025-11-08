@@ -17,6 +17,7 @@ export type TextLabelProps = {
 	AnchorPoint: Vector2?,
 	AutomaticSize: Enum.AutomaticSize?,
 	Font: Enum.Font?,
+	ZIndex: number?,
 	Stroke: {
 		Color: Color3?,
 		Thickness: number?,

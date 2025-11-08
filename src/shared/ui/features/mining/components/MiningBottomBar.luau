@@ -18,7 +18,8 @@ local function MiningBottomBar()
 			Size = UDim2.new(0, 2500, 0, 400),
 			AnchorPoint = Vector2.new(0.5, 1),
 			From = UDim2.new(0.5, 0, 1, -25),
-			To = UDim2.new(0.5, 0, 1.5, 0),
+			To = UDim2.new(0.5, 0, 1.2, 0),
+			Speed = 10,
 			Shown = shown,
 			children = {
 				e("UIListLayout", {
@@ -41,7 +42,7 @@ local function MiningBottomBar()
 							e(
 								TextLabel,
 								{
-									Text = "Mine",
+									Text = "Exit",
 									BackgroundTransparency = 1,
 									Size = UDim2.new(1, 0, 0.3, 0),
 									Position = UDim2.new(0.5, 0, 1, 0),

@@ -5,7 +5,7 @@ local UiTypes = require(ReplicatedStorage.Shared.ui.core.UiTypes)
 
 local e = React.createElement
 
-type Props = UiTypes.ImageLabelProps
+export type Props = UiTypes.ImageLabelProps
 
 local function ImageLabel(props: Props)
 	props.BackgroundTransparency = props.BackgroundTransparency or 1
