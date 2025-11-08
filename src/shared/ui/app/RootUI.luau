@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
+local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
 
 local e = React.createElement
@@ -13,6 +14,7 @@ local function RootUI()
 			ClipToDeviceSafeArea = false,
 		}, {
 			MiningScreen = e(MiningScreen),
+			HUD = e(HUD),
 		}),
 	})
 end

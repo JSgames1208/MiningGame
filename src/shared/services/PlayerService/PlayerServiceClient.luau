@@ -1,0 +1,22 @@
+--!strict
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Networker = require(ReplicatedStorage.Packages.Networker)
+local hudSlice = require(ReplicatedStorage.Shared.ui.features.hud.state.hudSlice)
+
+local PlayerServiceClient = {}
+
+function PlayerServiceClient.init(self: PlayerServiceClient)
+	self.networker = Networker.client.new("PlayerService", self)
+end
+
+function PlayerServiceClient.updateCurrency(self: PlayerServiceClient, amount: number)
+	hudSlice.actions.setCurrency(hudSlice.states.currency() + amount)
+	print("updated currency!")
+end
+
+type PlayerServiceClient = typeof(PlayerServiceClient) & {
+	networker: Networker.Client,
+}
+
+return PlayerServiceClient :: PlayerServiceClient

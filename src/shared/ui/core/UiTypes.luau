@@ -18,6 +18,12 @@ export type TextLabelProps = {
 	AutomaticSize: Enum.AutomaticSize?,
 	Font: Enum.Font?,
 	ZIndex: number?,
+	Prefix: {
+		Image: string,
+		Offset: number,
+		Size: UDim2,
+		Mirror: boolean?,
+	}?,
 	Stroke: {
 		Color: Color3?,
 		Thickness: number?,
@@ -36,6 +42,7 @@ export type ImageLabelProps = {
 	BackgroundColor3: Color3?,
 	SizeConstraint: Enum.SizeConstraint?,
 	ClipsDescendants: boolean?,
+	Mirror: boolean?,
 	ZIndex: number?,
 	Children: { React.Element<any> }?,
 }
