@@ -17,6 +17,7 @@ local function LeftHud()
 			To = UDim2.new(-0.2, 0, 0.5, 0),
 			Size = UDim2.new(0, 500, 0, 750),
 			BackgroundTransparency = 1,
+			Speed = 8,
 			children = {
 				e(CoinLabel),
 			},

@@ -23,6 +23,12 @@ function MiningServiceServer.init(self: MiningServiceServer)
 end
 
 function MiningServiceServer.startMining(self: MiningServiceServer, player: Player, target: BasePart)
+	local character = player.Character or player.CharacterAdded:Wait()
+	local hrp: BasePart = character:WaitForChild("HumanoidRootPart") :: BasePart
+	if (hrp.Position - target.Position).Magnitude > 40 then
+		return
+	end
+
 	local minableData = MinableRegistry.getMinableData(target)
 
 	if not minableData then

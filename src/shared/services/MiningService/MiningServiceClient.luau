@@ -10,11 +10,15 @@ local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.
 local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp: BasePart = character:WaitForChild("HumanoidRootPart")
+local humanoid: Humanoid = character:WaitForChild("Humanoid")
+
 type MinableData = MiningServiceUtil.MinableData
 
 MiningFXService:init()
 
-local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
 local MiningServiceClient = {}
@@ -31,12 +35,38 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	UserInputService.InputChanged:Connect(function(input, gameProcessed)
 		if gameProcessed or miningSlice.states.mining() then
 			self.isHovering = false
+			if self.highlight then
+				self.highlight:Destroy()
+				self.highlight = nil
+			end
 			return
 		end
 
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if mouse.Target and mouse.Target:HasTag("minable") then
 				self.isHovering = true
+
+				if self.highlight then
+					self.highlight:Destroy()
+				end
+
+				self.highlight = Instance.new("Highlight")
+
+				if not self.highlight then
+					return
+				end
+
+				self.highlight.FillColor = Color3.fromRGB(255, 0, 0)
+				self.highlight.Parent = mouse.Target
+				self.highlight.Adornee = mouse.Target
+				self.highlight.Enabled = true
+				self.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+				if (hrp.Position - mouse.Target.Position).Magnitude > 40 then
+					self.highlight.FillTransparency = 0.75
+				else
+					self.highlight.FillTransparency = 1
+				end
 			else
 				self.isHovering = false
 			end
@@ -51,6 +81,12 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 end
 
 function MiningServiceClient.startMining(self: MiningServiceClient, target: Part, minableData: MinableData)
+	self.isHovering = false
+	if self.highlight then
+		self.highlight:Destroy()
+		self.highlight = nil
+	end
+
 	miningSlice.actions.setMining(true)
 	miningSlice.actions.setCurrentTarget(target)
 	miningSlice.actions.setCurrentHP(minableData.health)
@@ -97,6 +133,7 @@ type MiningServiceClient = typeof(MiningServiceClient) & {
 	isHovering: boolean,
 	mouseConn: RBXScriptConnection?,
 	animation: AnimationTrack?,
+	highlight: Highlight?,
 }
 
 return MiningServiceClient :: MiningServiceClient
