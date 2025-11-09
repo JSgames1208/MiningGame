@@ -73,7 +73,7 @@ local function TextLabel(props: Props)
 			)
 
 			-- Mirror position directly below the original image
-			mirrorPos = UDim2.new(0, offset, 1, -10)
+			local mirrorPos = UDim2.new(0, offset, 1, -10)
 
 			local mirror = e("ImageLabel", {
 				Image = prefixImage,
