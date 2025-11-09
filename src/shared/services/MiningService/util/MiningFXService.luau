@@ -80,6 +80,20 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 	end)
 end
 
+function MiningFXService.mine(self: MiningFXService, target: BasePart)
+	local particleAttachment: Attachment = target:FindFirstChild("ParticleAttachment") :: Attachment
+
+	if not particleAttachment then
+		return
+	end
+
+	particleAttachment.Position = (workspace.CurrentCamera.CFrame.Position - target.Position) / 3
+
+	local particleEmitter: ParticleEmitter = particleAttachment:FindFirstChild("ParticleEmitter") :: ParticleEmitter
+
+	particleEmitter:Emit(1)
+end
+
 function MiningFXService.stopMining(self: MiningFXService)
 	Controls:Enable()
 

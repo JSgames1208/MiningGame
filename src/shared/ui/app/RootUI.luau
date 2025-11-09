@@ -1,7 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 local React = require(ReplicatedStorage.Packages.React)
 local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
+
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 local e = React.createElement
 

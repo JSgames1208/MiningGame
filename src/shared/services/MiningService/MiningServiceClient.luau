@@ -65,6 +65,10 @@ end
 function MiningServiceClient.mine(self: MiningServiceClient, target: Part, currentHP: number)
 	miningSlice.actions.setCurrentHP(miningSlice.states.currentHP(currentHP))
 
+	task.delay(0.3, function()
+		MiningFXService:mine(target)
+	end)
+
 	self.animation = AnimationService:playAnimation(AnimationIds.mine, 1.5)
 	if not self.animation then
 		return

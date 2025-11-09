@@ -54,6 +54,9 @@ function MinableGenerator.populate(self: MinableGenerator, spawnArea: Part)
 				Vector3.new(worldPoint.X, spawnArea.Position.Y + spawnArea.Size.Y + part.Size.Y / 2, worldPoint.Y)
 		end
 
+		local particleAttachment = ReplicatedStorage.ParticleAttachment:Clone()
+		particleAttachment.Parent = part
+
 		part.Parent = spawnArea
 
 		MinableRegistry.registerMinable(part, {
