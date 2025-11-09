@@ -2,7 +2,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local PoissonDiskSampling = {}
 
-function PoissonDiskSampling.getPoints(radius: number, k: number, width: number, height: number): { Vector2 }
+function PoissonDiskSampling.getPoints(
+	radius: number,
+	k: number,
+	width: number,
+	height: number
+): ({ Vector2 }, { { Vector2 } })
 	local N = 2
 	local points: { Vector2 } = {}
 	local active: { Vector2 } = {}

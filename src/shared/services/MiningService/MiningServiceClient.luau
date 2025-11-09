@@ -7,7 +7,10 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
+local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
+
+type MinableData = MiningServiceUtil.MinableData
 
 MiningFXService:init()
 
@@ -26,7 +29,7 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	self.isHovering = false
 
 	UserInputService.InputChanged:Connect(function(input, gameProcessed)
-		if gameProcessed or self.isMining then
+		if gameProcessed or miningSlice.states.mining() then
 			self.isHovering = false
 			return
 		end
@@ -41,30 +44,26 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	end)
 
 	mouse.Button1Down:Connect(function()
-		if self.isHovering and not self.isMining then
-			self:startMining(mouse.Target)
+		if self.isHovering and not miningSlice.states.mining() then
+			self.networker:fire("startMining", mouse.Target)
 		end
 	end)
 end
 
-function MiningServiceClient.startMining(self: MiningServiceClient, target: Part)
-	self.isMining = true
+function MiningServiceClient.startMining(self: MiningServiceClient, target: Part, minableData: MinableData)
+	miningSlice.actions.setMining(true)
+	miningSlice.actions.setCurrentTarget(target)
+	miningSlice.actions.setCurrentHP(minableData.health)
+	miningSlice.actions.setCurrentMaxHP(minableData.maxHealth)
+	MiningFXService:startMining(target)
 
-	if target:HasTag("minable") then
-		miningSlice.actions.setMining(true)
-		miningSlice.actions.setCurrentTarget(target)
-		miningSlice.actions.setCurrentHP(10000)
-		miningSlice.actions.setCurrentMaxHP(10000)
-		MiningFXService:startMining(target)
-
-		self.mouseConn = mouse.Button1Down:Connect(function()
-			self.networker:fire("attemptMine", target)
-		end)
-	end
+	self.mouseConn = mouse.Button1Down:Connect(function()
+		self.networker:fire("attemptMine", target)
+	end)
 end
 
-function MiningServiceClient.mine(self: MiningServiceClient, target: Part)
-	miningSlice.actions.setCurrentHP(miningSlice.states.currentHP() - 100)
+function MiningServiceClient.mine(self: MiningServiceClient, target: Part, currentHP: number)
+	miningSlice.actions.setCurrentHP(miningSlice.states.currentHP(currentHP))
 
 	self.animation = AnimationService:playAnimation(AnimationIds.mine, 1.5)
 	if not self.animation then
@@ -76,7 +75,8 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part)
 end
 
 function MiningServiceClient.stopMining(self: MiningServiceClient)
-	self.isMining = false
+	miningSlice.actions.setMining(false)
+
 	if self.mouseConn then
 		self.mouseConn:Disconnect()
 		self.mouseConn = nil
@@ -90,7 +90,6 @@ end
 
 type MiningServiceClient = typeof(MiningServiceClient) & {
 	networker: Networker.Client,
-	isMining: boolean,
 	isHovering: boolean,
 	mouseConn: RBXScriptConnection?,
 	animation: AnimationTrack?,

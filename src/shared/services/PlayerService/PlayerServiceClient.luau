@@ -12,7 +12,6 @@ end
 
 function PlayerServiceClient.updateCurrency(self: PlayerServiceClient, amount: number)
 	hudSlice.actions.setCurrency(hudSlice.states.currency() + amount)
-	print("updated currency!")
 end
 
 type PlayerServiceClient = typeof(PlayerServiceClient) & {

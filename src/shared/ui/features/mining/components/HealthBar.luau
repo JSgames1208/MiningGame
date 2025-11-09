@@ -39,11 +39,18 @@ local function HealthBar()
 	React.useEffect(function()
 		if adornee then
 			task.defer(function()
-				colorSpring.snap(0)
-				currentSize.snap(1)
+				if currentMaxHP == 0 then
+					return
+				end
+
+				local percent = currentHP / currentMaxHP * 100
+
+				colorSpring.snap(1 - percent / 100)
+				currentSize.snap(percent / 100)
 				currentHPspring.snap(currentHP)
-				colorSpring.setGoal(0)
-				currentSize.setGoal(1)
+
+				colorSpring.setGoal(1 - percent / 100)
+				currentSize.setGoal(percent / 100)
 				currentHPspring.setGoal(currentHP)
 			end)
 		end
