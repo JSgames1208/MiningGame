@@ -21,7 +21,7 @@ AnimationService:init()
 local root = ReactRoblox.createRoot(playerGui)
 root:render(e(RootUI))
 
-local points, grid = PoissonDiskSampling.getPoints(20, 30, 100, 100)
+local points, grid = PoissonDiskSampling.getPoints(10, 30, 100, 100)
 
 local parts = {}
 
@@ -37,46 +37,44 @@ for i, pos in ipairs(points) do
 end
 
 while true do
-	wait(1)
+	wait(0.3)
 
 	if #points == 0 then
 		print("no more points", grid, #grid)
 		continue
 	end
 
-	for i = 1, 10 do
-		-- remove random existing point
-		local removeIndex = math.random(1, #points)
-		local pos = table.remove(points, removeIndex)
+	-- remove random existing point
+	local removeIndex = math.random(1, #points)
+	local pos = table.remove(points, removeIndex)
 
-		-- remove from grid
-		local cellSize = 20 / math.sqrt(2)
-		local xindex = math.floor(pos.X / cellSize) + 1
-		local yindex = math.floor(pos.Y / cellSize) + 1
-		if grid[xindex] then
-			grid[xindex][yindex] = nil
-		end
+	-- remove from grid
+	local cellSize = 20 / math.sqrt(2)
+	local xindex = math.floor(pos.X / cellSize) + 1
+	local yindex = math.floor(pos.Y / cellSize) + 1
+	if grid[xindex] then
+		grid[xindex][yindex] = nil
+	end
 
-		-- remove the part
-		if parts[removeIndex] then
-			parts[removeIndex]:Destroy()
-			table.remove(parts, removeIndex)
-		end
+	-- remove the part
+	if parts[removeIndex] then
+		parts[removeIndex]:Destroy()
+		table.remove(parts, removeIndex)
+	end
 
-		-- add a new point
-		local newPoint, pts, g = PoissonDiskSampling.addPointAdaptive(20, 100, 100, grid, points, 10)
-		points = pts
-		grid = g
+	-- add a new point
+	local newPoint, pts, g = PoissonDiskSampling.addPointAdaptive(50, 100, 100, grid, points, 5)
+	points = pts
+	grid = g
 
-		if newPoint then
-			table.insert(points, newPoint)
-			local part = Instance.new("Part")
-			part.Anchored = true
-			part.Position = Vector3.new(newPoint.X, 10, newPoint.Y)
-			part.Color = Color3.fromRGB(0, 255, 0)
-			part.Size = Vector3.new(1, 1, 1)
-			part.Parent = workspace
-			table.insert(parts, part)
-		end
+	if newPoint then
+		table.insert(points, newPoint)
+		local part = Instance.new("Part")
+		part.Anchored = true
+		part.Position = Vector3.new(newPoint.X, 10, newPoint.Y)
+		part.Color = Color3.fromRGB(0, 255, 0)
+		part.Size = Vector3.new(1, 1, 1)
+		part.Parent = workspace
+		table.insert(parts, part)
 	end
 end
