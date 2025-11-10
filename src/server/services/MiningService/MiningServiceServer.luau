@@ -2,11 +2,13 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local DataService = require(ReplicatedStorage.Packages.DataService).server
 local MinableGenerator = require(ServerScriptService.Server.services.MiningService.util.MinableGenerator)
 local MinableRegistry = require(ServerScriptService.Server.services.MiningService.util.MinableRegistry)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 
 MiningFXServer:init()
 MinableGenerator:init()
@@ -39,7 +41,15 @@ function MiningServiceServer.startMining(self: MiningServiceServer, player: Play
 end
 
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
-	if not lastMined[player.UserId] or lastMined[player.UserId] + 1 < tick() then
+	local toolData: ToolRegistry.ToolData = DataService:get(player, { "tools", "equipped" })
+
+	if not toolData then
+		return
+	end
+
+	local toolStats = toolData.stats
+
+	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / toolStats.miningSpeed < tick() then
 		lastMined[player.UserId] = tick()
 
 		local minableData = MinableRegistry.getMinableData(target)
@@ -48,7 +58,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 			return
 		end
 
-		minableData.health -= 25
+		minableData.health -= toolStats.miningPower
 
 		self.networker:fire(player, "mine", target, minableData.health)
 

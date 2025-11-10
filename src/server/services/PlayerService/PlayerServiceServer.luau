@@ -1,6 +1,7 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
 
 local PlayerServiceServer = {}
@@ -10,16 +11,19 @@ function PlayerServiceServer.init(self: PlayerServiceServer)
 end
 
 function PlayerServiceServer.addCurrency(self: PlayerServiceServer, player: Player, amount: number)
-	self.networker:fire(player, "updateCurrency", amount)
+	DataService:update(player, { "currency", "coins" }, function(currentValue: number)
+		return currentValue + amount
+	end)
+
+	self.networker:fire(player, "setCurrency", DataService:get(player, { "currency", "coins" }))
 end
 
 function PlayerServiceServer.onPlayerAdded(self: PlayerServiceServer, player: Player)
-	local tool = ReplicatedStorage:WaitForChild("Pickaxe"):Clone()
+	DataService:waitForData(player)
 
-	local character = player.Character or player.CharacterAdded:Wait()
+	local coins = DataService:get(player, { "currency", "coins" })
 
-	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
-	humanoid:EquipTool(tool)
+	self.networker:fire(player, "setCurrency", coins)
 end
 
 type PlayerServiceServer = typeof(PlayerServiceServer) & {

@@ -4,6 +4,7 @@ local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -92,6 +93,24 @@ function MiningFXService.mine(self: MiningFXService, target: BasePart)
 	local particleEmitter: ParticleEmitter = particleAttachment:FindFirstChild("ParticleEmitter") :: ParticleEmitter
 
 	particleEmitter:Emit(1)
+
+	local function bobTarget(target: BasePart)
+		local originalOrientation: Vector3 = target.Orientation
+		local orientation = originalOrientation + Vector3.new(0, (math.random(1, 2) - 1.5) * 2 * 10, 0)
+		local originalSize = target.Size
+		local size = originalSize + Vector3.new(0.1, 0.1, 0.1)
+
+		local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, true)
+		local tween = TweenService:Create(target, tweenInfo, { Orientation = orientation, Size = size })
+		tween:Play()
+		tween.Completed:Wait()
+
+		target.Orientation = originalOrientation
+		tween:Destroy()
+		tween = nil
+	end
+
+	bobTarget(target)
 end
 
 function MiningFXService.stopMining(self: MiningFXService)

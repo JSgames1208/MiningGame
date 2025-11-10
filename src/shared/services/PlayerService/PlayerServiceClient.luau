@@ -10,8 +10,8 @@ function PlayerServiceClient.init(self: PlayerServiceClient)
 	self.networker = Networker.client.new("PlayerService", self)
 end
 
-function PlayerServiceClient.updateCurrency(self: PlayerServiceClient, amount: number)
-	hudSlice.actions.setCurrency(hudSlice.states.currency() + amount)
+function PlayerServiceClient.setCurrency(self: PlayerServiceClient, amount: number)
+	hudSlice.actions.setCurrency(amount)
 end
 
 type PlayerServiceClient = typeof(PlayerServiceClient) & {

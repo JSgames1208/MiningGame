@@ -60,8 +60,8 @@ function MinableGenerator.populate(self: MinableGenerator, spawnArea: Part)
 		part.Parent = spawnArea
 
 		MinableRegistry.registerMinable(part, {
-			health = 100,
-			maxHealth = 100,
+			health = 5,
+			maxHealth = 5,
 			name = "dirt",
 		})
 	end

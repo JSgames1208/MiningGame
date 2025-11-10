@@ -1,4 +1,4 @@
 return {
 	["mine"] = "rbxassetid://103813252472730",
-	["test"] = "rbxassetid://133707251282141",
+	["dig"] = "rbxassetid://103813252472730",
 }

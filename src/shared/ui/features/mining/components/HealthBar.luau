@@ -29,11 +29,13 @@ local function HealthBar()
 		if currentMaxHP == 0 then
 			return
 		end
-		local percent = currentHP / currentMaxHP * 100
+		local hp = math.max(currentHP, 0)
+
+		local percent = hp / currentMaxHP * 100
 
 		colorSpring.setGoal(1 - percent / 100)
 		currentSize.setGoal(percent / 100)
-		currentHPspring.setGoal(currentHP)
+		currentHPspring.setGoal(hp)
 	end, { currentHP, currentMaxHP })
 
 	React.useEffect(function()

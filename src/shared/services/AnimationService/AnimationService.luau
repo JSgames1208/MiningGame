@@ -1,4 +1,6 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid: Humanoid = character:WaitForChild("Humanoid")
@@ -8,18 +10,26 @@ local AnimationService = {}
 local animationCache = {}
 
 function AnimationService.init(self: AnimationService)
-	return
+	for _, animationId in pairs(AnimationIds) do
+		local track = animationCache[animationId]
+		if not track then
+			local animation = Instance.new("Animation")
+			animation.AnimationId = animationId
+			track = animator:LoadAnimation(animation)
+			animationCache[animationId] = track
+		end
+	end
 end
 
 function AnimationService.playAnimation(self: AnimationService, animationId: string, speed: number)
-	local animation = animationCache[animationId]
-	if not animation then
-		animation = Instance.new("Animation")
+	local track = animationCache[animationId]
+	if not track then
+		local animation = Instance.new("Animation")
 		animation.AnimationId = animationId
-		animationCache[animationId] = animation
+		track = animator:LoadAnimation(animation)
+		animationCache[animationId] = track
 	end
 
-	local track = animator:LoadAnimation(animation)
 	track:Play()
 	track:AdjustSpeed(speed)
 
