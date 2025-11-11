@@ -11,12 +11,12 @@ local DEFAULT_HOVER_SCALE = 1.15
 
 export type ButtonProps = UiTypes.ImageLabelProps & {
 	hoverScale: number?,
+	Mirror: boolean,
 	Children: { React.Element<any> },
 	onClick: (any?) -> any?,
 }
 
 local function Button(props)
-	local children = props.Children
 	local hoverScale = props.hoverScale or DEFAULT_HOVER_SCALE
 	local isHovering, hoverEvents = useHover()
 	local spring = useSpring(1, { speed = 10 })
@@ -34,14 +34,47 @@ local function Button(props)
 		props[React.Event.MouseButton1Click] = props.onClick
 	end
 
-	local safeProps = Sift.Dictionary.removeKeys(props, "Children", "hoverScale", "onClick")
+	local safeProps = Sift.Dictionary.removeKeys(props, "Children", "Mirror", "hoverScale", "onClick")
 	local buttonProps = Sift.Dictionary.join(safeProps, {
 		[React.Event.MouseEnter] = hoverEvents.onMouseEnter,
 		[React.Event.MouseLeave] = hoverEvents.onMouseLeave,
 	})
 
+	if props.Mirror then
+		-- Mirror image (flipped vertically)
+
+		if not props.ImageRectOffset or not props.ImageRectSize then
+			warn("Mirror requires ImageRectOffset and ImageRectSize")
+			return nil
+		end
+
+		local mirror = e("ImageLabel", {
+			Image = props.Image,
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1, 0, 1, 0),
+			Position = UDim2.new(0.5, 0, 0.8, 0),
+			AnchorPoint = Vector2.new(0.5, 0),
+			ImageRectOffset = Vector2.new(0, props.ImageRectSize.Y),
+			ImageRectSize = Vector2.new(props.ImageRectSize.X, -props.ImageRectSize.Y),
+			ZIndex = (props.ZIndex or 0) - 1,
+			ScaleType = props.ScaleType,
+		}, {
+			-- Use a UIGradient to fade out the reflection
+			e("UIGradient", {
+				Rotation = 90,
+				Transparency = NumberSequence.new({
+					NumberSequenceKeypoint.new(0, 0.6),
+					NumberSequenceKeypoint.new(0.3, 1),
+					NumberSequenceKeypoint.new(1, 1),
+				}),
+			}),
+		})
+
+		table.insert(props.Children :: any, mirror)
+	end
+
 	return e("ImageButton", buttonProps, {
-		children,
+		props.Children,
 		e("UIScale", {
 			Scale = spring.binding,
 		}),

@@ -2,8 +2,10 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
+local Charm = require(ReplicatedStorage.Packages.Charm)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
@@ -14,8 +16,8 @@ local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.mi
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local hrp: BasePart = character:WaitForChild("HumanoidRootPart")
-local humanoid: Humanoid = character:WaitForChild("Humanoid")
+local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+local hrp = character:WaitForChild("HumanoidRootPart")
 
 type MinableData = MiningServiceUtil.MinableData
 
@@ -27,6 +29,12 @@ local MiningServiceClient = {}
 
 function MiningServiceClient.init(self: MiningServiceClient)
 	self.networker = Networker.client.new("MiningService", self)
+
+	Charm.subscribe(miningSlice.states.mining, function(mining: boolean)
+		if not mining then
+			self:stopMining()
+		end
+	end)
 
 	self:handleInput()
 end

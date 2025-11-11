@@ -1,10 +1,12 @@
+--!strict
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local humanoid: Humanoid = character:WaitForChild("Humanoid")
-local animator: Animator = humanoid:WaitForChild("Animator") :: Animator
+local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+local animator = humanoid:WaitForChild("Animator") :: Animator
 
 local AnimationService = {}
 local animationCache = {}

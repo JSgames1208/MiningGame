@@ -13,6 +13,7 @@ export type AutoScaledFrameProps = {
 	Rotation: number?,
 	AnchorPoint: Vector2?,
 	BackgroundTransparency: number?,
+	BackgroundColor3: Color3?,
 	ZIndex: number?,
 	children: { React.ReactElement<any> },
 }
@@ -38,6 +39,7 @@ return React.forwardRef(function(props: AutoScaledFrameProps, ref: React.Ref<any
 		Rotation = props.Rotation,
 		ZIndex = props.ZIndex,
 		BackgroundTransparency = props.BackgroundTransparency or 1,
+		BackgroundColor3 = props.BackgroundColor3,
 		ref = ref,
 	}, {
 		React.createElement("UIScale", {

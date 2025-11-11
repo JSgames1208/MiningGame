@@ -15,9 +15,9 @@ local function CoinLabel()
 	local coinAnim
 
 	if exp then
-		coinAnim = useSpring(0, { speed = 7.5 })
+		coinAnim = useSpring(coins, { speed = 7.5 })
 	else
-		coinAnim = useLinear(0, { speed = 2 })
+		coinAnim = useLinear(coins, { speed = 2 })
 	end
 
 	React.useEffect(function()
@@ -38,8 +38,10 @@ local function CoinLabel()
 		TextColor3 = Color3.fromRGB(255, 255, 255),
 		BackgroundTransparency = 1,
 		Prefix = {
-			Image = ImageIds.coin,
+			Image = ImageIds.icons.coin,
 			Mirror = true,
+			ImageRectOffset = Vector2.zero,
+			ImageRectSize = Vector2.new(883, 978),
 			Offset = -10,
 			Size = UDim2.new(1.2, 0, 1.2, 0),
 		},

@@ -13,12 +13,18 @@ export type Currency = {
 	coins: number,
 }
 
+export type ToolInstance = {
+	id: string,
+	data: ToolRegistry.ToolData,
+	upgrades: {},
+}
+
 export type ToolData = {
 	equipped: ToolRegistry.ToolData?,
 }
 
 export type Inventory = {
-	items: { [string]: number },
+	tools: { ToolRegistry.ToolData },
 }
 
 export type ZoneData = {
@@ -69,7 +75,7 @@ local DefaultPlayerData: PlayerData = {
 		equipped = table.clone(ToolRegistry["wooden_shovel"]),
 	},
 	inventory = {
-		items = {},
+		tools = {},
 	},
 	zones = {
 		unlockedZones = { ["zone_1"] = true },

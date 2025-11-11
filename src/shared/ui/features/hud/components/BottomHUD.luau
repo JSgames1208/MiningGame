@@ -5,56 +5,58 @@ local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
-local e = React.createElement
+local hudSlice = require(ReplicatedStorage.Shared.ui.features.hud.state.hudSlice)
+local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
+local e: typeof(React.createElement) = React.createElement
 
-local function MiningBottomBar()
-	local shown = ReactCharm.useAtom(miningSlice.states.mining)
+local function BottomHUD()
+	local shown = ReactCharm.useAtom(hudSlice.states.shown)
 
 	return e(
 		SlideOutFrame,
 		{
-			Size = UDim2.new(0, 2500, 0, 400),
+			Shown = shown,
 			AnchorPoint = Vector2.new(0.5, 1),
 			From = UDim2.new(0.5, 0, 1, -25),
-			To = UDim2.new(0.5, 0, 1.25, 0),
+			To = UDim2.new(0.5, 0, 1.5, 0),
+			Size = UDim2.new(0, 1000, 0, 400),
+			BackgroundTransparency = 1,
 			Speed = 8,
-			Shown = shown,
 			children = {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				}),
 				e(
 					Button,
 					{
 						Size = UDim2.new(1, 0, 1, 0),
+						Position = UDim2.new(0.5, 0, 0.5, 0),
+						AnchorPoint = Vector2.new(0.5, 0.5),
 						SizeConstraint = Enum.SizeConstraint.RelativeYY,
 						BackgroundTransparency = 1,
-						Image = ImageIds.close,
+						Image = ImageIds.icons.stone_pickaxe,
+						ImageRectOffset = Vector2.zero,
+						ImageRectSize = Vector2.new(1028, 1028),
+						Mirror = true,
 						onClick = function()
-							miningSlice.actions.setMining(false)
+							inventorySlice.actions.setInventoryOpen(true)
 						end,
 						Children = {
 							e(
 								TextLabel,
 								{
-									Text = "Exit",
-									BackgroundTransparency = 1,
-									Size = UDim2.new(1, 0, 0.3, 0),
+									Text = "Inventory",
+									Font = Enum.Font.FredokaOne,
 									Position = UDim2.new(0.5, 0, 1, 0),
-									AnchorPoint = Vector2.new(0.5, 1),
-									TextColor3 = Color3.new(1, 1, 1),
+									AnchorPoint = Vector2.new(0.5, 0.75),
+									Size = UDim2.new(1, 0, 0.5, 0),
 									TextScaled = true,
-									TextWrapped = true,
+									TextWrapped = false,
 									TextXAlignment = Enum.TextXAlignment.Center,
 									TextYAlignment = Enum.TextYAlignment.Center,
-									Font = Enum.Font.FredokaOne,
+									TextColor3 = Color3.fromRGB(255, 255, 255),
+									BackgroundTransparency = 1,
+									ZIndex = 2,
 									Stroke = {
-										Color = Color3.new(0, 0, 0),
-										Thickness = 12.5,
+										Color = Color3.fromRGB(0, 0, 0),
+										Thickness = 10,
 									},
 								} :: TextLabel.Props
 							),
@@ -66,4 +68,4 @@ local function MiningBottomBar()
 	)
 end
 
-return MiningBottomBar
+return BottomHUD

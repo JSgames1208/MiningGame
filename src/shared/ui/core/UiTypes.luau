@@ -21,6 +21,8 @@ export type TextLabelProps = {
 	Prefix: {
 		Image: string,
 		Offset: number,
+		ImageRectOffset: Vector2?,
+		ImageRectSize: Vector2?,
 		Size: UDim2,
 		Mirror: boolean?,
 	}?,
@@ -42,6 +44,8 @@ export type ImageLabelProps = {
 	BackgroundColor3: Color3?,
 	SizeConstraint: Enum.SizeConstraint?,
 	ClipsDescendants: boolean?,
+	ImageRectOffset: Vector2?,
+	ImageRectSize: Vector2?,
 	Mirror: boolean?,
 	ZIndex: number?,
 	Children: { React.Element<any> }?,

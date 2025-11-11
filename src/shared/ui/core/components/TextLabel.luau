@@ -46,12 +46,15 @@ local function TextLabel(props: Props)
 		local offset = props.Prefix.Offset or 0
 		local mirrorEnabled = props.Prefix.Mirror or false
 
-		-- Normal prefix
 		local prefix = e(ImageLabel, {
 			Image = prefixImage,
 			BackgroundTransparency = 1,
 			ScaleType = Enum.ScaleType.Fit,
+			ClipsDescendants = false,
 			Size = prefixSize,
+			Mirror = mirrorEnabled,
+			ImageRectSize = props.Prefix.ImageRectSize,
+			ImageRectOffset = props.Prefix.ImageRectOffset,
 			SizeConstraint = Enum.SizeConstraint.RelativeYY,
 			Position = UDim2.new(0, offset, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),
@@ -59,47 +62,6 @@ local function TextLabel(props: Props)
 		})
 
 		table.insert(props.Children, prefix)
-
-		-- Mirrored reflection
-		if mirrorEnabled then
-			local mirrorHeightFrac = 1
-
-			-- Calculate mirror size
-			local mirrorSize = UDim2.new(
-				prefixSize.X.Scale,
-				prefixSize.X.Offset,
-				prefixSize.Y.Scale * mirrorHeightFrac,
-				prefixSize.Y.Offset * mirrorHeightFrac
-			)
-
-			-- Mirror position directly below the original image
-			local mirrorPos = UDim2.new(0, offset, 1, -10)
-
-			local mirror = e("ImageLabel", {
-				Image = prefixImage,
-				BackgroundTransparency = 1,
-				ScaleType = Enum.ScaleType.Fit,
-				SizeConstraint = Enum.SizeConstraint.RelativeYY,
-				Size = mirrorSize,
-				Position = mirrorPos,
-				AnchorPoint = Vector2.new(1, 0),
-				ZIndex = 1,
-				-- Flip using ImageRectSize
-				ImageRectOffset = Vector2.new(0, prefixSize.Y.Offset),
-				ImageRectSize = Vector2.new(prefixSize.X.Offset, -prefixSize.Y.Offset),
-			}, {
-				e("UIGradient", {
-					Rotation = 90,
-					Transparency = NumberSequence.new({
-						NumberSequenceKeypoint.new(0, 0.7),
-						NumberSequenceKeypoint.new(0.3, 1),
-						NumberSequenceKeypoint.new(1, 1),
-					}),
-				}),
-			})
-
-			table.insert(props.Children, mirror)
-		end
 	end
 
 	return e("TextLabel", safeProps, props.Children)
