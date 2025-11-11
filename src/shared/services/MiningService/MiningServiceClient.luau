@@ -2,11 +2,11 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
@@ -16,7 +16,6 @@ local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.mi
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid") :: Humanoid
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 type MinableData = MiningServiceUtil.MinableData
@@ -119,8 +118,9 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 		MiningFXService:mine(target)
 	end)
 
-	local toolData: ToolRegistry.ToolData = DataService:get({ "tools", "equipped" })
-	local toolType = toolData.toolType
+	local toolId: string = DataService:get({ "tools", "equipped" })
+	local toolInstance: DataTemplate.ToolInstance = DataService:get({ "inventory", "tools", toolId })
+	local toolType = toolInstance.data.toolType
 
 	local animationId = ""
 	if toolType == "shovel" then
@@ -129,7 +129,8 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 		animationId = AnimationIds.mine
 	end
 
-	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, toolData.stats.miningSpeed)
+	self.animation =
+		AnimationService:playAnimation(animationId or AnimationIds.mine, toolInstance.data.stats.miningSpeed)
 	if not self.animation then
 		return
 	end

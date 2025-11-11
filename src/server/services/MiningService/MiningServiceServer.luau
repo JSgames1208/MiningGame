@@ -1,13 +1,16 @@
 --!strict
 
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local MinableGenerator = require(ServerScriptService.Server.services.MiningService.util.MinableGenerator)
 local MinableRegistry = require(ServerScriptService.Server.services.MiningService.util.MinableRegistry)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 
 MiningFXServer:init()
@@ -41,7 +44,9 @@ function MiningServiceServer.startMining(self: MiningServiceServer, player: Play
 end
 
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
-	local toolData: ToolRegistry.ToolData = DataService:get(player, { "tools", "equipped" })
+	local toolId: string = DataService:get(player, { "tools", "equipped" })
+	local toolInstance: DataTemplate.ToolInstance = DataService:get(player, { "inventory", "tools", toolId })
+	local toolData = toolInstance.data
 
 	if not toolData then
 		return
@@ -70,6 +75,10 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				target:Destroy()
 
 				PlayerServiceServer:addCurrency(player, 100)
+				InventoryServiceServer:addItem(
+					player,
+					{ id = `tool_{HttpService:GenerateGUID()}`, data = ToolRegistry["stone_pickaxe"], upgrades = {} }
+				)
 			end)
 		end
 	end

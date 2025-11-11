@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local MiningServiceServer = require(ServerScriptService.Server.services.MiningService.MiningServiceServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
@@ -11,15 +12,17 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 })
 
 MiningServiceServer:init()
 PlayerServiceServer:init()
 ToolServiceServer:init()
+InventoryServiceServer:init()
 
 Players.PlayerAdded:Connect(function(player)
 	DataService:waitForData(player)
+	--print(DataService:get(player))
 	PlayerServiceServer:onPlayerAdded(player)
 	ToolServiceServer:onPlayerAdded(player)
 end)

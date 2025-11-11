@@ -3,24 +3,33 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 
 local ToolServiceServer = {}
 
 function ToolServiceServer.init(self: ToolServiceServer)
-	self.networker = Networker.server.new("ToolService", self, {})
+	self.networker = Networker.server.new("ToolService", self, {
+		self.equipTool :: any,
+	})
 end
 
 function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player)
 	DataService:waitForData(player)
 
-	local toolId: ToolRegistry.ToolData = DataService:get(player, { "tools", "equipped" })
-	self:equipTool(player, toolId)
+	local toolId: string = DataService:get(player, { "tools", "equipped" })
+	local tool = DataService:get(player, { "inventory", "tools", toolId })
+	if tool then
+		self:equipTool(player, tool)
+	end
 end
 
-function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolData: ToolRegistry.ToolData)
+function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolInstance: DataTemplate.ToolInstance)
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
+
+	if not DataService:get(player, { "inventory", "tools", toolInstance.id }) then
+		return
+	end
 
 	humanoid:UnequipTools()
 
@@ -28,9 +37,12 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 		v:Destroy()
 	end
 
-	DataService:set(player, { "tools", "equipped" }, toolData)
+	DataService:set(player, { "tools", "equipped" }, toolInstance.id)
 
-	local toolId = toolData.id
+	local toolId = toolInstance.data.id
+	if not toolId then
+		warn("Tool has no id: " .. toolInstance.id)
+	end
 	local tool = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Tools"):WaitForChild(toolId)
 
 	if not tool then
