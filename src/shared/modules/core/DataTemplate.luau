@@ -23,15 +23,26 @@ export type ToolData = {
 	equipped: string?,
 }
 
-export type Item = {
+export type PotionStack = {
 	id: string,
-	name: string,
 	amount: number,
-	data: any,
+}
+
+export type ItemStack = {
+	id: string,
+	amount: number,
+}
+
+export type MaterialStack = {
+	id: string,
+	amount: number,
 }
 
 export type Inventory = {
 	tools: { [string]: ToolInstance },
+	potions: { [string]: PotionStack },
+	materials: { [string]: MaterialStack },
+	items: { [string]: ItemStack },
 }
 
 export type ZoneData = {
@@ -89,6 +100,9 @@ local DefaultPlayerData: PlayerData = {
 				upgrades = {},
 			},
 		},
+		materials = {},
+		potions = {},
+		items = {},
 	},
 	zones = {
 		unlockedZones = { ["zone_1"] = true },

@@ -1,28 +1,33 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
-local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local e: typeof(React.createElement) = React.createElement
 
-local function ScrollingInventory()
+local function PotionsScrollingInventory()
 	local inventoryOpen = inventorySlice.states.inventoryOpen
-	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
+	local tab = ReactCharm.useAtom(inventorySlice.states.tab)
+
+	if tab ~= "potions" then
+		return nil
+	end
 
 	if not inventoryOpen() then
 		return nil
 	end
 
-	local inventoryItems = inventorySlice.states.inventoryItems()
+	local inventory = inventorySlice.states.inventory()
+
+	local potionsCategory = inventory.potions or {}
 
 	local items = {}
 
-	for id, item: Charm.Atom<{ tool: DataTemplate.ToolInstance, amount: number }> in inventoryItems do
-		local equipped: boolean = equippedToolId == id
+	for id, itemAtom in potionsCategory do
+		local stack = itemAtom()
+
+		local itemId = stack.item.id
 
 		table.insert(
 			items,
@@ -30,11 +35,11 @@ local function ScrollingInventory()
 				Button,
 				{
 					Size = UDim2.new(1, 0, 1, 0),
-					Image = ImageIds.icons[item().tool.data.id],
+					Image = ImageIds.icons[itemId],
 					BackgroundTransparency = 0,
-					BackgroundColor3 = equipped and Color3.fromRGB(0, 230, 0) or Color3.fromRGB(210, 210, 210),
+					BackgroundColor3 = Color3.fromRGB(210, 210, 210),
 					onClick = function()
-						toolSlice.actions.setEquipped(item().tool.id)
+						return
 					end,
 					Children = {
 						e("UICorner", {
@@ -79,4 +84,4 @@ local function ScrollingInventory()
 	})
 end
 
-return ScrollingInventory
+return PotionsScrollingInventory

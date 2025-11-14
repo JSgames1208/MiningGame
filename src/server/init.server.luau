@@ -22,7 +22,7 @@ InventoryServiceServer:init()
 
 Players.PlayerAdded:Connect(function(player)
 	DataService:waitForData(player)
-	--print(DataService:get(player))
+
 	PlayerServiceServer:onPlayerAdded(player)
 	ToolServiceServer:onPlayerAdded(player)
 end)

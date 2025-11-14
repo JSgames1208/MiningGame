@@ -11,7 +11,6 @@ local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
 local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local player = Players.LocalPlayer

@@ -77,6 +77,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				PlayerServiceServer:addCurrency(player, 100)
 				InventoryServiceServer:addItem(
 					player,
+					"tools",
 					{ id = `tool_{HttpService:GenerateGUID()}`, data = ToolRegistry["stone_pickaxe"], upgrades = {} }
 				)
 			end)

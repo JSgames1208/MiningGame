@@ -24,6 +24,8 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 end
 
 function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolInstance: DataTemplate.ToolInstance)
+	print("EQUIP")
+
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
 

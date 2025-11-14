@@ -23,9 +23,21 @@ return function(parent: Instance)
 			data = toolData,
 			upgrades = {},
 		}
+
 		DataService:set({ "inventory", "tools", id }, tool)
-		InventoryServiceClient:addItem(tool)
+		InventoryServiceClient:addItem("tools", tool)
 	end
+
+	local id = "stone_pickaxe"
+
+	DataService:set({ "inventory", "items", id }, { id = id, amount = 1 })
+	InventoryServiceClient:addItem("items", { id = id, amount = 1 })
+
+	DataService:set({ "inventory", "potions", id }, { id = id, amount = 1 })
+	InventoryServiceClient:addItem("potions", { id = id, amount = 1 })
+
+	DataService:set({ "inventory", "materials", id }, { id = id, amount = 1 })
+	InventoryServiceClient:addItem("materials", { id = id, amount = 1 })
 
 	PlayerServiceClient:init()
 

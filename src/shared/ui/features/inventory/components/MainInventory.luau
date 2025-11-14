@@ -4,7 +4,14 @@ local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local ScrollingInventory = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingInventory)
+local ItemsScrollingInventory =
+	require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemsScrollingInventory)
+local MaterialsScrollingInventory =
+	require(ReplicatedStorage.Shared.ui.features.inventory.components.MaterialsScrollingInventory)
+local PotionsScrollingInventory =
+	require(ReplicatedStorage.Shared.ui.features.inventory.components.PotionsScrollingInventory)
+local ToolsScrollingInventory =
+	require(ReplicatedStorage.Shared.ui.features.inventory.components.ToolsScrollingInventory)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local e: typeof(React.createElement) = React.createElement
 
@@ -84,7 +91,10 @@ local function MainInventory()
 						}),
 					},
 				}),
-				e(ScrollingInventory),
+				e(ToolsScrollingInventory),
+				e(ItemsScrollingInventory),
+				e(PotionsScrollingInventory),
+				e(MaterialsScrollingInventory),
 			},
 		} :: SlideOutFrame.SlideOutProps
 	)

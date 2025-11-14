@@ -9,15 +9,17 @@ local InventoryServiceClient = {}
 function InventoryServiceClient.init(self: InventoryServiceClient)
 	self.networker = Networker.client.new("InventoryService", self)
 
-	local inventory: { DataTemplate.ToolInstance } = DataService:get({ "inventory", "tools" })
+	local inventory: DataTemplate.Inventory = DataService:get({ "inventory" })
 
-	for _, v in inventory do
-		inventorySlice.actions.setItem(v, 1)
+	for categoryName, category in inventory do
+		for _, item in category do
+			inventorySlice.actions.setItem(categoryName, item, 1)
+		end
 	end
 end
 
-function InventoryServiceClient.addItem(self: InventoryServiceClient, tool: DataTemplate.ToolInstance)
-	inventorySlice.actions.setItem(tool, 1)
+function InventoryServiceClient.addItem(self: InventoryServiceClient, category: string, item)
+	inventorySlice.actions.setItem(category, item, 1)
 end
 
 type InventoryServiceClient = typeof(InventoryServiceClient) & {
