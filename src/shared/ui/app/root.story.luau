@@ -33,7 +33,7 @@ return function(parent: Instance)
 		InventoryServiceClient:addItem("tools", tool)
 	end
 
-	local id = "stone_pickaxe"
+	local id = "dirt"
 
 	DataService:set({ "inventory", "items", id }, { id = id, amount = 1 })
 	InventoryServiceClient:addItem("items", { id = id, amount = 1 })
