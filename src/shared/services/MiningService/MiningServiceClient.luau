@@ -11,6 +11,7 @@ local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
 local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
+local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local player = Players.LocalPlayer
@@ -119,7 +120,8 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 
 	local toolId: string = DataService:get({ "tools", "equipped" })
 	local toolInstance: DataTemplate.ToolInstance = DataService:get({ "inventory", "tools", toolId })
-	local toolType = toolInstance.data.toolType
+	local toolData = ToolRegistry[toolInstance.id]
+	local toolType = toolData.toolType
 
 	local animationId = ""
 	if toolType == "shovel" then
@@ -128,8 +130,7 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 		animationId = AnimationIds.mine
 	end
 
-	self.animation =
-		AnimationService:playAnimation(animationId or AnimationIds.mine, toolInstance.data.stats.miningSpeed)
+	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, toolData.stats.miningSpeed)
 	if not self.animation then
 		return
 	end

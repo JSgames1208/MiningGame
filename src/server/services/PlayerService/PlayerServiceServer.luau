@@ -18,6 +18,10 @@ function PlayerServiceServer.addCurrency(self: PlayerServiceServer, player: Play
 	self.networker:fire(player, "setCurrency", DataService:get(player, { "currency", "coins" }))
 end
 
+function PlayerServiceServer.addXP(self: PlayerServiceServer, player: Player, amount: number)
+	print("Add xp: " .. amount)
+end
+
 function PlayerServiceServer.onPlayerAdded(self: PlayerServiceServer, player: Player)
 	DataService:waitForData(player)
 

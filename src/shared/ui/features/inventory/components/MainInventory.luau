@@ -4,19 +4,14 @@ local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local ItemsScrollingInventory =
-	require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemsScrollingInventory)
-local MaterialsScrollingInventory =
-	require(ReplicatedStorage.Shared.ui.features.inventory.components.MaterialsScrollingInventory)
-local PotionsScrollingInventory =
-	require(ReplicatedStorage.Shared.ui.features.inventory.components.PotionsScrollingInventory)
-local ToolsScrollingInventory =
-	require(ReplicatedStorage.Shared.ui.features.inventory.components.ToolsScrollingInventory)
+local ScrollingInventory = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingInventory)
+local TabButton = require(ReplicatedStorage.Shared.ui.features.inventory.components.TabButton)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local e: typeof(React.createElement) = React.createElement
 
 local function MainInventory()
 	local shown = ReactCharm.useAtom(inventorySlice.states.inventoryOpen)
+	local tab = ReactCharm.useAtom(inventorySlice.states.tab)
 
 	return e(
 		SlideOutFrame,
@@ -91,10 +86,57 @@ local function MainInventory()
 						}),
 					},
 				}),
-				e(ToolsScrollingInventory),
-				e(ItemsScrollingInventory),
-				e(PotionsScrollingInventory),
-				e(MaterialsScrollingInventory),
+				e(TextLabel, {
+					Text = string.gsub(tab, "^%l", function(c)
+						return string.upper(c)
+					end),
+					Font = Enum.Font.FredokaOne,
+					Position = UDim2.new(0.025, 0, 0.06, 0),
+					AnchorPoint = Vector2.new(0, 0.5),
+					Size = UDim2.new(0.5, 0, 0.075, 0),
+					TextScaled = true,
+					TextWrapped = true,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Bottom,
+					Children = {},
+					TextColor3 = Color3.fromRGB(255, 255, 255),
+					ZIndex = 5,
+					Stroke = {
+						Thickness = 10,
+						Color = Color3.fromRGB(0, 0, 0),
+					},
+				}),
+
+				e("Frame", {
+					Size = UDim2.new(0.4, 0, 0.75, 0),
+					Position = UDim2.new(0, 0, 0.5, 0),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundTransparency = 1,
+					BackgroundColor3 = Color3.fromRGB(220, 220, 220),
+					ZIndex = 0,
+				}, {
+					e(TabButton, {
+						tab = "tools",
+					}),
+					e(TabButton, {
+						tab = "items",
+					}),
+					e(TabButton, {
+						tab = "materials",
+					}),
+					e(TabButton, {
+						tab = "potions",
+					}),
+					e("UIListLayout", {
+						Padding = UDim.new(0, 30),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						FillDirection = Enum.FillDirection.Vertical,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+					}),
+				}),
+
+				e(ScrollingInventory),
 			},
 		} :: SlideOutFrame.SlideOutProps
 	)

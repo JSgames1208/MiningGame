@@ -1,5 +1,6 @@
 --!strict
 
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -24,12 +25,10 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 end
 
 function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolInstance: DataTemplate.ToolInstance)
-	print("EQUIP")
-
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
 
-	if not DataService:get(player, { "inventory", "tools", toolInstance.id }) then
+	if not DataService:get(player, { "inventory", "tools", toolInstance.guid }) then
 		return
 	end
 
@@ -39,9 +38,9 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 		v:Destroy()
 	end
 
-	DataService:set(player, { "tools", "equipped" }, toolInstance.id)
+	DataService:set(player, { "tools", "equipped" }, toolInstance.guid)
 
-	local toolId = toolInstance.data.id
+	local toolId = toolInstance.id
 	if not toolId then
 		warn("Tool has no id: " .. toolInstance.id)
 	end
@@ -54,6 +53,20 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	tool = tool:Clone()
 
 	humanoid:EquipTool(tool)
+end
+
+function ToolServiceServer.generateTool(self: ToolServiceServer, player: Player, toolId: string)
+	local tool: DataTemplate.ToolInstance = {
+		guid = HttpService:GenerateGUID(),
+		id = toolId,
+		data = {
+			level = 1,
+			xp = 0,
+		},
+		upgrades = {},
+	}
+
+	return tool
 end
 
 type ToolServiceServer = typeof(ToolServiceServer) & {

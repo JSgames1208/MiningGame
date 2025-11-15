@@ -1,10 +1,9 @@
 --!strict
 
-local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
-local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
+local LootServiceServer = require(ServerScriptService.Server.services.LootService.LootServiceServer)
 local MinableGenerator = require(ServerScriptService.Server.services.MiningService.util.MinableGenerator)
 local MinableRegistry = require(ServerScriptService.Server.services.MiningService.util.MinableRegistry)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
@@ -46,7 +45,7 @@ end
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
 	local toolInstance: DataTemplate.ToolInstance = DataService:get(player, { "inventory", "tools", toolId })
-	local toolData = toolInstance.data
+	local toolData = ToolRegistry[toolInstance.id]
 
 	if not toolData then
 		return
@@ -75,11 +74,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				target:Destroy()
 
 				PlayerServiceServer:addCurrency(player, 100)
-				InventoryServiceServer:addItem(
-					player,
-					"tools",
-					{ id = `tool_{HttpService:GenerateGUID()}`, data = ToolRegistry["stone_pickaxe"], upgrades = {} }
-				)
+				LootServiceServer:giveLoot(player, "dirt")
 			end)
 		end
 	end

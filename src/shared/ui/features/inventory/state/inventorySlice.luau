@@ -48,6 +48,12 @@ local actions = {
 		local categoryMap = inv[category]
 
 		local id = item.id
+
+		if category == "tools" then
+			local i = item :: ToolInstance
+			id = i.guid
+		end
+
 		local existingAtom = categoryMap[id]
 
 		if existingAtom then
@@ -63,6 +69,14 @@ local actions = {
 		end
 
 		inventory(inv)
+	end,
+
+	setTab = function(value: string)
+		if not VALID_CATEGORIES[value] then
+			warn("[inventorySlice] Invalid tab: " .. value)
+			return
+		end
+		tab(value)
 	end,
 }
 

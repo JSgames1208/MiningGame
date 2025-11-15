@@ -1,6 +1,4 @@
 --!strict
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 
 export type PlayerStats = {
 	level: number,
@@ -13,14 +11,15 @@ export type Currency = {
 	coins: number,
 }
 
-export type ToolInstance = {
-	id: string,
-	data: ToolRegistry.ToolData,
-	upgrades: {},
-}
-
 export type ToolData = {
 	equipped: string?,
+}
+
+export type ToolInstance = {
+	id: string,
+	guid: string,
+	data: { level: number, xp: number },
+	upgrades: {},
 }
 
 export type PotionStack = {
@@ -95,8 +94,12 @@ local DefaultPlayerData: PlayerData = {
 	inventory = {
 		tools = {
 			["tool_1"] = {
-				id = "tool_1",
-				data = ToolRegistry["wooden_pickaxe"],
+				id = "wooden_pickaxe",
+				guid = "tool_1",
+				data = {
+					level = 1,
+					xp = 0,
+				},
 				upgrades = {},
 			},
 		},

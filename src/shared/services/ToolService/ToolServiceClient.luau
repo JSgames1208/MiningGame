@@ -15,6 +15,7 @@ function ToolServiceClient.init(self: ToolServiceClient)
 	toolSlice.actions.setEquipped(toolId)
 
 	Charm.subscribe(toolSlice.states.equipped, function(toolId: string)
+		print(DataService:get({ "inventory", "tools" }))
 		local toolInstance = DataService:get({ "inventory", "tools", toolId })
 		self.networker:fire("equipTool", toolInstance)
 	end)
