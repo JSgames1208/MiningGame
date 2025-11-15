@@ -2,7 +2,9 @@
 
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 
@@ -18,9 +20,18 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 	DataService:waitForData(player)
 
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
-	local tool = DataService:get(player, { "inventory", "tools", toolId })
-	if tool then
+	if not toolId then
+		-- Generate starter tool
+
+		local tool = self:generateTool(player, "wooden_pickaxe")
+		InventoryServiceServer:addItem(player, "tools", tool)
+
 		self:equipTool(player, tool)
+	else
+		local tool = DataService:get(player, { "inventory", "tools", toolId })
+		if tool then
+			self:equipTool(player, tool)
+		end
 	end
 end
 
@@ -55,7 +66,29 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	humanoid:EquipTool(tool)
 end
 
-function ToolServiceServer.generateTool(self: ToolServiceServer, player: Player, toolId: string)
+function ToolServiceServer.addXP(self: ToolServiceServer, player: Player, xp: number)
+	local toolId: string = DataService:get(player, { "tools", "equipped" })
+	local tool = DataService:get(player, { "inventory", "tools", toolId })
+	if tool then
+		DataService:update(player, { "inventory", "tools", toolId }, function(currentValue)
+			return {
+				guid = tool.guid,
+				id = tool.id,
+				data = {
+					level = currentValue.data.level,
+					xp = (currentValue.data.xp or 0) + xp,
+				},
+				upgrades = currentValue.upgrades,
+			}
+		end)
+	end
+end
+
+function ToolServiceServer.generateTool(
+	self: ToolServiceServer,
+	player: Player,
+	toolId: string
+): DataTemplate.ToolInstance
 	local tool: DataTemplate.ToolInstance = {
 		guid = HttpService:GenerateGUID(),
 		id = toolId,

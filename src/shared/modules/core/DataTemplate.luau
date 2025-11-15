@@ -89,20 +89,10 @@ local DefaultPlayerData: PlayerData = {
 		coins = 0,
 	},
 	tools = {
-		equipped = "tool_1",
+		equipped = nil,
 	},
 	inventory = {
-		tools = {
-			["tool_1"] = {
-				id = "wooden_pickaxe",
-				guid = "tool_1",
-				data = {
-					level = 1,
-					xp = 0,
-				},
-				upgrades = {},
-			},
-		},
+		tools = {},
 		materials = {},
 		potions = {},
 		items = {},

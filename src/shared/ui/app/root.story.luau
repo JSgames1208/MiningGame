@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local React = require(ReplicatedStorage.Packages.React)
@@ -17,10 +18,14 @@ return function(parent: Instance)
 
 	for i = 1, 10 do
 		local toolData = i % 2 == 0 and ToolRegistry["stone_pickaxe"] or ToolRegistry["wooden_pickaxe"]
-		local id = `tool_{tostring(i)}`
+		local id = toolData.id
 		local tool = {
 			id = id,
-			data = toolData,
+			guid = HttpService:GenerateGUID(),
+			data = {
+				level = 1,
+				xp = 0,
+			},
 			upgrades = {},
 		}
 

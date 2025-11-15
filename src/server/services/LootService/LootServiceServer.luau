@@ -50,6 +50,10 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 
 	if lootTable.xp then
 		PlayerServiceServer:addXP(player, lootTable.xp.player)
+
+		if lootTable.xp.mining then
+			ToolServiceServer:addXP(player, lootTable.xp.mining)
+		end
 	end
 
 	return rolled
