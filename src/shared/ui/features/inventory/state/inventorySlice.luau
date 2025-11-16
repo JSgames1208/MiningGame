@@ -44,18 +44,23 @@ local actions = {
 			return
 		end
 
-		local inv = inventory()
-		local categoryMap = inv[category]
+		-- clone inventory
+		local oldInv = inventory()
+		local inv = table.clone(oldInv)
 
+		-- clone category table
+		local oldCategoryMap = inv[category]
+		local categoryMap = table.clone(oldCategoryMap)
+		inv[category] = categoryMap
+
+		-- determine id
 		local id = item.id
-
 		if category == "tools" then
-			local i = item :: ToolInstance
-			id = i.guid
+			id = (item :: ToolInstance).guid
 		end
 
+		-- update or create atom
 		local existingAtom = categoryMap[id]
-
 		if existingAtom then
 			existingAtom({
 				item = item,
@@ -68,7 +73,7 @@ local actions = {
 			})
 		end
 
-		inventory(inv)
+		inventory(inv) -- NEW TABLE REFERENCE
 	end,
 
 	setTab = function(value: string)

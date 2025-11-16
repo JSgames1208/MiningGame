@@ -3,6 +3,8 @@ local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
+local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local InventoryItem = require(ReplicatedStorage.Shared.ui.features.inventory.components.InventoryItem)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local e: typeof(React.createElement) = React.createElement
@@ -22,69 +24,16 @@ local function ScrollingInventory()
 	local items = {}
 
 	for id, itemAtom in categoryMap do
-		local stack = itemAtom()
-
-		if tab == "tools" then
-			local toolId = stack.item.id
-			local toolGuid = stack.item.guid
-
-			local equipped: boolean = equippedToolId == id
-
-			table.insert(
-				items,
-				e(
-					Button,
-					{
-						Size = UDim2.new(1, 0, 1, 0),
-						Image = ImageIds.icons[toolId],
-						BackgroundTransparency = 0,
-						BackgroundColor3 = equipped and Color3.fromRGB(0, 230, 0) or Color3.fromRGB(210, 210, 210),
-						hoverScale = 1.075,
-						onClick = function()
-							toolSlice.actions.setEquipped(toolGuid)
-						end,
-						Children = {
-							e("UICorner", {
-								CornerRadius = UDim.new(0.2, 0),
-							}),
-							e("UIStroke", {
-								Color = Color3.fromRGB(0, 0, 0),
-								Thickness = 10,
-								ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-							}),
-						},
-					} :: Button.ButtonProps
-				)
-			)
-		else
-			local itemId = stack.item.id
-
-			table.insert(
-				items,
-				e(
-					Button,
-					{
-						Size = UDim2.new(1, 0, 1, 0),
-						Image = ImageIds.icons[itemId],
-						BackgroundTransparency = 0,
-						BackgroundColor3 = Color3.fromRGB(210, 210, 210),
-						onClick = function()
-							return
-						end,
-						Children = {
-							e("UICorner", {
-								CornerRadius = UDim.new(0.2, 0),
-							}),
-							e("UIStroke", {
-								Color = Color3.fromRGB(0, 0, 0),
-								Thickness = 10,
-								ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-							}),
-						},
-					} :: Button.ButtonProps
-				)
-			)
-		end
+		print(id, itemAtom())
+		table.insert(
+			items,
+			e(InventoryItem, {
+				id = id,
+				itemAtom = itemAtom,
+				tab = tab,
+				equippedToolId = equippedToolId,
+			})
+		)
 	end
 
 	return e("ScrollingFrame", {
@@ -93,15 +42,15 @@ local function ScrollingInventory()
 		Position = UDim2.new(1, 0, 1, 0),
 		AnchorPoint = Vector2.new(1, 1),
 		ScrollBarThickness = 20,
-		CanvasSize = UDim2.new(0, 0, 2, 0),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		CanvasSize = UDim2.fromOffset(0, 0),
 		ScrollBarImageTransparency = 0,
 		ClipsDescendants = true,
 		ZIndex = 4,
 	}, {
 		e("UIGridLayout", {
-			CellPadding = UDim2.new(0, 30, 0, 30),
-			CellSize = UDim2.new(0, 200, 0, 200),
+			CellPadding = UDim2.fromOffset(30, 30),
+			CellSize = UDim2.fromOffset(200, 200),
 			FillDirection = Enum.FillDirection.Horizontal,
 			SortOrder = Enum.SortOrder.LayoutOrder,
 		}),

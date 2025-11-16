@@ -12,7 +12,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 })
 
 MiningServiceServer:init()

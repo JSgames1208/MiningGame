@@ -20,7 +20,7 @@ export type ButtonProps = UiTypes.ImageLabelProps & {
 local function Button(props)
 	local hoverScale = props.hoverScale or DEFAULT_HOVER_SCALE
 	local isHovering, hoverEvents = useHover()
-	local spring = useSpring(1, { speed = 10 })
+	local spring = useSpring(1, { speed = 12.5 })
 
 	props.spring = (props.spring == nil) and true or props.spring
 
