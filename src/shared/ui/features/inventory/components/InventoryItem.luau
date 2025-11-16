@@ -10,56 +10,65 @@ local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.t
 
 local e: typeof(React.createElement) = React.createElement
 
+type InventoryEntry = DataTemplate.InventoryEntry
 type Atom<T> = Charm.Atom<T>
 
 export type InventoryItemProps = {
-	id: string,
-	itemAtom: Atom<{ id: string, amount: number }> | Atom<DataTemplate.ToolInstance>,
+	key: string,
 	tab: string,
+	entryAtom: Atom<InventoryEntry>,
 	equippedToolId: string,
 }
 
 local function InventoryItem(props: InventoryItemProps)
-	local stack = ReactCharm.useAtom(props.itemAtom)
-	print(props.itemAtom(), stack)
+	local entry = ReactCharm.useAtom(props.entryAtom)
 
 	local isTool = props.tab == "tools"
 
-	local item = stack.item
-	local itemId = item.guid
+	local itemId = entry.id
+	local amount = entry.amount
 
-	-- TOOL RENDER ------------------------------------
-	if isTool then
-		local toolGuid = item.guid
-		local equipped = props.equippedToolId == toolGuid
+	local bgColor = Color3.fromRGB(210, 210, 210)
 
-		return e(Button, {
-			Size = UDim2.new(1, 0, 1, 0),
-			Image = ImageIds.icons[itemId],
-			BackgroundTransparency = 0,
-			BackgroundColor3 = equipped and Color3.fromRGB(0, 230, 0) or Color3.fromRGB(210, 210, 210),
-			hoverScale = 1.075,
-			onClick = function()
-				toolSlice.actions.setEquipped(toolGuid)
-			end,
-			Children = {
-				e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
-				e("UIStroke", {
-					Color = Color3.fromRGB(0, 0, 0),
-					Thickness = 10,
-					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-				}),
-			},
-		})
+	if isTool and props.equippedToolId == entry.guid then
+		bgColor = Color3.fromRGB(0, 230, 0)
 	end
 
-	-- STACKABLES --------------------------------------
+	local amountLabel = nil
+
+	if not isTool then
+		amountLabel = e(
+			TextLabel,
+			{
+				Text = amount .. "x",
+				Size = UDim2.new(1, 0, 0.5, 0),
+				Position = UDim2.new(1, 0, 1, 0),
+				AnchorPoint = Vector2.new(0.85, 0.5),
+				TextXAlignment = Enum.TextXAlignment.Right,
+				TextYAlignment = Enum.TextYAlignment.Bottom,
+				TextColor3 = Color3.fromRGB(255, 255, 255),
+				BackgroundTransparency = 1,
+				TextScaled = true,
+				TextWrapped = true,
+				ZIndex = 2,
+				Stroke = {
+					Thickness = 10,
+					Color = Color3.fromRGB(0, 0, 0),
+				},
+			} :: TextLabel.Props
+		)
+	end
+
 	return e(Button, {
 		Size = UDim2.new(1, 0, 1, 0),
 		Image = ImageIds.icons[itemId],
 		BackgroundTransparency = 0,
-		BackgroundColor3 = Color3.fromRGB(210, 210, 210),
-		onClick = function() end,
+		BackgroundColor3 = bgColor,
+		onClick = function()
+			if isTool and entry.guid then
+				toolSlice.actions.setEquipped(entry.guid)
+			end
+		end,
 		Children = {
 			e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
 			e("UIStroke", {
@@ -67,26 +76,8 @@ local function InventoryItem(props: InventoryItemProps)
 				Thickness = 10,
 				ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 			}),
-			e(
-				TextLabel,
-				{
-					Text = stack.amount .. "x",
-					Size = UDim2.new(1, 0, 0.5, 0),
-					Position = UDim2.new(1, 0, 1, 0),
-					AnchorPoint = Vector2.new(0.85, 0.5),
-					TextXAlignment = Enum.TextXAlignment.Right,
-					TextYAlignment = Enum.TextYAlignment.Bottom,
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 1,
-					TextScaled = true,
-					TextWrapped = true,
-					ZIndex = 2,
-					Stroke = {
-						Thickness = 10,
-						Color = Color3.fromRGB(0, 0, 0),
-					},
-				} :: TextLabel.Props
-			),
+
+			amountLabel,
 		},
 	})
 end

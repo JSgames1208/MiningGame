@@ -6,20 +6,27 @@ local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.st
 
 local InventoryServiceClient = {}
 
+type InventoryEntry = DataTemplate.InventoryEntry
+type InventoryCategory = DataTemplate.InventoryCategory
+
 function InventoryServiceClient.init(self: InventoryServiceClient)
 	self.networker = Networker.client.new("InventoryService", self)
 
 	local inventory: DataTemplate.Inventory = DataService:get({ "inventory" })
 
 	for categoryName, category in inventory do
-		for _, item in category do
-			inventorySlice.actions.setItem(categoryName, item, 1)
+		for _, entry in category do
+			inventorySlice.actions.setItem(categoryName, entry)
 		end
 	end
 end
 
-function InventoryServiceClient.addItem(self: InventoryServiceClient, category: string, item)
-	inventorySlice.actions.setItem(category, item, 1)
+function InventoryServiceClient.setItem(
+	self: InventoryServiceClient,
+	category: InventoryCategory,
+	entry: InventoryEntry
+)
+	inventorySlice.actions.setItem(category, entry)
 end
 
 type InventoryServiceClient = typeof(InventoryServiceClient) & {

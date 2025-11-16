@@ -34,8 +34,8 @@ local ToolRegistry: ToolRegistry = {
 		toolType = "pickaxe",
 		stats = {
 			durability = 60,
-			miningPower = 1,
-			miningSpeed = 1.0,
+			miningPower = 5,
+			miningSpeed = 3.0,
 		},
 	},
 	stone_pickaxe = {

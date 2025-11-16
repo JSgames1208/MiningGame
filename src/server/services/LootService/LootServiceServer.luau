@@ -1,10 +1,14 @@
 --!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
 local LootTables = require(ReplicatedStorage.Shared.services.LootService.LootTables)
+
+type InventoryCategory = DataTemplate.InventoryCategory
+type InventoryEntry = DataTemplate.InventoryEntry
 
 local LootServiceServer = {}
 
@@ -13,7 +17,7 @@ function LootServiceServer.init(self: LootServiceServer) end
 function LootServiceServer.rollLoot(self: LootServiceServer, player: Player, maxChance: number, drops: LootTables.Drops)
 	local items = {}
 
-	for cName, c in drops do
+	for cName: InventoryCategory, c in drops do
 		for _, drop in c do
 			local chance = math.random() * maxChance
 			if chance <= drop.chance then
@@ -33,7 +37,7 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 		return
 	end
 
-	local rolled: { { category: string, id: string, amount: number } } = {}
+	local rolled: { { category: InventoryCategory, id: string, amount: number } } = {}
 
 	if lootTable.drops then
 		rolled = self:rollLoot(player, lootTable.maxChance, lootTable.drops)
@@ -44,7 +48,14 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 			local tool = ToolServiceServer:generateTool(player, item.id)
 			InventoryServiceServer:addItem(player, item.category, tool)
 		else
-			InventoryServiceServer:addItem(player, item.category, { id = item.id, amount = item.amount })
+			local entry: InventoryEntry = {
+				amount = item.amount,
+				id = item.id,
+				type = "item",
+				data = {},
+				guid = nil,
+			}
+			InventoryServiceServer:addItem(player, item.category, entry)
 		end
 	end
 

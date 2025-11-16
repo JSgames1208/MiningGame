@@ -35,11 +35,17 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 	end
 end
 
-function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolInstance: DataTemplate.ToolInstance)
+function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, toolEntry: DataTemplate.InventoryEntry)
+	local toolGuid = toolEntry.guid
+	if not toolGuid then
+		warn("Tool has no guid")
+		return
+	end
+
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
 
-	if not DataService:get(player, { "inventory", "tools", toolInstance.guid }) then
+	if not DataService:get(player, { "inventory", "tools", toolGuid }) then
 		return
 	end
 
@@ -49,11 +55,11 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 		v:Destroy()
 	end
 
-	DataService:set(player, { "tools", "equipped" }, toolInstance.guid)
+	DataService:set(player, { "tools", "equipped" }, toolGuid)
 
-	local toolId = toolInstance.id
+	local toolId = toolEntry.id
 	if not toolId then
-		warn("Tool has no id: " .. toolInstance.id)
+		warn("Tool has no id: " .. toolEntry.id)
 	end
 	local tool = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Tools"):WaitForChild(toolId)
 
@@ -88,15 +94,16 @@ function ToolServiceServer.generateTool(
 	self: ToolServiceServer,
 	player: Player,
 	toolId: string
-): DataTemplate.ToolInstance
-	local tool: DataTemplate.ToolInstance = {
+): DataTemplate.InventoryEntry
+	local tool: DataTemplate.InventoryEntry = {
+		amount = 1,
 		guid = HttpService:GenerateGUID(),
 		id = toolId,
+		type = "tool",
 		data = {
 			level = 1,
 			xp = 0,
 		},
-		upgrades = {},
 	}
 
 	return tool

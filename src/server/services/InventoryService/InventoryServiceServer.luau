@@ -6,27 +6,45 @@ local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 
 local InventoryServiceServer = {}
 
+type InventoryEntry = DataTemplate.InventoryEntry
+type InventoryCategory = DataTemplate.InventoryCategory
+
 function InventoryServiceServer.init(self: InventoryServiceServer)
 	self.networker = Networker.server.new("InventoryService", self, {})
+end
+
+local function getInventoryKey(entry: InventoryEntry): string
+	if entry.type == "tool" then
+		if entry.guid then
+			return entry.guid
+		end
+		return entry.id
+	else
+		return entry.id
+	end
 end
 
 function InventoryServiceServer.addItem(
 	self: InventoryServiceServer,
 	player: Player,
-	category,
-	item: { id: string, amount: number } | DataTemplate.ToolInstance
+	category: InventoryCategory,
+	entry: InventoryEntry
 )
-	if category ~= "tools" then
-		local i: { id: string, amount: number } = item :: { id: string, amount: number }
-		DataService:update(player, { "inventory", category, item.id }, function(currentValue)
-			return { id = item.id, amount = (currentValue and currentValue.amount or 0) + i.amount }
+	local key = getInventoryKey(entry)
+	if DataService:get(player, { "inventory", category, key }) then
+		DataService:update(player, { "inventory", category, key }, function(currentValue: InventoryEntry)
+			return {
+				amount = (currentValue.amount or 0) + entry.amount,
+				data = currentValue.data,
+				guid = currentValue.guid,
+				id = currentValue.id,
+				type = currentValue.type,
+			}
 		end)
 	else
-		local i = item :: DataTemplate.ToolInstance
-		DataService:set(player, { "inventory", category, i.guid }, item)
+		DataService:set(player, { "inventory", category, key }, entry)
 	end
-
-	self.networker:fire(player, "addItem", category, item)
+	self.networker:fire(player, "setItem", category, DataService:get(player, { "inventory", category, key }))
 end
 
 type InventoryServiceServer = typeof(InventoryServiceServer) & {

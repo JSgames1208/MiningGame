@@ -37,11 +37,18 @@ export type MaterialStack = {
 	amount: number,
 }
 
+export type InventoryCategory = "tools" | "materials" | "potions" | "items"
+
+export type InventoryEntry = {
+	id: string,
+	guid: string?,
+	type: "tool" | "item",
+	amount: number,
+	data: {}?,
+}
+
 export type Inventory = {
-	tools: { [string]: ToolInstance },
-	potions: { [string]: PotionStack },
-	materials: { [string]: MaterialStack },
-	items: { [string]: ItemStack },
+	[InventoryCategory]: { [string]: InventoryEntry },
 }
 
 export type ZoneData = {

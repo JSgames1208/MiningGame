@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 export type Drop = {
 	id: string,
 	min: number,
@@ -5,9 +7,7 @@ export type Drop = {
 	chance: number,
 }
 
-export type ItemType = "tools" | "materials" | "potions" | "items"
-
-export type Drops = { [ItemType]: { Drop } }
+export type Drops = { [DataTemplate.InventoryCategory]: { Drop } }
 
 export type XP = {
 	mining: number,

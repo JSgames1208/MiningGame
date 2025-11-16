@@ -7,13 +7,17 @@ type Atom<T> = Charm.Atom<T>
 type Category = "tools" | "materials" | "potions" | "items"
 type ToolInstance = DataTemplate.ToolInstance
 type Item = ToolInstance | { id: string }
+type InventoryEntry = DataTemplate.InventoryEntry
+type InventoryCategory = DataTemplate.InventoryCategory
 
 local inventoryOpen: Atom<boolean> = atom(false)
+local tab = atom("tools")
+
 local inventory: Atom<{
-	tools: { [string]: Atom<{ ToolInstance }> },
-	materials: { [string]: Atom<{ item: Item, amount: number }> },
-	potions: { [string]: Atom<{ item: Item, amount: number }> },
-	items: { [string]: Atom<{ item: Item, amount: number }> },
+	tools: { [string]: Atom<InventoryEntry> },
+	materials: { [string]: Atom<InventoryEntry> },
+	potions: { [string]: Atom<InventoryEntry> },
+	items: { [string]: Atom<InventoryEntry> },
 }> =
 	atom({
 		tools = {},
@@ -21,8 +25,6 @@ local inventory: Atom<{
 		potions = {},
 		items = {},
 	})
-
-local tab: Atom<string> = atom("tools")
 
 local VALID_CATEGORIES = {
 	tools = true,
@@ -38,44 +40,33 @@ local actions = {
 
 	-- category: "tools" | "materials" | "potions" | "items"
 	-- item: ToolInstance | Material | Item | Potion
-	setItem = function(category: string, item: Item, amount: number)
+	setItem = function(category: InventoryCategory, entry: InventoryEntry)
 		if not VALID_CATEGORIES[category] then
 			warn("[inventorySlice] Invalid category: " .. category)
 			return
 		end
 
-		-- clone inventory
-		local oldInv = inventory()
-		local inv = table.clone(oldInv)
+		local inv = inventory()
+		local categoryMap = inv[category]
 
-		-- clone category table
-		local oldCategoryMap = inv[category]
-		local categoryMap = table.clone(oldCategoryMap)
-		inv[category] = categoryMap
+		local key = if entry.type == "tool" then entry.guid else entry.id
 
-		-- determine id
-		local id = item.id
-		if category == "tools" then
-			id = (item :: ToolInstance).guid
+		if not key then
+			warn("[inventorySlice] Invalid item: " .. entry.id)
+			return
 		end
 
-		-- update or create atom
-		local existingAtom = categoryMap[id]
+		local existingAtom = categoryMap[key]
 		if existingAtom then
-			existingAtom({
-				item = item,
-				amount = amount,
-			})
+			existingAtom(entry) -- just update that item
 		else
-			categoryMap[id] = atom({
-				item = item,
-				amount = amount,
-			})
+			-- make a new category table so React re-renders the tab properly
+			local newCategoryMap = table.clone(categoryMap)
+			newCategoryMap[key] = atom(entry)
+			inv[category] = newCategoryMap
+			inventory(inv)
 		end
-
-		inventory(inv) -- NEW TABLE REFERENCE
 	end,
-
 	setTab = function(value: string)
 		if not VALID_CATEGORIES[value] then
 			warn("[inventorySlice] Invalid tab: " .. value)

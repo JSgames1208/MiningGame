@@ -1,9 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
-local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
-local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
 local InventoryItem = require(ReplicatedStorage.Shared.ui.features.inventory.components.InventoryItem)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
@@ -23,16 +20,18 @@ local function ScrollingInventory()
 
 	local items = {}
 
-	for id, itemAtom in categoryMap do
-		print(id, itemAtom())
+	for id, entryAtom in categoryMap do
 		table.insert(
 			items,
-			e(InventoryItem, {
-				id = id,
-				itemAtom = itemAtom,
-				tab = tab,
-				equippedToolId = equippedToolId,
-			})
+			e(
+				InventoryItem,
+				{
+					key = tab .. "_" .. id,
+					tab = tab,
+					entryAtom = entryAtom,
+					equippedToolId = equippedToolId,
+				} :: InventoryItem.InventoryItemProps
+			)
 		)
 	end
 
