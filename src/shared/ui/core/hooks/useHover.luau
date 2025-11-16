@@ -1,4 +1,3 @@
--- useHover.lua
 local React = require(game.ReplicatedStorage.Packages.React)
 
 local function useHover()

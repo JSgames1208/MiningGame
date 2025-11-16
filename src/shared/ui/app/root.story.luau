@@ -22,27 +22,39 @@ return function(parent: Instance)
 		local tool = {
 			id = id,
 			guid = HttpService:GenerateGUID(),
+			type = "tool",
+			amount = 1,
 			data = {
 				level = 1,
 				xp = 0,
 			},
-			upgrades = {},
 		}
 
 		DataService:set({ "inventory", "tools", id }, tool)
-		InventoryServiceClient:addItem("tools", tool)
+		InventoryServiceClient:setItem("tools", tool)
 	end
 
-	local id = "dirt"
+	local item1 = {
+		id = "potion_yellow",
+		amount = 10,
+		type = "item",
+		data = {},
+		guid = nil,
+	}
 
-	DataService:set({ "inventory", "items", id }, { id = id, amount = 1 })
-	InventoryServiceClient:addItem("items", { id = id, amount = 1 })
+	DataService:set({ "inventory", "potions", item1.id }, item1)
+	InventoryServiceClient:setItem("potions", item1)
 
-	DataService:set({ "inventory", "potions", id }, { id = id, amount = 1 })
-	InventoryServiceClient:addItem("potions", { id = id, amount = 1 })
+	local item2 = {
+		id = "potion_green",
+		amount = 5,
+		type = "item",
+		data = {},
+		guid = nil,
+	}
 
-	DataService:set({ "inventory", "materials", id }, { id = id, amount = 1 })
-	InventoryServiceClient:addItem("materials", { id = id, amount = 1 })
+	DataService:set({ "inventory", "potions", item2.id }, item2)
+	InventoryServiceClient:setItem("potions", item2)
 
 	PlayerServiceClient:init()
 

@@ -44,7 +44,7 @@ export type InventoryEntry = {
 	guid: string?,
 	type: "tool" | "item",
 	amount: number,
-	data: {}?,
+	data: { [string]: any }?,
 }
 
 export type Inventory = {

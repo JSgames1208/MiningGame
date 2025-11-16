@@ -7,5 +7,9 @@ return {
 		["dirt"] = "rbxassetid://135841438755400",
 		["wooden_pickaxe"] = "rbxassetid://130418748207283",
 		["stone_pickaxe"] = "rbxassetid://92012186181879",
+		["potion_yellow"] = "rbxassetid://122389967727680",
+		["potion_green"] = "rbxassetid://104535255679560",
+		["potion_red"] = "rbxassetid://115943588411486",
+		["button_background"] = "rbxassetid://85983122588246",
 	},
 }

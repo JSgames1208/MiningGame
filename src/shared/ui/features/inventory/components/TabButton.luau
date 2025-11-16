@@ -7,6 +7,13 @@ local useSpring = require(ReplicatedStorage.Shared.ui.core.hooks.useSpring)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local e: typeof(React.createElement) = React.createElement
 
+local TAB_IMAGES = {
+	tools = ImageIds.icons.stone_pickaxe,
+	materials = ImageIds.icons.dirt,
+	potions = ImageIds.icons.potion_red,
+	items = ImageIds.icons.wooden_pickaxe,
+}
+
 export type Props = {
 	tab: string,
 }
@@ -57,7 +64,7 @@ local function TabButton(props: Props)
 			Position = UDim2.new(0.05, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0, 0.5),
 			BackgroundTransparency = 1,
-			Image = ImageIds.icons.wooden_pickaxe,
+			Image = TAB_IMAGES[props.tab] or ImageIds.icons.stone_pickaxe,
 			ScaleType = Enum.ScaleType.Fit,
 			ImageRectOffset = Vector2.zero,
 			ImageRectSize = Vector2.new(1028, 1028),

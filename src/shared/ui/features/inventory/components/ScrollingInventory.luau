@@ -21,15 +21,40 @@ local function ScrollingInventory()
 	local items = {}
 
 	for id, entryAtom in categoryMap do
+		table.insert(items, { id = id, atom = entryAtom })
+	end
+
+	table.sort(items, function(a, b)
+		local aEntry = a.atom()
+		local bEntry = b.atom()
+
+		-- equipped tool goes first
+		local aIsEquipped = aEntry.guid == equippedToolId
+		local bIsEquipped = bEntry.guid == equippedToolId
+
+		if aIsEquipped and not bIsEquipped then
+			return true
+		end
+		if bIsEquipped and not aIsEquipped then
+			return false
+		end
+
+		-- otherwise alphabetical
+		return aEntry.id < bEntry.id
+	end)
+
+	local rendered = {}
+	for index, data in ipairs(items) do
 		table.insert(
-			items,
+			rendered,
 			e(
 				InventoryItem,
 				{
-					key = tab .. "_" .. id,
+					key = tab .. "_" .. data.id,
 					tab = tab,
-					entryAtom = entryAtom,
+					entryAtom = data.atom,
 					equippedToolId = equippedToolId,
+					LayoutOrder = index, -- 👈 ADD THIS
 				} :: InventoryItem.InventoryItemProps
 			)
 		)
@@ -59,7 +84,7 @@ local function ScrollingInventory()
 			PaddingRight = UDim.new(0, 50),
 			PaddingTop = UDim.new(0, 50),
 		}),
-		items,
+		table.unpack(rendered),
 	})
 end
 

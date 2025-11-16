@@ -15,6 +15,7 @@ export type ButtonProps = UiTypes.ImageLabelProps & {
 	Children: { React.Element<any> },
 	onClick: (any?) -> any?,
 	spring: boolean?,
+	--springTrigger: any?,
 }
 
 local function Button(props)
@@ -25,9 +26,17 @@ local function Button(props)
 	props.spring = (props.spring == nil) and true or props.spring
 
 	React.useEffect(function()
+		if props.spring then
+			spring.setGoal(1)
+		end
+	end, { props.LayoutOrder })
+
+	-- Hover animation (ignored when layout changes)
+	React.useEffect(function()
 		if not props.spring then
 			return
 		end
+
 		if isHovering then
 			spring.setGoal(hoverScale)
 		else
@@ -40,7 +49,8 @@ local function Button(props)
 		props[React.Event.MouseButton1Click] = props.onClick
 	end
 
-	local safeProps = Sift.Dictionary.removeKeys(props, "Children", "Mirror", "hoverScale", "onClick", "spring")
+	local safeProps =
+		Sift.Dictionary.removeKeys(props, "Children", "Mirror", "hoverScale", "onClick", "spring", "springTrigger")
 	local buttonProps = Sift.Dictionary.join(safeProps, {
 		[React.Event.MouseEnter] = hoverEvents.onMouseEnter,
 		[React.Event.MouseLeave] = hoverEvents.onMouseLeave,
