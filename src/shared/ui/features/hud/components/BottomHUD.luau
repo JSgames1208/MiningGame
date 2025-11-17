@@ -17,7 +17,7 @@ local function BottomHUD()
 		{
 			Shown = shown,
 			AnchorPoint = Vector2.new(0.5, 1),
-			From = UDim2.new(0.5, 0, 1, -25),
+			From = UDim2.new(0.5, 0, 1, -55),
 			To = UDim2.new(0.5, 0, 1.5, 0),
 			Size = UDim2.new(0, 1000, 0, 400),
 			BackgroundTransparency = 1,

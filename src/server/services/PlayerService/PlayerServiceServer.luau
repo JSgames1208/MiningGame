@@ -19,7 +19,9 @@ function PlayerServiceServer.addCurrency(self: PlayerServiceServer, player: Play
 end
 
 function PlayerServiceServer.addXP(self: PlayerServiceServer, player: Player, amount: number)
-	print("Add xp: " .. amount)
+	DataService:update(player, { "stats", "xp" }, function(currentValue: number)
+		return currentValue + amount
+	end)
 end
 
 function PlayerServiceServer.onPlayerAdded(self: PlayerServiceServer, player: Player)

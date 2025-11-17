@@ -1,7 +1,6 @@
 --!strict
 
 export type PlayerStats = {
-	level: number,
 	xp: number,
 	mined: number,
 	playTime: number,
@@ -87,7 +86,6 @@ export type PlayerData = {
 local DefaultPlayerData: PlayerData = {
 	version = 1,
 	stats = {
-		level = 0,
 		xp = 0,
 		mined = 0,
 		playTime = 0,

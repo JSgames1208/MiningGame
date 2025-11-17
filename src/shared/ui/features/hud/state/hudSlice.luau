@@ -13,14 +13,33 @@ local shown = Charm.computed(function()
 end)
 
 local currency: Charm.Atom<number> = atom(0)
+local level: Charm.Atom<number> = atom(0)
+local xp: Charm.Atom<number> = atom(0)
+local maxXP: Charm.Atom<number> = atom(0)
 
 local actions = {
 	setCurrency = function(value: number)
 		currency(value)
 	end,
+	setLevel = function(value: number)
+		level(value)
+	end,
+	setXP = function(value: number)
+		xp(value)
+	end,
+	setMaxXP = function(value: number)
+		maxXP(value)
+	end,
 }
 
 return {
-	states = { screenCovered = screenCovered, shown = shown, currency = currency },
+	states = {
+		screenCovered = screenCovered,
+		shown = shown,
+		currency = currency,
+		level = level,
+		xp = xp,
+		maxXP = maxXP,
+	},
 	actions = actions,
 }

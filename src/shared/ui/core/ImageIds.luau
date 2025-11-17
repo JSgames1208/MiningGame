@@ -1,6 +1,8 @@
 return {
 	["healthdisplay"] = "rbxassetid://99664572061963",
 	["healthbar"] = "rbxassetid://122642298593161",
+	["xpbaroverlay"] = "rbxassetid://109302674906170",
+	["xpbarback"] = "rbxassetid://104552968071257",
 	["close"] = "rbxassetid://71417026080482",
 	["icons"] = {
 		["coin"] = "rbxassetid://76443803906555",

@@ -60,7 +60,9 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 	end
 
 	if lootTable.xp then
-		PlayerServiceServer:addXP(player, lootTable.xp.player)
+		task.delay(1, function()
+			PlayerServiceServer:addXP(player, lootTable.xp.player)
+		end)
 
 		if lootTable.xp.mining then
 			ToolServiceServer:addXP(player, lootTable.xp.mining)

@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
+local NumberFormatter = require(ReplicatedStorage.Shared.modules.math.NumberFormatter)
 local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
 local useLinear = require(ReplicatedStorage.Shared.ui.core.hooks.useLinear)
@@ -25,7 +26,7 @@ local function CoinLabel()
 	end, { coins })
 
 	return e(TextLabel, {
-		Text = math.round(coinAnim.binding),
+		Text = NumberFormatter(math.round(coinAnim.binding)),
 		Font = Enum.Font.FredokaOne,
 		Position = UDim2.new(0.7, 0, 0.5, 0),
 		AnchorPoint = Vector2.new(0.5, 0.5),
