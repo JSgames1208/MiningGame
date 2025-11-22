@@ -9,7 +9,9 @@ local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local ImageLabel = require(ReplicatedStorage.Shared.ui.core.components.ImageLabel)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
+local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local e: typeof(React.createElement) = React.createElement
 
@@ -20,11 +22,14 @@ export type InventoryItemProps = {
 	key: string,
 	tab: string,
 	entryAtom: Atom<InventoryEntry>,
-	equippedToolId: string,
+	equippedToolId: string?,
 	LayoutOrder: number,
+	exitOnPress: boolean?,
 }
 
 local function InventoryItem(props: InventoryItemProps)
+	local exitOnPress = props.exitOnPress ~= nil and props.exitOnPress or false
+
 	local entry = ReactCharm.useAtom(props.entryAtom)
 
 	local isTool = props.tab == "tools"
@@ -76,6 +81,10 @@ local function InventoryItem(props: InventoryItemProps)
 		onClick = function()
 			if isTool and entry.guid then
 				toolSlice.actions.setEquipped(entry.guid)
+			end
+			if exitOnPress then
+				miningSlice.actions.setSwapToolOpen(false)
+				inventorySlice.actions.setInventoryOpen(false)
 			end
 		end,
 		--springTrigger = props.LayoutOrder,

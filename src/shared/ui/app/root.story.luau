@@ -8,6 +8,8 @@ local InventoryServiceClient = require(ReplicatedStorage.Shared.services.Invento
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
 local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
+local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
+
 local e = React.createElement
 
 return function(parent: Instance)

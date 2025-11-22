@@ -5,7 +5,7 @@ export type RarityColors = { [ItemRegistry.ItemRarity]: Color3 }
 
 local RarityColors: RarityColors = {
 	["common"] = Color3.fromHex("adb5bd"),
-	["uncommon"] = Color3.fromHex("00b4d8"),
+	["uncommon"] = Color3.fromHex("#00c7ef"),
 	["rare"] = Color3.fromHex("70e000"),
 }
 

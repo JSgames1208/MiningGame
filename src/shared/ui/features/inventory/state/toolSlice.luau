@@ -5,8 +5,8 @@ local atom: typeof(Charm.atom) = Charm.atom
 local equipped: Charm.Atom<string> = atom("")
 
 local actions = {
-	setEquipped = function(toolId: string)
-		equipped(toolId)
+	setEquipped = function(toolGuid: string)
+		equipped(toolGuid)
 	end,
 }
 

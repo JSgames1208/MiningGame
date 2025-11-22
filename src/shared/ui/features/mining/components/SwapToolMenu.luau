@@ -4,19 +4,50 @@ local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local ScrollingInventory = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingInventory)
-local TabButton = require(ReplicatedStorage.Shared.ui.features.inventory.components.TabButton)
+local ScrollingItemLayout = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingItemLayout)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
+local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
+local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 local e: typeof(React.createElement) = React.createElement
 
-local function MainInventory()
-	local shown = ReactCharm.useAtom(inventorySlice.states.inventoryOpen)
-	local tab = ReactCharm.useAtom(inventorySlice.states.tab)
+local function SwapToolMenu()
+	local shown = ReactCharm.useAtom(miningSlice.states.swapToolOpen)
+	local mining = ReactCharm.useAtom(miningSlice.states.mining)
+
+	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
+
+	local inventory = inventorySlice.states.inventory()
+	local categoryMap = inventory["tools"]
+
+	local items = {}
+
+	for id, entryAtom in categoryMap do
+		table.insert(items, { id = id, atom = entryAtom })
+	end
+
+	table.sort(items, function(a, b)
+		local aEntry = a.atom()
+		local bEntry = b.atom()
+
+		-- equipped tool goes first
+		local aIsEquipped = aEntry.guid == equippedToolId
+		local bIsEquipped = bEntry.guid == equippedToolId
+
+		if aIsEquipped and not bIsEquipped then
+			return true
+		end
+		if bIsEquipped and not aIsEquipped then
+			return false
+		end
+
+		-- otherwise alphabetical
+		return aEntry.id < bEntry.id
+	end)
 
 	return e(
 		SlideOutFrame,
 		{
-			Shown = shown,
+			Shown = shown and mining,
 			Size = UDim2.new(0, 2000, 0, 1500),
 			BackgroundTransparency = 0,
 			BackgroundColor3 = Color3.fromRGB(230, 230, 230),
@@ -34,7 +65,7 @@ local function MainInventory()
 					CornerRadius = UDim.new(0.05, 0),
 				}),
 				e(TextLabel, {
-					Text = "Inventory!",
+					Text = "Swap Tool!",
 					Font = Enum.Font.FredokaOne,
 					Position = UDim2.new(0.05, 0, 0, 0),
 					AnchorPoint = Vector2.new(0, 0.75),
@@ -59,7 +90,7 @@ local function MainInventory()
 					BackgroundTransparency = 0,
 					BackgroundColor3 = Color3.fromRGB(225, 0, 0),
 					onClick = function()
-						inventorySlice.actions.setInventoryOpen(false)
+						miningSlice.actions.setSwapToolOpen(false)
 					end,
 					ZIndex = 5,
 					Children = {
@@ -86,60 +117,33 @@ local function MainInventory()
 						}),
 					},
 				}),
-				e(TextLabel, {
-					Text = string.gsub(tab, "^%l", function(c)
-						return string.upper(c)
-					end),
-					Font = Enum.Font.FredokaOne,
-					Position = UDim2.new(0.025, 0, 0.06, 0),
-					AnchorPoint = Vector2.new(0, 0.5),
-					Size = UDim2.new(0.5, 0, 0.075, 0),
-					TextScaled = true,
-					TextWrapped = true,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextYAlignment = Enum.TextYAlignment.Bottom,
-					Children = {},
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					ZIndex = 5,
-					Stroke = {
-						Thickness = 10,
-						Color = Color3.fromRGB(0, 0, 0),
+				e(
+					"Frame",
+					{
+						Size = UDim2.new(0.4, 0, 0.75, 0),
+						Position = UDim2.new(0, 0, 0.5, 0),
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						BackgroundColor3 = Color3.fromRGB(220, 220, 220),
+						ZIndex = 0,
 					},
-				}),
-
-				e("Frame", {
-					Size = UDim2.new(0.4, 0, 0.75, 0),
-					Position = UDim2.new(0, 0, 0.5, 0),
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					BackgroundColor3 = Color3.fromRGB(220, 220, 220),
-					ZIndex = 0,
-				}, {
-					e(TabButton, {
-						tab = "tools",
-					}),
-					e(TabButton, {
-						tab = "items",
-					}),
-					e(TabButton, {
-						tab = "materials",
-					}),
-					e(TabButton, {
-						tab = "potions",
-					}),
 					e("UIListLayout", {
 						Padding = UDim.new(0, 30),
 						SortOrder = Enum.SortOrder.LayoutOrder,
 						FillDirection = Enum.FillDirection.Vertical,
 						VerticalAlignment = Enum.VerticalAlignment.Center,
 						HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					}),
+					})
+				),
+				e(ScrollingItemLayout, {
+					items = items,
+					equippedToolId = equippedToolId,
+					exitOnPress = true,
+					tab = "tools",
 				}),
-
-				e(ScrollingInventory),
 			},
 		} :: SlideOutFrame.SlideOutProps
 	)
 end
 
-return MainInventory
+return SwapToolMenu
