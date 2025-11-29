@@ -11,16 +11,16 @@ local ToolServiceClient = {}
 function ToolServiceClient.init(self: ToolServiceClient)
 	self.networker = Networker.client.new("ToolService", self)
 
+	Charm.subscribe(toolSlice.states.equipped, function(toolId: string)
+		local toolInstance = DataService:get({ "inventory", "tools", toolId })
+		self.networker:fire("equipTool", toolInstance)
+	end)
+
 	local toolId: string = DataService:get({ "tools", "equipped" })
 	toolSlice.actions.setEquipped(toolId)
 
 	DataService:getChangedSignal({ "tools", "equipped" }):Connect(function(toolId: string)
 		toolSlice.actions.setEquipped(toolId)
-	end)
-
-	Charm.subscribe(toolSlice.states.equipped, function(toolId: string)
-		local toolInstance = DataService:get({ "inventory", "tools", toolId })
-		self.networker:fire("equipTool", toolInstance)
 	end)
 end
 

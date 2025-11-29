@@ -30,6 +30,7 @@ return React.forwardRef(function(props: SlideOutProps, ref)
 		end
 
 		posSpring.setGoal(to)
+
 		local discon = posSpring.onComplete(function()
 			if not shown then
 				setMounted(false)

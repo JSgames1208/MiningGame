@@ -18,7 +18,7 @@ return function(parent: Instance)
 	DataService:waitForData()
 	DataService:set({ "currency", "coins" }, 100)
 
-	DataService:set({ "stats", "xp" }, 1000)
+	DataService:set({ "stats", "xp" }, 10000)
 
 	for i = 1, 10 do
 		local toolData = i % 2 == 0 and ToolRegistry["stone_pickaxe"] or ToolRegistry["wooden_pickaxe"]

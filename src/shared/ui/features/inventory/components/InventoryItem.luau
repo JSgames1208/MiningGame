@@ -41,7 +41,7 @@ local function InventoryItem(props: InventoryItemProps)
 
 	local imageColor = Color3.fromRGB(210, 210, 210)
 
-	if isTool and props.equippedToolId == entry.guid then
+	if isTool and isEquipped then
 		imageColor = Color3.fromRGB(0, 230, 0)
 	else
 		imageColor = RarityColors[ItemRegistry[entry.id].rarity]

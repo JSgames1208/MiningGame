@@ -57,6 +57,10 @@ local function useSpring(initialGoal: number | UDim2, config: { speed: number }?
 					and math.abs(dyScale) < 0.001
 					and math.abs(dxOffset) < 0.5
 					and math.abs(dyOffset) < 0.5
+
+				if done then
+					newValue = curGoal
+				end
 			else
 				-- fallback: different types, snap
 				newValue = curGoal

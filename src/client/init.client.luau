@@ -18,9 +18,9 @@ DataService:init()
 
 MiningServiceClient:init()
 PlayerServiceClient:init()
-ToolServiceClient:init()
 InventoryServiceClient:init()
 AnimationService:init()
+ToolServiceClient:init()
 
 local root = ReactRoblox.createRoot(playerGui)
 root:render(e(RootUI))
