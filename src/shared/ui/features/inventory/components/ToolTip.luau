@@ -1,3 +1,4 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local e: typeof(React.createElement) = React.createElement
@@ -26,7 +27,10 @@ local function ToolTip(props: ToolTipProps)
 	return e("Frame", {
 		Visible = true,
 		Size = UDim2.new(0, 200, 0, 150),
-		Position = UDim2.fromOffset(absPos.X + absSize.X + 12, absPos.Y),
+		Position = UDim2.fromOffset(
+			absPos.X + absSize.X + 15,
+			absPos.Y + absSize.Y / 2 - 35 + GuiService:GetGuiInset().Y
+		),
 		AnchorPoint = Vector2.new(0, 0),
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 		BorderSizePixel = 0,
