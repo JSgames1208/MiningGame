@@ -48,6 +48,7 @@ export type ImageLabelProps = {
 	ImageRectSize: Vector2?,
 	Mirror: boolean?,
 	ZIndex: number?,
+	LayoutOrder: number?,
 	Children: { React.Element<any> }?,
 }
 

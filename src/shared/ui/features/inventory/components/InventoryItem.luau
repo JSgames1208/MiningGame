@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
+local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local ItemRegistry = require(ReplicatedStorage.Shared.modules.core.ItemRegistry)
 local RarityColors = require(ReplicatedStorage.Shared.modules.core.RarityColors)
@@ -9,8 +10,10 @@ local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local ImageLabel = require(ReplicatedStorage.Shared.ui.core.components.ImageLabel)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local ItemToolTip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemToolTip)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
+local tooltipSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipSlice)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local e: typeof(React.createElement) = React.createElement
@@ -72,7 +75,10 @@ local function InventoryItem(props: InventoryItemProps)
 		)
 	end
 
+	local anchorRef = React.useRef(nil)
+
 	return e(Button, {
+		ref = anchorRef,
 		Size = UDim2.new(1, 0, 1, 0),
 		Image = ImageIds.icons[itemId],
 		BackgroundTransparency = 1,
@@ -87,17 +93,15 @@ local function InventoryItem(props: InventoryItemProps)
 				inventorySlice.actions.setInventoryOpen(false)
 			end
 		end,
-		--springTrigger = props.LayoutOrder,
+		onHover = function()
+			tooltipSlice.actions.setTooltip(anchorRef, ItemRegistry[entry.id].name, ItemRegistry[entry.id].description)
+		end,
+		onHoverEnded = function()
+			tooltipSlice.actions.hideTooltip()
+		end,
 		LayoutOrder = props.LayoutOrder,
 		Children = {
 			e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
-
-			--[[e("UIStroke", {
-				Color = Color3.fromRGB(0, 0, 0),
-				Thickness = 10,
-				ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			}),]]
-
 			e(ImageLabel, {
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				AnchorPoint = Vector2.new(0.5, 0.5),

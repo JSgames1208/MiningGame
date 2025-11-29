@@ -20,6 +20,7 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 	DataService:waitForData(player)
 
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
+
 	if not toolId then
 		-- Generate starter tool
 
