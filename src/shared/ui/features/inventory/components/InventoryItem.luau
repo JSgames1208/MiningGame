@@ -2,15 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
-local ItemRegistry = require(ReplicatedStorage.Shared.modules.core.ItemRegistry)
 local RarityColors = require(ReplicatedStorage.Shared.modules.core.RarityColors)
+local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
 local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local ImageLabel = require(ReplicatedStorage.Shared.ui.core.components.ImageLabel)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local ItemToolTip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemToolTip)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local tooltipSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipSlice)
@@ -47,7 +45,12 @@ local function InventoryItem(props: InventoryItemProps)
 	if isTool and isEquipped then
 		imageColor = Color3.fromRGB(0, 230, 0)
 	else
-		imageColor = RarityColors[ItemRegistry[entry.id].rarity]
+		local itemEntry = Items.get(entry.id)
+		if itemEntry then
+			imageColor = RarityColors[itemEntry.rarity]
+		else
+			imageColor = RarityColors.fallback
+		end
 	end
 
 	local amountLabel = nil
@@ -94,7 +97,10 @@ local function InventoryItem(props: InventoryItemProps)
 			end
 		end,
 		onHover = function()
-			tooltipSlice.actions.setTooltip(anchorRef, ItemRegistry[entry.id].name, ItemRegistry[entry.id].description)
+			local itemEntry = Items.get(entry.id)
+			if itemEntry then
+				tooltipSlice.actions.setTooltip(anchorRef, itemEntry.name, itemEntry.description)
+			end
 		end,
 		onHoverEnded = function()
 			tooltipSlice.actions.hideTooltip()

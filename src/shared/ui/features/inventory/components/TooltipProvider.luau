@@ -13,8 +13,6 @@ local function TooltipProvider()
 		return nil
 	end
 
-	print(tooltipAtom.title)
-
 	return e(ItemToolTip, {
 		shown = tooltipAtom.shown,
 		anchor = tooltipAtom.anchor,
