@@ -15,7 +15,6 @@ local function RootUI()
 			IgnoreGuiInset = true,
 			ResetOnSpawn = false,
 			ZIndexBehavior = Enum.ZIndexBehavior.Global,
-			ClipToDeviceSafeArea = false,
 		}, {
 			MiningScreen = e(MiningScreen),
 			HUD = e(HUD),

@@ -38,6 +38,12 @@ function MiningServiceClient.init(self: MiningServiceClient)
 	self:handleInput()
 end
 
+local function mobileRaycast(position: Vector2)
+	local camera = workspace.CurrentCamera
+	local ray = camera:ScreenPointToRay(position.X, position.Y)
+	return workspace:Raycast(ray.Origin, ray.Direction * 300)
+end
+
 function MiningServiceClient.handleInput(self: MiningServiceClient)
 	self.isHovering = false
 
@@ -90,6 +96,57 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 		if self.isHovering and not miningSlice.states.mining() then
 			self.networker:fire("startMining", mouse.Target)
 		end
+	end)
+
+	UserInputService.TouchMoved:Connect(function(touch)
+		if miningSlice.states.mining() then
+			return
+		end
+
+		local result = mobileRaycast(touch.Position)
+		if not result or not result.Instance or not result.Instance:HasTag("minable") then
+			self.isHovering = false
+			if self.highlight then
+				self.highlight:Destroy()
+				self.highlight = nil
+			end
+			return
+		end
+
+		self.isHovering = true
+
+		if self.highlight then
+			self.highlight:Destroy()
+		end
+
+		self.highlight = Instance.new("Highlight")
+		if self.highlight then
+			self.highlight.FillColor = Color3.fromRGB(255, 0, 0)
+			self.highlight.Parent = result.Instance
+			self.highlight.Adornee = result.Instance
+			self.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+			local dist = (hrp.Position - result.Position).Magnitude
+			self.highlight.FillTransparency = dist > 40 and 0.75 or 1
+		end
+	end)
+
+	-- MOBILE TAP SUPPORT
+	UserInputService.TouchTap:Connect(function(touchPositions)
+		if miningSlice.states.mining() then
+			return
+		end
+		if not self.isHovering then
+			return
+		end
+
+		local pos = touchPositions[1]
+		local result = mobileRaycast(pos)
+		if not result or not result.Instance then
+			return
+		end
+
+		self.networker:fire("startMining", result.Instance)
 	end)
 end
 

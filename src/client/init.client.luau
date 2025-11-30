@@ -22,5 +22,9 @@ InventoryServiceClient:init()
 AnimationService:init()
 ToolServiceClient:init()
 
-local root = ReactRoblox.createRoot(playerGui)
+local uiFolder = Instance.new("Folder")
+uiFolder.Name = "ReactUI"
+uiFolder.Parent = playerGui
+
+local root = ReactRoblox.createRoot(uiFolder)
 root:render(e(RootUI))
