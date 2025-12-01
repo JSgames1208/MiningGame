@@ -1,4 +1,14 @@
-export type UpgradeApplyFn<TItem> = (item: TItem, level: number) -> ()
+export type UpgradeEffect<TItem> = {
+	stats: {
+		durability: number?,
+		miningPower: number?,
+		miningSpeed: number?,
+	}?,
+
+	onMine: ((tool: any, ore: any, player: Player) -> ())?,
+
+	dropMultiplier: number?,
+}
 
 export type UpgradeData<TItem> = {
 	name: string,
@@ -7,7 +17,7 @@ export type UpgradeData<TItem> = {
 
 	applicableTo: { string }?,
 
-	apply: UpgradeApplyFn<TItem>,
+	effect: UpgradeEffect<TItem>,
 }
 
 return {}

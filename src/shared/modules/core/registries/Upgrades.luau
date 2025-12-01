@@ -19,9 +19,11 @@ Upgrades.EFFICIENCY = Registry.register(Registries.UPGRADE, "efficiency", {
 	description = "Increases mining speed.",
 	maxLevel = 3,
 
-	apply = function(item, level)
-		print("APPLY UPGRADE")
-	end,
+	effect = {
+		stats = {
+			miningSpeed = 1,
+		},
+	},
 })
 
 Upgrades.FORTUNE = Registry.register(Registries.UPGRADE, "fortune", {
@@ -29,9 +31,9 @@ Upgrades.FORTUNE = Registry.register(Registries.UPGRADE, "fortune", {
 	description = "Chance to drop extra items.",
 	maxLevel = 3,
 
-	apply = function(item, level)
-		print("APPLY UPGRADE")
-	end,
+	effect = {
+		dropMultiplier = 1,
+	},
 })
 
 function Upgrades.get(id: string): UpgradeData<any>?
