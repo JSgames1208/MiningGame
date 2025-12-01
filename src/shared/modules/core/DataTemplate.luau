@@ -40,10 +40,15 @@ export type InventoryCategory = "tools" | "materials" | "potions" | "items"
 
 export type InventoryEntry = {
 	id: string,
-	guid: string?,
+	guid: string,
 	type: "tool" | "item",
 	amount: number,
-	data: { [string]: any }?,
+
+	toolData: {
+		level: number,
+		xp: number,
+		upgrades: { [string]: number }?,
+	}?,
 }
 
 export type Inventory = {

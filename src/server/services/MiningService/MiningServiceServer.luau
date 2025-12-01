@@ -10,7 +10,7 @@ local MiningFXServer = require(ServerScriptService.Server.services.MiningService
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 
 MiningFXServer:init()
 MinableGenerator:init()
@@ -45,13 +45,16 @@ end
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
 	local toolInstance: DataTemplate.ToolInstance = DataService:get(player, { "inventory", "tools", toolId })
-	local toolData = ToolRegistry[toolInstance.id]
+	local toolData = Registries.ITEM:get(toolInstance.id)
 
 	if not toolData then
 		return
 	end
 
-	local toolStats = toolData.stats
+	local toolStats = toolData.toolStats
+	if not toolStats then
+		error("[MiningServiceServer] TOOL HAS NO STATS!")
+	end
 
 	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / toolStats.miningSpeed < tick() then
 		lastMined[player.UserId] = tick()

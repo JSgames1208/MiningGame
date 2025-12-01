@@ -35,7 +35,7 @@ function InventoryServiceServer.addItem(
 		DataService:update(player, { "inventory", category, key }, function(currentValue: InventoryEntry)
 			return {
 				amount = (currentValue.amount or 0) + entry.amount,
-				data = currentValue.data,
+				data = currentValue.toolData,
 				guid = currentValue.guid,
 				id = currentValue.id,
 				type = currentValue.type,

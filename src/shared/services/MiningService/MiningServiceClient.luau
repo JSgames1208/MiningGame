@@ -7,11 +7,11 @@ local DataService = require(ReplicatedStorage.Packages.DataService).client
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
 local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local player = Players.LocalPlayer
@@ -177,8 +177,17 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 
 	local toolId: string = DataService:get({ "tools", "equipped" })
 	local toolInstance: DataTemplate.ToolInstance = DataService:get({ "inventory", "tools", toolId })
-	local toolData = ToolRegistry[toolInstance.id]
-	local toolType = toolData.toolType
+	local toolData = Registries.ITEM:get(toolInstance.id)
+
+	if not toolData then
+		return
+	end
+	local toolStats = toolData.toolStats
+	if not toolStats then
+		return
+	end
+
+	local toolType = toolStats.toolType
 
 	local animationId = ""
 	if toolType == "shovel" then
@@ -187,7 +196,7 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 		animationId = AnimationIds.mine
 	end
 
-	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, toolData.stats.miningSpeed)
+	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, toolStats.miningSpeed)
 	if not self.animation then
 		return
 	end

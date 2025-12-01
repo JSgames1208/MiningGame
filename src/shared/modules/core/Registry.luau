@@ -9,9 +9,12 @@ type Dict<T> = { [string]: T }
 
 export type Registry<T> = {
 	entries: Dict<T>,
+	reverse: { [any]: string },
 
 	register: (self: Registry<T>, id: string, entry: T) -> T,
 	get: (self: Registry<T>, id: string) -> T?,
+	idOf: (self: Registry<T>, value: T) -> string?,
+
 	exists: (self: Registry<T>, id: string) -> boolean,
 	values: (self: Registry<T>) -> { T },
 	keys: (self: Registry<T>) -> { string },
@@ -26,6 +29,7 @@ function Registry.new<T>(): Registry<T>
 	local self = setmetatable({}, Registry) :: Registry<T>
 
 	self.entries = {} :: Dict<T>
+	self.reverse = {} :: { [any]: string }
 
 	return self
 end
@@ -36,11 +40,17 @@ function Registry.register<T>(self: Registry<T>, id: string, value: T): T
 	end
 
 	self.entries = Sift.Dictionary.set(self.entries, id, value) :: Dict<T>
+	self.reverse[value] = id
+
 	return value
 end
 
 function Registry.get<T>(self: Registry<T>, id: string): T?
 	return self.entries[id]
+end
+
+function Registry.idOf<T>(self: Registry<T>, value: T): string?
+	return self.reverse[value]
 end
 
 function Registry.exists<T>(self: Registry<T>, id: string): boolean

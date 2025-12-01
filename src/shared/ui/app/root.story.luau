@@ -4,11 +4,12 @@ local DataService = require(ReplicatedStorage.Packages.DataService).client
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+require(ReplicatedStorage.Shared.modules.core.RegistryLoader)
 local InventoryServiceClient = require(ReplicatedStorage.Shared.services.InventoryService.InventoryServiceClient)
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
-local ToolRegistry = require(ReplicatedStorage.Shared.services.ToolService.util.ToolRegistry)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
-local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local e = React.createElement
 
@@ -21,8 +22,8 @@ return function(parent: Instance)
 	DataService:set({ "stats", "xp" }, 10000)
 
 	for i = 1, 10 do
-		local toolData = i % 2 == 0 and ToolRegistry["stone_pickaxe"] or ToolRegistry["wooden_pickaxe"]
-		local id = toolData.id
+		local toolData = i % 2 == 0 and Items.STONE_PICKAXE or Items.WOODEN_PICKAXE
+		local id = Registries.ITEM:idOf(toolData)
 		local tool = {
 			id = id,
 			guid = HttpService:GenerateGUID(),
