@@ -6,7 +6,11 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local Upgrades = require(ReplicatedStorage.Shared.modules.core.registries.Upgrades)
+local ItemType = require(ReplicatedStorage.Shared.modules.core.types.ItemType)
 
 local ToolServiceServer = {}
 
@@ -27,9 +31,22 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 		local tool = self:generateTool(player, "wooden_pickaxe")
 		InventoryServiceServer:addItem(player, "tools", tool)
 
+		local upgrade = Upgrades.EFFICIENCY
+		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
+
+		local upgrade = Upgrades.POWER
+		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
+
 		self:equipTool(player, tool)
 	else
 		local tool = DataService:get(player, { "inventory", "tools", toolId })
+
+		local upgrade = Upgrades.EFFICIENCY
+		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
+
+		local upgrade = Upgrades.POWER
+		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
+
 		if tool then
 			self:equipTool(player, tool)
 		end
@@ -73,19 +90,53 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	humanoid:EquipTool(tool)
 end
 
+function ToolServiceServer.ApplyUpgrade(
+	self: ToolServiceServer,
+	player: Player,
+	toolGuid: string,
+	upgradeId: string,
+	level: number
+)
+	local tool = DataService:get(player, { "inventory", "tools", toolGuid })
+	if tool then
+		DataService:update(
+			player,
+			{ "inventory", "tools", toolGuid },
+			function(currentValue: DataTemplate.InventoryEntry)
+				return {
+					guid = tool.guid,
+					id = tool.id,
+					amount = 1,
+					type = "tool",
+					toolData = {
+						level = (currentValue.toolData :: any).level,
+						xp = (currentValue.toolData :: any).xp,
+						upgrades = Sift.Dictionary.join(
+							(currentValue.toolData :: any).upgrades,
+							{ [upgradeId] = level }
+						),
+					},
+				} :: DataTemplate.InventoryEntry
+			end
+		)
+	end
+end
+
 function ToolServiceServer.addXP(self: ToolServiceServer, player: Player, xp: number)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
 	local tool = DataService:get(player, { "inventory", "tools", toolId })
 	if tool then
-		DataService:update(player, { "inventory", "tools", toolId }, function(currentValue)
+		DataService:update(player, { "inventory", "tools", toolId }, function(currentValue: DataTemplate.InventoryEntry)
 			return {
+				amount = 1,
 				guid = tool.guid,
 				id = tool.id,
-				data = {
-					level = currentValue.data.level,
-					xp = (currentValue.data.xp or 0) + xp,
+				type = "tool",
+				toolData = {
+					level = (currentValue.toolData :: any).level,
+					xp = ((currentValue.toolData :: any).xp or 0) + xp,
+					upgrades = (currentValue.toolData :: any).upgrades,
 				},
-				upgrades = currentValue.upgrades,
 			}
 		end)
 	end
@@ -101,9 +152,10 @@ function ToolServiceServer.generateTool(
 		guid = HttpService:GenerateGUID(),
 		id = toolId,
 		type = "tool",
-		data = {
+		toolData = {
 			level = 1,
 			xp = 0,
+			upgrades = {},
 		},
 	}
 

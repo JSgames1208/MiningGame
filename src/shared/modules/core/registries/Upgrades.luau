@@ -8,6 +8,7 @@ type UpgradeData<T> = UpgradeType.UpgradeData<T>
 type Upgrades = {
 	EFFICIENCY: UpgradeData<any>,
 	FORTUNE: UpgradeData<any>,
+	POWER: UpgradeData<any>,
 
 	get: (id: string) -> UpgradeData<any>?,
 }
@@ -21,7 +22,19 @@ Upgrades.EFFICIENCY = Registry.register(Registries.UPGRADE, "efficiency", {
 
 	effect = {
 		stats = {
-			miningSpeed = 1,
+			miningSpeed = 0.2,
+		},
+	},
+})
+
+Upgrades.POWER = Registry.register(Registries.UPGRADE, "power", {
+	name = "Power",
+	description = "Increases mining power.",
+	maxLevel = 3,
+
+	effect = {
+		stats = {
+			miningPower = 1,
 		},
 	},
 })

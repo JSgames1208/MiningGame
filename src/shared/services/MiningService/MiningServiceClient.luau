@@ -168,7 +168,7 @@ function MiningServiceClient.startMining(self: MiningServiceClient, target: Part
 	end)
 end
 
-function MiningServiceClient.mine(self: MiningServiceClient, target: Part, currentHP: number)
+function MiningServiceClient.mine(self: MiningServiceClient, target: Part, currentHP: number, speed: number)
 	miningSlice.actions.setCurrentHP(miningSlice.states.currentHP(currentHP))
 
 	task.delay(0.3, function()
@@ -176,7 +176,7 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 	end)
 
 	local toolId: string = DataService:get({ "tools", "equipped" })
-	local toolInstance: DataTemplate.ToolInstance = DataService:get({ "inventory", "tools", toolId })
+	local toolInstance: DataTemplate.InventoryEntry = DataService:get({ "inventory", "tools", toolId })
 	local toolData = Registries.ITEM:get(toolInstance.id)
 
 	if not toolData then
@@ -196,7 +196,7 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 		animationId = AnimationIds.mine
 	end
 
-	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, toolStats.miningSpeed)
+	self.animation = AnimationService:playAnimation(animationId or AnimationIds.mine, speed)
 	if not self.animation then
 		return
 	end

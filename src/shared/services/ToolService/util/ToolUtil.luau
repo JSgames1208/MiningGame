@@ -20,6 +20,8 @@ export type ToolInstance = {
 function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?): ToolStats
 	local final = {} :: ToolStats
 
+	print(upgrades)
+
 	for k, v in baseStats do
 		final[k] = v
 	end
@@ -40,6 +42,7 @@ function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?
 
 		local eff = upgrade.effect
 		if eff and eff.stats then
+			print("HERE")
 			for statName, deltaPerLevel in eff.stats do
 				local add = (deltaPerLevel :: number) * level
 				final[statName] = (final[statName] or 0) + add

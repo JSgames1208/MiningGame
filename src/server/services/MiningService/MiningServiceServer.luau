@@ -11,6 +11,7 @@ local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerSe
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 
 MiningFXServer:init()
 MinableGenerator:init()
@@ -44,7 +45,7 @@ end
 
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
-	local toolInstance: DataTemplate.ToolInstance = DataService:get(player, { "inventory", "tools", toolId })
+	local toolInstance: DataTemplate.InventoryEntry = DataService:get(player, { "inventory", "tools", toolId })
 	local toolData = Registries.ITEM:get(toolInstance.id)
 
 	if not toolData then
@@ -56,7 +57,11 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		error("[MiningServiceServer] TOOL HAS NO STATS!")
 	end
 
-	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / toolStats.miningSpeed < tick() then
+	print(toolInstance.toolData)
+
+	local finalStats = ToolUtil.getStats(toolStats, (toolInstance.toolData :: any).upgrades)
+
+	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / finalStats.miningSpeed < tick() then
 		lastMined[player.UserId] = tick()
 
 		local minableData = MinableRegistry.getMinableData(target)
@@ -65,9 +70,11 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 			return
 		end
 
-		minableData.health -= toolStats.miningPower
+		minableData.health -= finalStats.miningPower
 
-		self.networker:fire(player, "mine", target, minableData.health)
+		print(finalStats.miningSpeed)
+
+		self.networker:fire(player, "mine", target, minableData.health, finalStats.miningSpeed)
 
 		if minableData.health <= 0 then
 			MinableRegistry.removeMinable(target)
