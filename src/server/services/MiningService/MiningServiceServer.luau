@@ -57,8 +57,6 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		error("[MiningServiceServer] TOOL HAS NO STATS!")
 	end
 
-	print(toolInstance.toolData)
-
 	local finalStats = ToolUtil.getStats(toolStats, (toolInstance.toolData :: any).upgrades)
 
 	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / finalStats.miningSpeed < tick() then
@@ -71,8 +69,6 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		end
 
 		minableData.health -= finalStats.miningPower
-
-		print(finalStats.miningSpeed)
 
 		self.networker:fire(player, "mine", target, minableData.health, finalStats.miningSpeed)
 
