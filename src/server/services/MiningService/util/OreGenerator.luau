@@ -1,23 +1,29 @@
 --!strict
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Sift = require(ReplicatedStorage.Packages.Sift)
-local MinableRegistry = require(ServerScriptService.Server.services.MiningService.util.MinableRegistry)
+local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
+local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 local PoissonDiskSampling = require(ReplicatedStorage.Shared.modules.math.PoissonDiskSampling)
-local MinableGenerator = {}
+local OreGenerator = {}
 
-function MinableGenerator.init(self: MinableGenerator)
+function OreGenerator.init(self: OreGenerator)
 	self:populateAll()
 end
 
-function MinableGenerator.populateAll(self: MinableGenerator)
+function OreGenerator.populateAll(self: OreGenerator)
 	for _, spawnArea in ipairs(workspace.SpawnAreas:GetChildren()) do
 		self:populate(spawnArea)
 	end
 end
 
-function MinableGenerator.populate(self: MinableGenerator, spawnArea: Part)
+function OreGenerator.spawnOre(self: OreGenerator, id: string, oreData: OreType.OreData) end
+
+function OreGenerator.populate(self: OreGenerator, spawnArea: Part)
 	local rayParams = RaycastParams.new()
 	rayParams.FilterType = Enum.RaycastFilterType.Exclude
 
@@ -59,14 +65,15 @@ function MinableGenerator.populate(self: MinableGenerator, spawnArea: Part)
 
 		part.Parent = spawnArea
 
-		MinableRegistry.registerMinable(part, {
-			health = 5,
-			maxHealth = 5,
-			name = "dirt",
+		OreStore.add(part, {
+			id = Registries.ORE:idOf(Ores.DIRT) :: string,
+			guid = HttpService:GenerateGUID(),
+			oreData = Ores.DIRT,
+			health = 0,
 		})
 	end
 end
 
-type MinableGenerator = typeof(MinableGenerator) & {}
+type OreGenerator = typeof(OreGenerator) & {}
 
-return MinableGenerator :: MinableGenerator
+return OreGenerator :: OreGenerator

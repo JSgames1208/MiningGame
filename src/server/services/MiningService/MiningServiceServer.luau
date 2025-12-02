@@ -4,8 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local LootServiceServer = require(ServerScriptService.Server.services.LootService.LootServiceServer)
-local MinableGenerator = require(ServerScriptService.Server.services.MiningService.util.MinableGenerator)
-local MinableRegistry = require(ServerScriptService.Server.services.MiningService.util.MinableRegistry)
+local OreGenerator = require(ServerScriptService.Server.services.MiningService.util.OreGenerator)
+local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -14,7 +14,7 @@ local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Regi
 local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 
 MiningFXServer:init()
-MinableGenerator:init()
+OreGenerator:init()
 
 local MiningServiceServer = {}
 
@@ -34,7 +34,7 @@ function MiningServiceServer.startMining(self: MiningServiceServer, player: Play
 		return
 	end
 
-	local minableData = MinableRegistry.getMinableData(target)
+	local minableData = OreStore.getOreInstance(target)
 
 	if not minableData then
 		return
@@ -62,7 +62,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / finalStats.miningSpeed < tick() then
 		lastMined[player.UserId] = tick()
 
-		local minableData = MinableRegistry.getMinableData(target)
+		local minableData = OreStore.getOreInstance(target)
 
 		if not minableData then
 			return
@@ -73,7 +73,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		self.networker:fire(player, "mine", target, minableData.health, finalStats.miningSpeed)
 
 		if minableData.health <= 0 then
-			MinableRegistry.removeMinable(target)
+			OreStore.removeOre(target)
 
 			task.delay(0.75, function()
 				self.networker:fire(player, "stopMining")

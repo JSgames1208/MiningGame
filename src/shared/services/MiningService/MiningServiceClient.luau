@@ -8,17 +8,17 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
-local MiningServiceUtil = require(ReplicatedStorage.Shared.services.MiningService.util.MiningServiceUtil)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
-type MinableData = MiningServiceUtil.MinableData
+type OreInstance = OreType.OreInstance
 
 MiningFXService:init()
 
@@ -150,7 +150,7 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	end)
 end
 
-function MiningServiceClient.startMining(self: MiningServiceClient, target: Part, minableData: MinableData)
+function MiningServiceClient.startMining(self: MiningServiceClient, target: Part, minableData: OreInstance)
 	self.isHovering = false
 	if self.highlight then
 		self.highlight:Destroy()
@@ -160,7 +160,7 @@ function MiningServiceClient.startMining(self: MiningServiceClient, target: Part
 	miningSlice.actions.setMining(true)
 	miningSlice.actions.setCurrentTarget(target)
 	miningSlice.actions.setCurrentHP(minableData.health)
-	miningSlice.actions.setCurrentMaxHP(minableData.maxHealth)
+	miningSlice.actions.setCurrentMaxHP(minableData.oreData.maxHealth)
 	MiningFXService:startMining(target)
 
 	self.mouseConn = mouse.Button1Down:Connect(function()
