@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 
 export type TextLabelProps = {
-	Children: { React.Element<any> },
+	Children: { React.ReactElement<any> },
 	Text: string,
 	TextColor3: (Color3 | ColorSequence)?,
 	TextSize: number?,
