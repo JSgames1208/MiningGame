@@ -1,63 +1,37 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
-local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
 local Tooltip = require(ReplicatedStorage.Shared.ui.features.inventory.components.Tooltip)
 local e: typeof(React.createElement) = React.createElement
 
 export type ItemTooltipProps = {
 	shown: boolean,
-	title: string,
-	description: string,
 	anchor: React.Ref<GuiObject>,
+	children: { React.ReactElement<any> },
 }
 
 local function ItemTooltip(props: ItemTooltipProps)
-	local tooltipProps = {
+	local function getHeight(children: { React.ReactElement<any> }): number
+		local height = 0
+		for _, child in pairs(children) do
+			height += child.props.Size.Y.Offset + 6
+		end
+		return height
+	end
+
+	return e(Tooltip, {
 		shown = props.shown,
 		anchor = props.anchor,
+		height = getHeight(props.children),
 		children = {
-			e(
-				TextLabel,
-				{
-					Text = props.title,
-					Font = Enum.Font.FredokaOne,
-					Size = UDim2.new(0.98, 0, 0.24, 0),
-					Position = UDim2.new(0.5, 0, 0.005, 0),
-					AnchorPoint = Vector2.new(0.5, 0),
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					TextScaled = false,
-					TextWrapped = true,
-					TextSize = 30,
-					TextXAlignment = Enum.TextXAlignment.Center,
-					TextYAlignment = Enum.TextYAlignment.Top,
-					ZIndex = 50001,
-					Stroke = {
-						Thickness = 3,
-						Color = Color3.fromRGB(0, 0, 0),
-					},
-				} :: TextLabel.Props
-			),
-			e(
-				TextLabel,
-				{
-					Text = props.description,
-					Font = Enum.Font.FredokaOne,
-					Size = UDim2.new(1, 0, 0.75, 0),
-					Position = UDim2.new(0, 0, 0.25, 0),
-					AnchorPoint = Vector2.new(0, 0),
-					TextColor3 = Color3.fromRGB(0, 0, 0),
-					TextSize = 20,
-					TextScaled = false,
-					TextWrapped = true,
-					TextXAlignment = Enum.TextXAlignment.Center,
-					TextYAlignment = Enum.TextYAlignment.Top,
-					ZIndex = 50001,
-				} :: TextLabel.Props
-			),
-		},
-	}
+			e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Vertical,
+				Padding = UDim.new(0, 6),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+			}),
 
-	return e(Tooltip, tooltipProps)
+			table.unpack(props.children),
+		},
+	})
 end
 
 return ItemTooltip

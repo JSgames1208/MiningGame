@@ -21,21 +21,6 @@ export type ToolInstance = {
 	upgrades: {},
 }
 
-export type PotionStack = {
-	id: string,
-	amount: number,
-}
-
-export type ItemStack = {
-	id: string,
-	amount: number,
-}
-
-export type MaterialStack = {
-	id: string,
-	amount: number,
-}
-
 export type InventoryCategory = "tools" | "materials" | "potions" | "items"
 
 export type InventoryEntry = {

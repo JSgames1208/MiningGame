@@ -8,6 +8,8 @@ type Tooltip = {
 	anchor: React.Ref<GuiObject>,
 	title: string,
 	description: string,
+	type: string?,
+	guid: string?,
 }
 
 local tooltip: Charm.Atom<Tooltip> = atom({
@@ -15,15 +17,25 @@ local tooltip: Charm.Atom<Tooltip> = atom({
 	anchor = nil,
 	title = "",
 	description = "",
+	type = "",
+	guid = "",
 })
 
 actions = {
-	setTooltip = function(anchor: React.Ref<GuiObject>, title: string, description: string)
+	setTooltip = function(
+		anchor: React.Ref<GuiObject>,
+		title: string,
+		description: string,
+		type: string?,
+		guid: string?
+	)
 		tooltip({
 			shown = true,
 			anchor = anchor,
 			title = title,
 			description = description,
+			type = type or "item",
+			guid = guid or "",
 		})
 	end,
 	hideTooltip = function()
@@ -32,6 +44,8 @@ actions = {
 			anchor = nil,
 			title = "",
 			description = "",
+			type = "",
+			guid = "",
 		})
 	end,
 }

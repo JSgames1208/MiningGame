@@ -6,6 +6,7 @@ local e: typeof(React.createElement) = React.createElement
 type TooltipProps = {
 	children: { React.ReactElement<any> },
 	anchor: React.Ref<GuiObject>,
+	height: number,
 	shown: boolean,
 }
 
@@ -24,10 +25,8 @@ local function Tooltip(props: TooltipProps)
 	local absPos = anchor.AbsolutePosition
 	local absSize = anchor.AbsoluteSize
 
-	local contentSize, setContentSize = React.useState(Vector2.new(200, 20))
-
 	return e("Frame", {
-		Size = UDim2.new(0, contentSize.X, 0, contentSize.Y),
+		Size = UDim2.new(0, 200, 0, props.height),
 		Position = UDim2.fromOffset(
 			absPos.X + absSize.X + 15,
 			absPos.Y + absSize.Y / 2 - 35 + GuiService:GetGuiInset().Y
@@ -37,6 +36,7 @@ local function Tooltip(props: TooltipProps)
 		BorderSizePixel = 0,
 		ZIndex = 50000,
 	}, {
+		props.children,
 		e("UICorner", {
 			CornerRadius = UDim.new(0.1, 0),
 		}),
@@ -44,22 +44,6 @@ local function Tooltip(props: TooltipProps)
 			Color = Color3.fromRGB(50, 50, 50),
 			Thickness = 3,
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-		}),
-		e("Frame", {
-			BackgroundTransparency = 1,
-			Size = UDim2.new(1, -12, 1, -12),
-			Position = UDim2.fromOffset(6, 6),
-		}, {
-			e("UIListLayout", {
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				FillDirection = Enum.FillDirection.Vertical,
-				Padding = UDim.new(0, 6),
-
-				[React.Change.AbsoluteContentSize] = function(rbx)
-					setContentSize(Vector2.new(220, rbx.AbsoluteContentSize.Y + 12))
-				end,
-			}),
-			props.children,
 		}),
 	})
 end

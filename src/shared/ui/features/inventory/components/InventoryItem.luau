@@ -99,7 +99,13 @@ local function InventoryItem(props: InventoryItemProps)
 		onHover = function()
 			local itemEntry = Items.get(entry.id)
 			if itemEntry then
-				tooltipSlice.actions.setTooltip(anchorRef, itemEntry.name, itemEntry.description)
+				tooltipSlice.actions.setTooltip(
+					anchorRef,
+					itemEntry.name,
+					itemEntry.description,
+					itemEntry.type,
+					entry.guid
+				)
 			end
 		end,
 		onHoverEnded = function()
