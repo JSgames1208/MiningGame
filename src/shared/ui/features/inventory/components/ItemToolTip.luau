@@ -1,18 +1,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
-local ToolTip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ToolTip)
+local Tooltip = require(ReplicatedStorage.Shared.ui.features.inventory.components.Tooltip)
 local e: typeof(React.createElement) = React.createElement
 
-export type ItemToolTipProps = {
+export type ItemTooltipProps = {
 	shown: boolean,
 	title: string,
 	description: string,
 	anchor: React.Ref<GuiObject>,
 }
 
-local function ItemToolTip(props: ItemToolTipProps)
-	local toolTipProps = {
+local function ItemTooltip(props: ItemTooltipProps)
+	local tooltipProps = {
 		shown = props.shown,
 		anchor = props.anchor,
 		children = {
@@ -55,7 +55,7 @@ local function ItemToolTip(props: ItemToolTipProps)
 		},
 	}
 
-	return e(ToolTip, toolTipProps)
+	return e(Tooltip, tooltipProps)
 end
 
-return ItemToolTip
+return ItemTooltip

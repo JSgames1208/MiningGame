@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local ItemToolTip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemToolTip)
+local ItemTooltip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemTooltip)
 local tooltipSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipSlice)
 
 local e: typeof(React.createElement) = React.createElement
@@ -13,7 +13,7 @@ local function TooltipProvider()
 		return nil
 	end
 
-	return e(ItemToolTip, {
+	return e(ItemTooltip, {
 		shown = tooltipAtom.shown,
 		anchor = tooltipAtom.anchor,
 		title = tooltipAtom.title,

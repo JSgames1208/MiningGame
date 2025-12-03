@@ -3,7 +3,6 @@ local React = require(ReplicatedStorage.Packages.React)
 local BottomHUD = require(ReplicatedStorage.Shared.ui.features.hud.components.BottomHUD)
 local LeftHUD = require(ReplicatedStorage.Shared.ui.features.hud.components.LeftHUD)
 local XpBar = require(ReplicatedStorage.Shared.ui.features.hud.components.XpBar)
-local ItemToolTip = require(ReplicatedStorage.Shared.ui.features.inventory.components.ItemToolTip)
 local e: typeof(React.createElement) = React.createElement
 
 return function()

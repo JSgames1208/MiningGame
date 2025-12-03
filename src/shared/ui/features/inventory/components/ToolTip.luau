@@ -3,13 +3,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local e: typeof(React.createElement) = React.createElement
 
-type ToolTipProps = {
+type TooltipProps = {
 	children: { React.ReactElement<any> },
 	anchor: React.Ref<GuiObject>,
 	shown: boolean,
 }
 
-local function ToolTip(props: ToolTipProps)
+local function Tooltip(props: TooltipProps)
 	if not props.shown then
 		return
 	end
@@ -48,4 +48,4 @@ local function ToolTip(props: ToolTipProps)
 	})
 end
 
-return ToolTip
+return Tooltip
