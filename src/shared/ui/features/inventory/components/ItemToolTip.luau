@@ -25,6 +25,7 @@ local function ItemTooltip(props: ItemTooltipProps)
 		children = {
 			e("UIListLayout", {
 				FillDirection = Enum.FillDirection.Vertical,
+				HorizontalAlignment = Enum.HorizontalAlignment.Center,
 				Padding = UDim.new(0, 6),
 				SortOrder = Enum.SortOrder.LayoutOrder,
 			}),
