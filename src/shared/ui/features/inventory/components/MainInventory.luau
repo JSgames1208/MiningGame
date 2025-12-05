@@ -21,7 +21,7 @@ local function MainInventory()
 			Shown = shown,
 			Size = UDim2.new(0, 2000, 0, 1500),
 			BackgroundTransparency = 0,
-			BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+			BackgroundColor3 = Color3.fromRGB(245, 245, 245),
 			From = UDim2.new(0.5, 0, 0.5, 0),
 			To = UDim2.new(0.5, 0, -0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
