@@ -10,18 +10,9 @@ export type ItemTooltipProps = {
 }
 
 local function ItemTooltip(props: ItemTooltipProps)
-	local function getHeight(children: { React.ReactElement<any> }): number
-		local height = 0
-		for _, child in pairs(children) do
-			height += child.props.Size.Y.Offset + 6
-		end
-		return height
-	end
-
 	return e(Tooltip, {
 		shown = props.shown,
 		anchor = props.anchor,
-		height = getHeight(props.children),
 		children = {
 			e("UIListLayout", {
 				FillDirection = Enum.FillDirection.Vertical,

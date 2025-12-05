@@ -20,7 +20,7 @@ local function InventoryTooltip(props: InventoryTooltipProps)
 			-- Title
 			e(TextLabel, {
 				Text = props.title,
-				Size = UDim2.new(1, 0, 0, 100),
+				Size = UDim2.new(1, 0, 0, 75),
 				TextXAlignment = Enum.TextXAlignment.Center,
 				Position = UDim2.new(0, 0, 0, 0),
 				Children = {},
@@ -38,7 +38,7 @@ local function InventoryTooltip(props: InventoryTooltipProps)
 			-- Description
 			e(TextLabel, {
 				Text = props.description,
-				Size = UDim2.new(1, 0, 0, 75),
+				Size = UDim2.new(1, 0, 0, 40),
 				TextXAlignment = Enum.TextXAlignment.Center,
 				Position = UDim2.new(0, 0, 0, 0),
 				TextColor3 = Color3.fromRGB(0, 0, 0),

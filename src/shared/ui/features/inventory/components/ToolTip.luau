@@ -6,7 +6,6 @@ local e: typeof(React.createElement) = React.createElement
 type TooltipProps = {
 	children: { React.ReactElement<any> },
 	anchor: React.Ref<GuiObject>,
-	height: number,
 	shown: boolean,
 }
 
@@ -26,7 +25,7 @@ local function Tooltip(props: TooltipProps)
 	local absSize = anchor.AbsoluteSize
 
 	return e("Frame", {
-		Size = UDim2.new(0, 200, 0, props.height),
+		Size = UDim2.new(0, 200, 0, 100),
 		Position = UDim2.fromOffset(
 			absPos.X + absSize.X + 15,
 			absPos.Y + absSize.Y / 2 - 35 + GuiService:GetGuiInset().Y
@@ -35,6 +34,7 @@ local function Tooltip(props: TooltipProps)
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 		BorderSizePixel = 0,
 		ZIndex = 50000,
+		AutomaticSize = Enum.AutomaticSize.Y,
 	}, {
 		props.children,
 		e("UICorner", {
