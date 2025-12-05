@@ -1,11 +1,12 @@
 --!strict
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local LootTableType = require(ReplicatedStorage.Shared.modules.core.types.LootTableType)
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
-local LootTables = require(ReplicatedStorage.Shared.services.LootService.LootTables)
 
 type InventoryCategory = DataTemplate.InventoryCategory
 type InventoryEntry = DataTemplate.InventoryEntry
@@ -14,7 +15,12 @@ local LootServiceServer = {}
 
 function LootServiceServer.init(self: LootServiceServer) end
 
-function LootServiceServer.rollLoot(self: LootServiceServer, player: Player, maxChance: number, drops: LootTables.Drops)
+function LootServiceServer.rollLoot(
+	self: LootServiceServer,
+	player: Player,
+	maxChance: number,
+	drops: LootTableType.Drops
+)
 	local items = {}
 
 	for cName: InventoryCategory, c in drops do
@@ -31,8 +37,7 @@ function LootServiceServer.rollLoot(self: LootServiceServer, player: Player, max
 	return items
 end
 
-function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, lootId: string)
-	local lootTable = LootTables[lootId]
+function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, lootTable: LootTableType.LootTable)
 	if not lootTable then
 		return
 	end
@@ -53,7 +58,7 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 				id = item.id,
 				type = "item",
 				data = {},
-				guid = nil,
+				guid = HttpService:GenerateGUID(),
 			}
 			InventoryServiceServer:addItem(player, item.category, entry)
 		end

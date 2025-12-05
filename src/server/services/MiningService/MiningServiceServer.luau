@@ -10,6 +10,8 @@ local MiningFXServer = require(ServerScriptService.Server.services.MiningService
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local LootTables = require(ReplicatedStorage.Shared.modules.core.registries.LootTables)
+local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 
@@ -80,7 +82,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				target:Destroy()
 
 				PlayerServiceServer:addCurrency(player, 100)
-				LootServiceServer:giveLoot(player, "dirt")
+				LootServiceServer:giveLoot(player, LootTables.DIRT)
 			end)
 		end
 	end

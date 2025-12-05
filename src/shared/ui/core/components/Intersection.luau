@@ -7,14 +7,14 @@ export type IntersectionProps = {
 	ZIndex: number,
 }
 
-local ColorSequence = ColorSequence.new({
+--[[local ColorSequence = ColorSequence.new({
 	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
 	ColorSequenceKeypoint.new(0.1, Color3.fromRGB(255, 255, 255)),
 	ColorSequenceKeypoint.new(0.3, Color3.fromRGB(220, 220, 220)),
 	ColorSequenceKeypoint.new(0.7, Color3.fromRGB(220, 220, 220)),
 	ColorSequenceKeypoint.new(0.9, Color3.fromRGB(255, 255, 255)),
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
-})
+})]]
 
 local TransparencySequence = NumberSequence.new({
 	NumberSequenceKeypoint.new(0, 1),

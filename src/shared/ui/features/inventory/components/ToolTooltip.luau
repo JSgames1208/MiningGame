@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 local InventoryTooltip = require(ReplicatedStorage.Shared.ui.features.inventory.components.InventoryTooltip)
 local UpgradesDisplay = require(ReplicatedStorage.Shared.ui.features.inventory.components.UpgradesDisplay)
@@ -26,7 +27,11 @@ local function ToolTooltip(props: ToolTooltipProps)
 
 		if upgrades then
 			for upgrade, level in upgrades do
-				upgradesArray[#upgradesArray + 1] = upgrade .. " " .. level
+				local upgradeEntry = Registries.UPGRADE:get(upgrade)
+				if upgradeEntry then
+					upgrade = upgradeEntry.name
+					upgradesArray[#upgradesArray + 1] = upgrade .. " " .. level
+				end
 			end
 		end
 	end

@@ -16,6 +16,7 @@ export type Items = {
 	POTION_YELLOW: ItemData,
 
 	get: (id: string) -> ItemData?,
+	idOf: (item: ItemData) -> string?,
 }
 
 local Items = {}
@@ -80,6 +81,10 @@ Items.POTION_YELLOW = Registry.register(Registries.ITEM, "potion_yellow", {
 -- getter
 function Items.get(id: string)
 	return Registries.ITEM:get(id)
+end
+
+function Items.idOf(item: ItemData)
+	return Registries.ITEM:idOf(item)
 end
 
 return Items :: Items

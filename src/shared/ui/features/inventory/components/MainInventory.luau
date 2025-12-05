@@ -1,13 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
 local ScrollingInventory = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingInventory)
 local TabButton = require(ReplicatedStorage.Shared.ui.features.inventory.components.TabButton)
-local TooltipProvider = require(ReplicatedStorage.Shared.ui.features.inventory.components.TooltipProvider)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local e: typeof(React.createElement) = React.createElement
 

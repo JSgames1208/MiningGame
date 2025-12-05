@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
+require(ReplicatedStorage.Shared.modules.core.RegistryLoader)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local InventoryServiceClient = require(ReplicatedStorage.Shared.services.InventoryService.InventoryServiceClient)
 local MiningServiceClient = require(ReplicatedStorage.Shared.services.MiningService.MiningServiceClient)

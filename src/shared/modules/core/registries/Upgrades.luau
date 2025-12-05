@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Registry = require(ReplicatedStorage.Shared.modules.core.Registry)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local UpgradeType = require(ReplicatedStorage.Shared.modules.core.types.UpgradeType)
+
 type UpgradeData<T> = UpgradeType.UpgradeData<T>
 
 type Upgrades = {
@@ -11,9 +12,10 @@ type Upgrades = {
 	POWER: UpgradeData<any>,
 
 	get: (id: string) -> UpgradeData<any>?,
+	idOf: (upgrade: UpgradeData<any>) -> string?,
 }
 
-local Upgrades = {} :: Upgrades
+local Upgrades = {}
 
 Upgrades.EFFICIENCY = Registry.register(Registries.UPGRADE, "efficiency", {
 	name = "Efficiency",
@@ -51,6 +53,10 @@ Upgrades.FORTUNE = Registry.register(Registries.UPGRADE, "fortune", {
 
 function Upgrades.get(id: string): UpgradeData<any>?
 	return Registries.UPGRADE:get(id)
+end
+
+function Upgrades.idOf(upgrade: UpgradeData<any>): string?
+	return Registries.UPGRADE:idOf(upgrade)
 end
 
 return Upgrades :: Upgrades
