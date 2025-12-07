@@ -8,9 +8,6 @@ local InventoryServiceServer = require(ServerScriptService.Server.services.Inven
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
-local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
-local Upgrades = require(ReplicatedStorage.Shared.modules.core.registries.Upgrades)
-local ItemType = require(ReplicatedStorage.Shared.modules.core.types.ItemType)
 
 local ToolServiceServer = {}
 
@@ -31,21 +28,9 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 		local tool = self:generateTool(player, "wooden_pickaxe")
 		InventoryServiceServer:addItem(player, "tools", tool)
 
-		local upgrade = Upgrades.EFFICIENCY
-		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
-
-		local upgrade = Upgrades.POWER
-		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
-
 		self:equipTool(player, tool)
 	else
 		local tool = DataService:get(player, { "inventory", "tools", toolId })
-
-		local upgrade = Upgrades.EFFICIENCY
-		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
-
-		local upgrade = Upgrades.POWER
-		self:ApplyUpgrade(player, tool.guid, Registries.UPGRADE:idOf(upgrade) :: string, 3)
 
 		if tool then
 			self:equipTool(player, tool)
@@ -90,7 +75,7 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	humanoid:EquipTool(tool)
 end
 
-function ToolServiceServer.ApplyUpgrade(
+function ToolServiceServer.applyUpgrade(
 	self: ToolServiceServer,
 	player: Player,
 	toolGuid: string,
@@ -119,6 +104,19 @@ function ToolServiceServer.ApplyUpgrade(
 				} :: DataTemplate.InventoryEntry
 			end
 		)
+	end
+end
+
+function ToolServiceServer.incrementUpgrade(
+	self: ToolServiceServer,
+	player: Player,
+	toolGuid: string,
+	upgradeId: string
+)
+	local tool = DataService:get(player, { "inventory", "tools", toolGuid })
+	if tool then
+		local upgradeLevel = (tool.toolData :: any).upgrades[upgradeId]
+		self:applyUpgrade(player, toolGuid, upgradeId, upgradeLevel and upgradeLevel + 1 or 1)
 	end
 end
 

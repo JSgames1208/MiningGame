@@ -47,29 +47,33 @@ local function BottomHUD()
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					ImageTransparency = 0.3,
 					ZIndex = 0,
+					ClipsDescendants = true,
 					Children = {
+						e("UICorner", {
+							CornerRadius = UDim.new(1, 0),
+						}),
 						e("Frame", {
 							BackgroundColor3 = Color3.fromRGB(74, 203, 139),
 							BackgroundTransparency = 0.15,
 							BorderSizePixel = 0,
-							Size = UDim2.new(sizeSpring.binding, -4, 1, -4),
+							Size = UDim2.new(sizeSpring.binding, -4, 1, -16),
 							AnchorPoint = Vector2.new(0, 0.5),
-							Position = UDim2.new(0, 1, 0.5, 0),
+							Position = UDim2.new(0, 8, 0.5, 0),
 							ZIndex = 2,
 						}, {
 							e("UICorner", {
 								CornerRadius = UDim.new(1, 0),
 							}),
 						}),
-						e(ImageLabel, {
-							Image = ImageIds.xpbaroverlay,
-							BackgroundTransparency = 1,
-							Size = UDim2.new(1, 0, 1, 0),
-							Position = UDim2.new(0.5, 0, 0.5, 0),
-							AnchorPoint = Vector2.new(0.5, 0.5),
-							ZIndex = 3,
-						}),
 					},
+				}),
+				e(ImageLabel, {
+					Image = ImageIds.xpbaroverlay,
+					BackgroundTransparency = 1,
+					Size = UDim2.new(1, 0, 1, 0),
+					Position = UDim2.new(0.5, 0, 0.5, 0),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					ZIndex = 3,
 				}),
 				e(
 					TextLabel,

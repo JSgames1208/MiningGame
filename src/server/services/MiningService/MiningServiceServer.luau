@@ -8,11 +8,12 @@ local OreGenerator = require(ServerScriptService.Server.services.MiningService.u
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
+local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local LootTables = require(ReplicatedStorage.Shared.modules.core.registries.LootTables)
-local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local Upgrades = require(ReplicatedStorage.Shared.modules.core.registries.Upgrades)
 local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 
 MiningFXServer:init()
@@ -83,6 +84,20 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 
 				PlayerServiceServer:addCurrency(player, 100)
 				LootServiceServer:giveLoot(player, LootTables.DIRT)
+
+				-- TEMPORARY TESTING --
+
+				ToolServiceServer:incrementUpgrade(
+					player,
+					DataService:get(player, { "tools", "equipped" }),
+					Registries.UPGRADE:idOf(Upgrades.POWER) :: string
+				)
+
+				ToolServiceServer:incrementUpgrade(
+					player,
+					DataService:get(player, { "tools", "equipped" }),
+					Registries.UPGRADE:idOf(Upgrades.EFFICIENCY) :: string
+				)
 			end)
 		end
 	end
