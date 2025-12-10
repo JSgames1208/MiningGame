@@ -13,5 +13,6 @@ return {
 		["potion_green"] = "rbxassetid://104535255679560",
 		["potion_red"] = "rbxassetid://115943588411486",
 		["button_background"] = "rbxassetid://85983122588246",
+		["placeholder"] = "rbxassetid://137176110916267", -- I'm too lazy to make UI so I'm just using a placeholder for now (:
 	},
 }

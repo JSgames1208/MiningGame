@@ -24,13 +24,9 @@ local function getInventoryKey(entry: InventoryEntry): string
 	end
 end
 
-function InventoryServiceServer.addItem(
-	self: InventoryServiceServer,
-	player: Player,
-	category: InventoryCategory,
-	entry: InventoryEntry
-)
+function InventoryServiceServer.addItem(self: InventoryServiceServer, player: Player, entry: InventoryEntry)
 	local key = getInventoryKey(entry)
+	local category = entry.type
 	if DataService:get(player, { "inventory", category, key }) then
 		DataService:update(player, { "inventory", category, key }, function(currentValue: InventoryEntry)
 			return {

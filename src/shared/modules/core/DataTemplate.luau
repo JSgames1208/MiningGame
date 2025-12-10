@@ -21,7 +21,7 @@ export type ToolInstance = {
 	upgrades: {},
 }
 
-export type InventoryCategory = "tools" | "materials" | "potions" | "items"
+export type InventoryCategory = "tool" | "upgrade" | "potion" | "item"
 
 export type InventoryEntry = {
 	id: string,
@@ -87,10 +87,10 @@ local DefaultPlayerData: PlayerData = {
 		equipped = nil,
 	},
 	inventory = {
-		tools = {},
-		materials = {},
-		potions = {},
-		items = {},
+		tool = {},
+		upgrade = {},
+		potion = {},
+		item = {},
 	},
 	zones = {
 		unlockedZones = { ["zone_1"] = true },

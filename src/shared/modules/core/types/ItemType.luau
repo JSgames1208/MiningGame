@@ -13,7 +13,7 @@ export type ItemData = {
 	name: string,
 	description: string,
 	rarity: ItemRarity,
-	type: "item" | "tool" | "material" | "potion",
+	type: "item" | "tool" | "upgrade" | "potion",
 
 	toolStats: ToolStats?,
 }

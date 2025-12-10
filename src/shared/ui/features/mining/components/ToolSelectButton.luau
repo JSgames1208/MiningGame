@@ -13,7 +13,7 @@ local function ToolSelectButton()
 	local equippedToolGuid = ReactCharm.useAtom(toolSlice.states.equipped)
 	local inventory = ReactCharm.useAtom(inventorySlice.states.inventory)
 
-	local equippedToolEntryAtom = inventory.tools[equippedToolGuid]
+	local equippedToolEntryAtom = inventory.tool[equippedToolGuid]
 	local equippedToolId = equippedToolEntryAtom and equippedToolEntryAtom().id or nil
 
 	return e(

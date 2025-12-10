@@ -8,10 +8,10 @@ local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.st
 local e: typeof(React.createElement) = React.createElement
 
 local TAB_IMAGES = {
-	tools = ImageIds.icons.stone_pickaxe,
-	materials = ImageIds.icons.dirt,
-	potions = ImageIds.icons.potion_red,
-	items = ImageIds.icons.wooden_pickaxe,
+	tool = ImageIds.icons.stone_pickaxe,
+	upgrade = ImageIds.icons.placeholder,
+	potion = ImageIds.icons.potion_green,
+	item = ImageIds.icons.dirt,
 }
 
 export type Props = {

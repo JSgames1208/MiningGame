@@ -4,33 +4,33 @@ local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local atom: typeof(Charm.atom) = Charm.atom
 
 type Atom<T> = Charm.Atom<T>
-type Category = "tools" | "materials" | "potions" | "items"
+type Category = "tool" | "upgrade" | "potion" | "item"
 type ToolInstance = DataTemplate.ToolInstance
 type Item = ToolInstance | { id: string }
 type InventoryEntry = DataTemplate.InventoryEntry
 type InventoryCategory = DataTemplate.InventoryCategory
 
 local inventoryOpen: Atom<boolean> = atom(false)
-local tab = atom("tools")
+local tab = atom("tool")
 
 local inventory: Atom<{
-	tools: { [string]: Atom<InventoryEntry> },
-	materials: { [string]: Atom<InventoryEntry> },
-	potions: { [string]: Atom<InventoryEntry> },
-	items: { [string]: Atom<InventoryEntry> },
+	tool: { [string]: Atom<InventoryEntry> },
+	upgrade: { [string]: Atom<InventoryEntry> },
+	potion: { [string]: Atom<InventoryEntry> },
+	item: { [string]: Atom<InventoryEntry> },
 }> =
 	atom({
-		tools = {},
-		materials = {},
-		potions = {},
-		items = {},
+		tool = {},
+		upgrade = {},
+		potion = {},
+		item = {},
 	})
 
 local VALID_CATEGORIES = {
-	tools = true,
-	materials = true,
-	potions = true,
-	items = true,
+	tool = true,
+	upgrade = true,
+	potion = true,
+	item = true,
 }
 
 local actions = {
@@ -38,8 +38,7 @@ local actions = {
 		inventoryOpen(value)
 	end,
 
-	-- category: "tools" | "materials" | "potions" | "items"
-	-- item: ToolInstance | Material | Item | Potion
+	-- category: "tool" | "upgrade" | "potion" | "item"
 	setItem = function(category: InventoryCategory, entry: InventoryEntry)
 		if not VALID_CATEGORIES[category] then
 			warn("[inventorySlice] Invalid category: " .. category)

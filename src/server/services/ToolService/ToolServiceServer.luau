@@ -26,11 +26,13 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 		-- Generate starter tool
 
 		local tool = self:generateTool(player, "wooden_pickaxe")
-		InventoryServiceServer:addItem(player, "tools", tool)
+		InventoryServiceServer:addItem(player, tool)
+
+		self:applyUpgrade(player, tool.guid, "power", 10)
 
 		self:equipTool(player, tool)
 	else
-		local tool = DataService:get(player, { "inventory", "tools", toolId })
+		local tool = DataService:get(player, { "inventory", "tool", toolId })
 
 		if tool then
 			self:equipTool(player, tool)
@@ -48,7 +50,7 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character:WaitForChild("Humanoid") :: Humanoid
 
-	if not DataService:get(player, { "inventory", "tools", toolGuid }) then
+	if not DataService:get(player, { "inventory", "tool", toolGuid }) then
 		return
 	end
 
@@ -82,11 +84,11 @@ function ToolServiceServer.applyUpgrade(
 	upgradeId: string,
 	level: number
 )
-	local tool = DataService:get(player, { "inventory", "tools", toolGuid })
+	local tool = DataService:get(player, { "inventory", "tool", toolGuid })
 	if tool then
 		DataService:update(
 			player,
-			{ "inventory", "tools", toolGuid },
+			{ "inventory", "tool", toolGuid },
 			function(currentValue: DataTemplate.InventoryEntry)
 				return {
 					guid = tool.guid,
@@ -113,7 +115,7 @@ function ToolServiceServer.incrementUpgrade(
 	toolGuid: string,
 	upgradeId: string
 )
-	local tool = DataService:get(player, { "inventory", "tools", toolGuid })
+	local tool = DataService:get(player, { "inventory", "tool", toolGuid })
 	if tool then
 		local upgradeLevel = (tool.toolData :: any).upgrades[upgradeId]
 		self:applyUpgrade(player, toolGuid, upgradeId, upgradeLevel and upgradeLevel + 1 or 1)
@@ -122,9 +124,9 @@ end
 
 function ToolServiceServer.addXP(self: ToolServiceServer, player: Player, xp: number)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
-	local tool = DataService:get(player, { "inventory", "tools", toolId })
+	local tool = DataService:get(player, { "inventory", "tool", toolId })
 	if tool then
-		DataService:update(player, { "inventory", "tools", toolId }, function(currentValue: DataTemplate.InventoryEntry)
+		DataService:update(player, { "inventory", "tool", toolId }, function(currentValue: DataTemplate.InventoryEntry)
 			return {
 				amount = 1,
 				guid = tool.guid,

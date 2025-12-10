@@ -19,7 +19,7 @@ return function(parent: Instance)
 	DataService:waitForData()
 	DataService:set({ "currency", "coins" }, 100)
 
-	DataService:set({ "stats", "xp" }, 0)
+	DataService:set({ "stats", "xp" }, 2.2e25)
 
 	for i = 1, 10 do
 		local toolData = i % 2 == 0 and Items.STONE_PICKAXE or Items.WOODEN_PICKAXE
@@ -35,8 +35,8 @@ return function(parent: Instance)
 			},
 		}
 
-		DataService:set({ "inventory", "tools", id }, tool)
-		InventoryServiceClient:setItem("tools", tool)
+		DataService:set({ "inventory", "tool", id }, tool)
+		InventoryServiceClient:setItem("tool", tool)
 	end
 
 	local item1 = {
@@ -47,8 +47,8 @@ return function(parent: Instance)
 		guid = nil,
 	}
 
-	DataService:set({ "inventory", "potions", item1.id }, item1)
-	InventoryServiceClient:setItem("potions", item1)
+	DataService:set({ "inventory", "potion", item1.id }, item1)
+	InventoryServiceClient:setItem("potion", item1)
 
 	local item2 = {
 		id = "potion_green",
@@ -58,8 +58,41 @@ return function(parent: Instance)
 		guid = nil,
 	}
 
-	DataService:set({ "inventory", "potions", item2.id }, item2)
-	InventoryServiceClient:setItem("potions", item2)
+	DataService:set({ "inventory", "potion", item2.id }, item2)
+	InventoryServiceClient:setItem("potion", item2)
+
+	local item3 = {
+		id = "efficiency_i",
+		amount = 10,
+		type = "upgrade",
+		data = {},
+		guid = nil,
+	}
+
+	DataService:set({ "inventory", "upgrade", item3.id }, item3)
+	InventoryServiceClient:setItem("upgrade", item3)
+
+	local item4 = {
+		id = "efficiency_ii",
+		amount = 5,
+		type = "upgrade",
+		data = {},
+		guid = nil,
+	}
+
+	DataService:set({ "inventory", "upgrade", item4.id }, item4)
+	InventoryServiceClient:setItem("upgrade", item4)
+
+	local item5 = {
+		id = "efficiency_iii",
+		amount = 1,
+		type = "upgrade",
+		data = {},
+		guid = nil,
+	}
+
+	DataService:set({ "inventory", "upgrade", item5.id }, item5)
+	InventoryServiceClient:setItem("upgrade", item5)
 
 	PlayerServiceClient:init()
 

@@ -3,7 +3,7 @@ local DataService = require(ReplicatedStorage.Packages.DataService).client
 
 local actions = {
 	getToolInstance = function(guid: string)
-		return DataService:get({ "inventory", "tools", guid })
+		return DataService:get({ "inventory", "tool", guid })
 	end,
 }
 

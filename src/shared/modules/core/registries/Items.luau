@@ -10,10 +10,16 @@ type ItemData = ItemType.ItemData
 export type Items = {
 	WOODEN_PICKAXE: ItemData,
 	STONE_PICKAXE: ItemData,
+
 	DIRT: ItemData,
+
 	POTION_RED: ItemData,
 	POTION_GREEN: ItemData,
 	POTION_YELLOW: ItemData,
+
+	EFFICIENCY_I: ItemData,
+	EFFICIENCY_II: ItemData,
+	EFFICIENCY_III: ItemData,
 
 	get: (id: string) -> ItemData?,
 	idOf: (item: ItemData) -> string?,
@@ -54,7 +60,7 @@ Items.DIRT = Registry.register(Registries.ITEM, "dirt", {
 	name = "Dirt",
 	description = "A ball of dirt.",
 	rarity = "common",
-	type = "material",
+	type = "item",
 })
 
 Items.POTION_RED = Registry.register(Registries.ITEM, "potion_red", {
@@ -76,6 +82,27 @@ Items.POTION_YELLOW = Registry.register(Registries.ITEM, "potion_yellow", {
 	description = "A yellow potion.",
 	rarity = "rare",
 	type = "potion",
+})
+
+Items.EFFICIENCY_I = Registry.register(Registries.ITEM, "efficiency_i", {
+	name = "Efficiency I",
+	description = "An efficiency I upgrade.",
+	rarity = "common",
+	type = "upgrade",
+})
+
+Items.EFFICIENCY_II = Registry.register(Registries.ITEM, "efficiency_ii", {
+	name = "Efficiency II",
+	description = "An efficiency II upgrade.",
+	rarity = "uncommon",
+	type = "upgrade",
+})
+
+Items.EFFICIENCY_III = Registry.register(Registries.ITEM, "efficiency_iii", {
+	name = "Efficiency III",
+	description = "An efficiency III upgrade.",
+	rarity = "rare",
+	type = "upgrade",
 })
 
 -- getter

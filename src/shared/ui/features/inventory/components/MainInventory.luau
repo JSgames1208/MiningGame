@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
+local TabNames = require(ReplicatedStorage.Shared.services.InventoryService.TabNames)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
@@ -87,9 +88,7 @@ local function MainInventory()
 					},
 				}),
 				e(TextLabel, {
-					Text = string.gsub(tab, "^%l", function(c)
-						return string.upper(c)
-					end),
+					Text = TabNames[tab],
 					Font = Enum.Font.FredokaOne,
 					Position = UDim2.new(0.025, 0, 0.06, 0),
 					AnchorPoint = Vector2.new(0, 0.5),
@@ -116,16 +115,16 @@ local function MainInventory()
 					ZIndex = 0,
 				}, {
 					e(TabButton, {
-						tab = "tools",
+						tab = "tool",
 					}),
 					e(TabButton, {
-						tab = "items",
+						tab = "item",
 					}),
 					e(TabButton, {
-						tab = "materials",
+						tab = "upgrade",
 					}),
 					e(TabButton, {
-						tab = "potions",
+						tab = "potion",
 					}),
 					e("UIListLayout", {
 						Padding = UDim.new(0, 30),

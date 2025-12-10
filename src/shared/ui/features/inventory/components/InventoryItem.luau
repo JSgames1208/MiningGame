@@ -33,7 +33,7 @@ local function InventoryItem(props: InventoryItemProps)
 
 	local entry = ReactCharm.useAtom(props.entryAtom)
 
-	local isTool = props.tab == "tools"
+	local isTool = props.tab == "tool"
 
 	local itemId = entry.id
 	local amount = entry.amount
@@ -83,7 +83,7 @@ local function InventoryItem(props: InventoryItemProps)
 	return e(Button, {
 		ref = anchorRef,
 		Size = UDim2.new(1, 0, 1, 0),
-		Image = ImageIds.icons[itemId],
+		Image = ImageIds.icons[itemId] or ImageIds.icons["placeholder"],
 		BackgroundTransparency = 1,
 		BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 		ZIndex = 2,

@@ -3,6 +3,7 @@ local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
 local LootTableType = require(ReplicatedStorage.Shared.modules.core.types.LootTableType)
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
@@ -19,18 +20,16 @@ function LootServiceServer.rollLoot(
 	self: LootServiceServer,
 	player: Player,
 	maxChance: number,
-	drops: LootTableType.Drops
+	drops: { LootTableType.Drop }
 )
 	local items = {}
 
-	for cName: InventoryCategory, c in drops do
-		for _, drop in c do
-			local chance = math.random() * maxChance
-			if chance <= drop.chance then
-				local amount = math.random(drop.min, drop.max)
+	for _, drop in drops do
+		local chance = math.random() * maxChance
+		if chance <= drop.chance then
+			local amount = math.random(drop.min, drop.max)
 
-				table.insert(items, { category = cName, id = drop.id, amount = amount })
-			end
+			table.insert(items, { id = drop.id, amount = amount })
 		end
 	end
 
@@ -42,16 +41,20 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 		return
 	end
 
-	local rolled: { { category: InventoryCategory, id: string, amount: number } } = {}
+	local rolled: { { id: string, amount: number } } = {}
 
 	if lootTable.drops then
 		rolled = self:rollLoot(player, lootTable.maxChance, lootTable.drops)
 	end
 
 	for _, item in rolled do
-		if item.category == "tools" then
+		local itemEntry = Items.get(item.id)
+		if not itemEntry then
+			continue
+		end
+		if itemEntry.type == "tool" then
 			local tool = ToolServiceServer:generateTool(player, item.id)
-			InventoryServiceServer:addItem(player, item.category, tool)
+			InventoryServiceServer:addItem(player, tool)
 		else
 			local entry: InventoryEntry = {
 				amount = item.amount,
@@ -60,7 +63,7 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 				data = {},
 				guid = HttpService:GenerateGUID(),
 			}
-			InventoryServiceServer:addItem(player, item.category, entry)
+			InventoryServiceServer:addItem(player, entry)
 		end
 	end
 

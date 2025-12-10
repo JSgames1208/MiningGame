@@ -48,7 +48,7 @@ end
 
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
-	local toolInstance: DataTemplate.InventoryEntry = DataService:get(player, { "inventory", "tools", toolId })
+	local toolInstance: DataTemplate.InventoryEntry = DataService:get(player, { "inventory", "tool", toolId })
 	local toolData = Registries.ITEM:get(toolInstance.id)
 
 	if not toolData then

@@ -17,7 +17,7 @@ local function SwapToolMenu()
 	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
 
 	local inventory = inventorySlice.states.inventory()
-	local categoryMap = inventory["tools"]
+	local categoryMap = inventory["tool"]
 
 	local items = {}
 
@@ -139,7 +139,7 @@ local function SwapToolMenu()
 					items = items,
 					equippedToolId = equippedToolId,
 					exitOnPress = true,
-					tab = "tools",
+					tab = "tool",
 				}),
 			},
 		} :: SlideOutFrame.SlideOutProps

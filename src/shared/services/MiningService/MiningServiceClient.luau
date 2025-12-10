@@ -12,6 +12,7 @@ local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
+local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
 local player = Players.LocalPlayer
@@ -161,6 +162,7 @@ function MiningServiceClient.startMining(self: MiningServiceClient, target: Part
 	miningSlice.actions.setCurrentTarget(target)
 	miningSlice.actions.setCurrentHP(minableData.health)
 	miningSlice.actions.setCurrentMaxHP(minableData.oreData.maxHealth)
+	inventorySlice.actions.setInventoryOpen(false)
 	MiningFXService:startMining(target)
 
 	self.mouseConn = mouse.Button1Down:Connect(function()
@@ -176,7 +178,7 @@ function MiningServiceClient.mine(self: MiningServiceClient, target: Part, curre
 	end)
 
 	local toolId: string = DataService:get({ "tools", "equipped" })
-	local toolInstance: DataTemplate.InventoryEntry = DataService:get({ "inventory", "tools", toolId })
+	local toolInstance: DataTemplate.InventoryEntry = DataService:get({ "inventory", "tool", toolId })
 	local toolData = Registries.ITEM:get(toolInstance.id)
 
 	if not toolData then

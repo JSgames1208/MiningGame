@@ -21,7 +21,7 @@ function ToolServiceClient.init(self: ToolServiceClient)
 			return
 		end
 
-		local toolInstance = DataService:get({ "inventory", "tools", toolId })
+		local toolInstance = DataService:get({ "inventory", "tool", toolId })
 		self.networker:fire("equipTool", toolInstance)
 	end)
 
