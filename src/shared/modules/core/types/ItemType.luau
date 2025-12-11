@@ -9,6 +9,11 @@ export type ToolStats = {
 	miningSpeed: number,
 }
 
+export type UpgradeData = {
+	id: string,
+	level: number,
+}
+
 export type ItemData = {
 	name: string,
 	description: string,
@@ -16,6 +21,7 @@ export type ItemData = {
 	type: "item" | "tool" | "upgrade" | "potion",
 
 	toolStats: ToolStats?,
+	upgrade: UpgradeData?,
 }
 
 return {}

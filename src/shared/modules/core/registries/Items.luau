@@ -89,6 +89,11 @@ Items.EFFICIENCY_I = Registry.register(Registries.ITEM, "efficiency_i", {
 	description = "An efficiency I upgrade.",
 	rarity = "common",
 	type = "upgrade",
+
+	upgrade = {
+		id = "efficiency",
+		level = 1,
+	},
 })
 
 Items.EFFICIENCY_II = Registry.register(Registries.ITEM, "efficiency_ii", {
@@ -96,6 +101,11 @@ Items.EFFICIENCY_II = Registry.register(Registries.ITEM, "efficiency_ii", {
 	description = "An efficiency II upgrade.",
 	rarity = "uncommon",
 	type = "upgrade",
+
+	upgrade = {
+		id = "efficiency",
+		level = 2,
+	},
 })
 
 Items.EFFICIENCY_III = Registry.register(Registries.ITEM, "efficiency_iii", {
@@ -103,6 +113,47 @@ Items.EFFICIENCY_III = Registry.register(Registries.ITEM, "efficiency_iii", {
 	description = "An efficiency III upgrade.",
 	rarity = "rare",
 	type = "upgrade",
+
+	upgrade = {
+		id = "efficiency",
+		level = 3,
+	},
+})
+
+Items.POWER_I = Registry.register(Registries.ITEM, "power_i", {
+	name = "Power I",
+	description = "A Power I upgrade.",
+	rarity = "common",
+	type = "upgrade",
+
+	upgrade = {
+		id = "power",
+		level = 1,
+	},
+})
+
+Items.POWER_II = Registry.register(Registries.ITEM, "power_ii", {
+	name = "Power II",
+	description = "A Power II upgrade.",
+	rarity = "uncommon",
+	type = "upgrade",
+
+	upgrade = {
+		id = "power",
+		level = 2,
+	},
+})
+
+Items.POWER_III = Registry.register(Registries.ITEM, "power_iii", {
+	name = "Power III",
+	description = "A Power III upgrade.",
+	rarity = "rare",
+	type = "upgrade",
+
+	upgrade = {
+		id = "power",
+		level = 3,
+	},
 })
 
 -- getter

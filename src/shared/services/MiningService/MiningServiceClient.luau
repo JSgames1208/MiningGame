@@ -137,17 +137,17 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 		if miningSlice.states.mining() then
 			return
 		end
-		if not self.isHovering then
-			return
-		end
 
 		local pos = touchPositions[1]
 		local result = mobileRaycast(pos)
-		if not result or not result.Instance then
-			return
-		end
 
-		self.networker:fire("startMining", result.Instance)
+		if result and result.Instance and result.Instance:HasTag("minable") then
+			if not result or not result.Instance then
+				return
+			end
+
+			self.networker:fire("startMining", result.Instance)
+		end
 	end)
 end
 
@@ -215,7 +215,7 @@ function MiningServiceClient.stopMining(self: MiningServiceClient)
 		self.mouseConn = nil
 	end
 
-	miningSlice.actions.setMining(false)
+	--miningSlice.actions.setMining(false)
 	miningSlice.actions.setCurrentTarget(nil)
 
 	MiningFXService:stopMining()

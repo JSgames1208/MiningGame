@@ -17,7 +17,6 @@ export type ButtonProps = UiTypes.ImageLabelProps & {
 	onHover: (any?) -> any?,
 	onHoverEnded: (any?) -> any?,
 	spring: boolean?,
-	--springTrigger: any?,
 }
 
 local Button = React.forwardRef(function(props: ButtonProps, ref: React.Ref<GuiObject?>)
@@ -55,6 +54,7 @@ local Button = React.forwardRef(function(props: ButtonProps, ref: React.Ref<GuiO
 	-- preserve onClick if provided
 	if props.onClick then
 		props[React.Event.MouseButton1Click] = props.onClick
+		props[React.Event.TouchTap] = props.onClick
 	end
 
 	local safeProps = Sift.Dictionary.removeKeys(

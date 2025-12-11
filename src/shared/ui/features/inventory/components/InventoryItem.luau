@@ -91,6 +91,12 @@ local function InventoryItem(props: InventoryItemProps)
 			if isTool and entry.guid then
 				toolSlice.actions.setEquipped(entry.guid)
 			end
+
+			local itemEntry = Items.get(entry.id)
+			if itemEntry.upgrade then
+				print(itemEntry.upgrade.id, itemEntry.upgrade.level)
+			end
+
 			if exitOnPress then
 				miningSlice.actions.setSwapToolOpen(false)
 				inventorySlice.actions.setInventoryOpen(false)
