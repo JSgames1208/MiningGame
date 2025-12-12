@@ -65,7 +65,7 @@ local function MainInventory()
 				}),
 			}),
 
-			e(ScrollingInventory),
+			e(ScrollingInventory, {}),
 		},
 	})
 end

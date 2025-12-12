@@ -1,7 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local InventoryItem = require(ReplicatedStorage.Shared.ui.features.inventory.components.InventoryItem)
 local ScrollingItemLayout = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingItemLayout)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
@@ -44,7 +43,7 @@ local function ScrollingInventory()
 		return aEntry.id < bEntry.id
 	end)
 
-	return ScrollingItemLayout({ tab = tab, items = items, exitOnPress = false, equippedToolId = equippedToolId })
+	return e(ScrollingItemLayout, { tab = tab, items = items, exitOnPress = false, equippedToolId = equippedToolId })
 end
 
 return ScrollingInventory
