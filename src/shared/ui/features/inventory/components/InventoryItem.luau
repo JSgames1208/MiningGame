@@ -3,12 +3,10 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
-local RarityColors = require(ReplicatedStorage.Shared.modules.core.RarityColors)
 local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
-local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
-local ImageLabel = require(ReplicatedStorage.Shared.ui.core.components.ImageLabel)
-local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local ItemImage = require(ReplicatedStorage.Shared.ui.core.components.ItemImage)
+local ItemWithAmount = require(ReplicatedStorage.Shared.ui.core.components.ItemWithAmount)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local tooltipSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipSlice)
@@ -39,51 +37,12 @@ local function InventoryItem(props: InventoryItemProps)
 	local amount = entry.amount
 
 	local isEquipped = props.equippedToolId == entry.guid
-
-	local imageColor = Color3.fromRGB(210, 210, 210)
-
-	if isTool and isEquipped then
-		imageColor = Color3.fromRGB(0, 230, 0)
-	else
-		local itemEntry = Items.get(entry.id)
-		if itemEntry then
-			imageColor = RarityColors[itemEntry.rarity]
-		else
-			imageColor = RarityColors.fallback
-		end
-	end
-
-	local amountLabel = nil
-
-	if not isTool then
-		amountLabel = e(
-			TextLabel,
-			{
-				Text = amount .. "x",
-				Size = UDim2.new(1, 0, 0.4, 0),
-				Position = UDim2.new(1, 0, 0, 0),
-				AnchorPoint = Vector2.new(0.85, 0.5),
-				TextXAlignment = Enum.TextXAlignment.Right,
-				TextYAlignment = Enum.TextYAlignment.Bottom,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				BackgroundTransparency = 1,
-				TextScaled = true,
-				TextWrapped = true,
-				ZIndex = 3,
-				Stroke = {
-					Thickness = 7.5,
-					Color = Color3.fromRGB(30, 30, 30),
-				},
-			} :: TextLabel.Props
-		)
-	end
-
 	local anchorRef = React.useRef(nil)
 
 	return e(Button, {
 		ref = anchorRef,
 		Size = UDim2.new(1, 0, 1, 0),
-		Image = ImageIds.icons[itemId] or ImageIds.icons["placeholder"],
+		Image = "",
 		BackgroundTransparency = 1,
 		BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 		ZIndex = 2,
@@ -120,20 +79,9 @@ local function InventoryItem(props: InventoryItemProps)
 		LayoutOrder = props.LayoutOrder,
 		Children = {
 			e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
-			e(ImageLabel, {
-				Position = UDim2.new(0.5, 0, 0.5, 0),
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Size = UDim2.new(1, 0, 1, 0),
-				Image = ImageIds.icons.button_background,
-				ImageColor3 = imageColor,
-				ScaleType = Enum.ScaleType.Fit,
-				BackgroundTransparency = 1,
-				ImageRectOffset = Vector2.zero,
-				ImageRectSize = Vector2.new(1028, 1028),
-				ZIndex = 1,
-			}),
-
-			amountLabel,
+			if not isTool
+				then e(ItemWithAmount, { itemId = itemId, equipped = isEquipped, amount = amount })
+				else e(ItemImage, { itemId = itemId, equipped = isEquipped }),
 		},
 	})
 end

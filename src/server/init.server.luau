@@ -8,6 +8,7 @@ local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local MiningServiceServer = require(ServerScriptService.Server.services.MiningService.MiningServiceServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
+local UpgradeServiceServer = require(ServerScriptService.Server.services.UpgradeService.UpgradeServiceServer)
 
 DataService:init({
 	template = DataTemplate,
@@ -20,10 +21,12 @@ MiningServiceServer:init()
 PlayerServiceServer:init()
 ToolServiceServer:init()
 InventoryServiceServer:init()
+UpgradeServiceServer:init()
 
 Players.PlayerAdded:Connect(function(player)
 	DataService:waitForData(player)
 
 	PlayerServiceServer:onPlayerAdded(player)
 	ToolServiceServer:onPlayerAdded(player)
+	UpgradeServiceServer:onPlayerAdded(player)
 end)

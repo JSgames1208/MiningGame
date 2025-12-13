@@ -12,12 +12,21 @@ type ItemData = ItemType.ItemData
 export type ItemImageProps = {
 	itemId: string,
 	equipped: boolean?,
+	Size: UDim2?,
+	SizeConstraint: Enum.SizeConstraint?,
+	AnchorPoint: Vector2?,
+	Position: UDim2?,
+	children: { React.ReactElement<any> }?,
 }
 
+-- Item image, with background, image, and rarity color. Optionally equipped
 local function ItemImage(props: ItemImageProps)
 	local imageColor = Color3.fromRGB(210, 210, 210)
 
 	local itemEntry = Items.get(props.itemId)
+	if not itemEntry then
+		itemEntry = Items.DIRT
+	end
 	local isTool = itemEntry.toolStats ~= nil
 
 	props.equipped = props.equipped ~= nil and props.equipped or false
@@ -33,15 +42,13 @@ local function ItemImage(props: ItemImageProps)
 	end
 
 	return e(ImageLabel, {
-		Image = ImageIds[props.itemId] or ImageIds.icons["placeholder"],
+		Image = ImageIds.icons[props.itemId] or ImageIds.icons["placeholder"],
 		BackgroundTransparency = 1,
-		Size = UDim2.new(1, 0, 1, 0),
-		SizeConstraint = Enum.SizeConstraint.RelativeXX,
-		Position = UDim2.new(0.5, 0, 0.5, 0),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		ImageRectOffset = Vector2.new(0, 0),
-		ImageRectSize = Vector2.new(64, 64),
-		ZIndex = 2,
+		Size = props.Size or UDim2.new(1, 0, 1, 0),
+		SizeConstraint = props.SizeConstraint or Enum.SizeConstraint.RelativeXX,
+		Position = props.Position or UDim2.new(0.5, 0, 0.5, 0),
+		AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5),
+		ZIndex = 3,
 		ScaleType = Enum.ScaleType.Crop,
 		Children = {
 			e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
@@ -53,10 +60,9 @@ local function ItemImage(props: ItemImageProps)
 				ImageColor3 = imageColor,
 				ScaleType = Enum.ScaleType.Fit,
 				BackgroundTransparency = 1,
-				ImageRectOffset = Vector2.zero,
-				ImageRectSize = Vector2.new(1028, 1028),
 				ZIndex = 1,
 			}),
+			table.unpack(props.children or {}),
 		},
 	})
 end
