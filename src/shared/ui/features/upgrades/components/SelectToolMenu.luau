@@ -11,8 +11,11 @@ local function SelectToolMenu()
 
 	local shown = upgradesOpen and menuOpen
 
+	local setOpen = upgradeSlice.actions.setSelectMenuOpen
+
 	return e(SwapToolMenu, {
 		shown = shown,
+		setOpen = setOpen,
 		clickCallback = upgradeSlice.actions.setSelectedGuid,
 	})
 end

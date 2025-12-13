@@ -18,7 +18,7 @@ local actions = {
 		mining(value)
 		equipToolOpen(false)
 	end,
-	setSwapToolOpen = function(value: boolean)
+	setEquipToolOpen = function(value: boolean)
 		equipToolOpen(value)
 	end,
 	setCurrentTarget = function(value: Part?)

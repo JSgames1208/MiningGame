@@ -12,8 +12,11 @@ local function EquipToolMenu()
 
 	local shown = mining and equipMenuOpen
 
+	local setOpen = miningSlice.actions.setEquipToolOpen
+
 	return e(SwapToolMenu, {
 		shown = shown,
+		setOpen = setOpen,
 		clickCallback = toolSlice.actions.setEquipped,
 	})
 end

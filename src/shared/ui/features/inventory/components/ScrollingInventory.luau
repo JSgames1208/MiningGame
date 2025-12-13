@@ -43,16 +43,13 @@ local function ScrollingInventory()
 		return aEntry.id < bEntry.id
 	end)
 
-	return e(
-		ScrollingItemLayout,
-		{
-			tab = tab,
-			items = items,
-			exitOnPress = false,
-			clickCallback = toolSlice.actions.setEquipped,
-			equippedToolId = equippedToolId,
-		}
-	)
+	return e(ScrollingItemLayout, {
+		tab = tab,
+		items = items,
+		exitOnPress = false,
+		clickCallback = toolSlice.actions.setEquipped,
+		equippedToolId = equippedToolId,
+	})
 end
 
 return ScrollingInventory

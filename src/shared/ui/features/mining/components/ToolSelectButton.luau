@@ -24,7 +24,7 @@ local function ToolSelectButton()
 			BackgroundTransparency = 1,
 			Image = ImageIds.icons[equippedToolId] or ImageIds.icons.wooden_pickaxe,
 			onClick = function()
-				miningSlice.actions.setSwapToolOpen(true)
+				miningSlice.actions.setEquipToolOpen(true)
 			end,
 			Children = {
 				e(

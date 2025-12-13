@@ -22,6 +22,7 @@ export type InventoryItemProps = {
 	entryAtom: Atom<InventoryEntry>,
 	equippedToolId: string?,
 	clickCallback: (any) -> any,
+	setOpen: ((any) -> any)?,
 	LayoutOrder: number,
 	exitOnPress: boolean?,
 }
@@ -51,7 +52,6 @@ local function InventoryItem(props: InventoryItemProps)
 				if props.clickCallback then
 					props.clickCallback(entry.guid)
 				end
-				--toolSlice.actions.setEquipped(entry.guid)
 			end
 
 			local itemEntry = Items.get(entry.id)
@@ -60,8 +60,12 @@ local function InventoryItem(props: InventoryItemProps)
 			end
 
 			if exitOnPress then
-				miningSlice.actions.setSwapToolOpen(false)
-				inventorySlice.actions.setInventoryOpen(false)
+				if props.setOpen then
+					props.setOpen(false)
+				else
+					miningSlice.actions.setEquipToolOpen(false)
+					inventorySlice.actions.setInventoryOpen(false)
+				end
 			end
 		end,
 		onHover = function()
