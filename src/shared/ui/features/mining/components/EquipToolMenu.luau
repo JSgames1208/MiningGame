@@ -16,6 +16,7 @@ local function EquipToolMenu()
 
 	return e(SwapToolMenu, {
 		shown = shown,
+		menuTitle = "Equip Tool!",
 		setOpen = setOpen,
 		clickCallback = toolSlice.actions.setEquipped,
 	})

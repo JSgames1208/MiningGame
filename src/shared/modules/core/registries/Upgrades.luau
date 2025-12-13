@@ -21,6 +21,11 @@ Upgrades.EFFICIENCY = Registry.register(Registries.UPGRADE, "efficiency", {
 	name = "Efficiency",
 	description = "Increases mining speed.",
 	maxLevel = 3,
+	levels = {
+		[1] = "efficiency_i",
+		[2] = "efficiency_ii",
+		[3] = "efficiency_iii",
+	},
 
 	effect = {
 		stats = {
@@ -33,6 +38,11 @@ Upgrades.POWER = Registry.register(Registries.UPGRADE, "power", {
 	name = "Power",
 	description = "Increases mining power.",
 	maxLevel = 3,
+	levels = {
+		[1] = "power_i",
+		[2] = "power_ii",
+		[3] = "power_iii",
+	},
 
 	effect = {
 		stats = {
@@ -45,6 +55,11 @@ Upgrades.FORTUNE = Registry.register(Registries.UPGRADE, "fortune", {
 	name = "Fortune",
 	description = "Chance to drop extra items.",
 	maxLevel = 3,
+	levels = {
+		[1] = "fortune_i",
+		[2] = "fortune_ii",
+		[3] = "fortune_iii",
+	},
 
 	effect = {
 		dropMultiplier = 1,

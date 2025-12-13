@@ -7,14 +7,15 @@ local e: typeof(React.createElement) = React.createElement
 
 local function SelectToolMenu()
 	local upgradesOpen = ReactCharm.useAtom(upgradeSlice.states.upgradeMenuOpen)
-	local menuOpen = ReactCharm.useAtom(upgradeSlice.states.selectMenuOpen)
+	local menuOpen = ReactCharm.useAtom(upgradeSlice.states.selectToolMenuOpen)
 
 	local shown = upgradesOpen and menuOpen
 
-	local setOpen = upgradeSlice.actions.setSelectMenuOpen
+	local setOpen = upgradeSlice.actions.setSelectToolMenuOpen
 
 	return e(SwapToolMenu, {
 		shown = shown,
+		menuTitle = "Select Tool!",
 		setOpen = setOpen,
 		clickCallback = upgradeSlice.actions.setSelectedGuid,
 	})

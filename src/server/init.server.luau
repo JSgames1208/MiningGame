@@ -14,7 +14,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 })
 
 MiningServiceServer:init()
@@ -29,4 +29,5 @@ Players.PlayerAdded:Connect(function(player)
 	PlayerServiceServer:onPlayerAdded(player)
 	ToolServiceServer:onPlayerAdded(player)
 	UpgradeServiceServer:onPlayerAdded(player)
+	InventoryServiceServer:onPlayerAdded(player)
 end)

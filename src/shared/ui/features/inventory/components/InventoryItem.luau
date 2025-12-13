@@ -48,9 +48,11 @@ local function InventoryItem(props: InventoryItemProps)
 		BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 		ZIndex = 2,
 		onClick = function()
-			if isTool and entry.guid then
-				if props.clickCallback then
+			if props.clickCallback then
+				if isTool and entry.guid then
 					props.clickCallback(entry.guid)
+				else
+					props.clickCallback(entry.id)
 				end
 			end
 

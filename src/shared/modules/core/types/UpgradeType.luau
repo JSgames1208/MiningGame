@@ -14,6 +14,9 @@ export type UpgradeData<TItem> = {
 	name: string,
 	description: string,
 	maxLevel: number,
+	levels: {
+		[number]: string,
+	},
 
 	applicableTo: { string }?,
 

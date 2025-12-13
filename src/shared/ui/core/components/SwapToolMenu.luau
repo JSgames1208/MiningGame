@@ -1,8 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local MenuScreen = require(ReplicatedStorage.Shared.ui.core.components.MenuScreen)
-local ScrollingItemLayout = require(ReplicatedStorage.Shared.ui.features.inventory.components.ScrollingItemLayout)
+local SelectItemMenu = require(ReplicatedStorage.Shared.ui.core.components.SelectItemMenu)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local e: typeof(React.createElement) = React.createElement
@@ -10,6 +9,7 @@ local e: typeof(React.createElement) = React.createElement
 export type SwapToolMenuProps = {
 	clickCallback: (any) -> any,
 	setOpen: ((any) -> any)?,
+	menuTitle: string?,
 	shown: boolean,
 }
 
@@ -44,20 +44,13 @@ local function SwapToolMenu(props: SwapToolMenuProps)
 		return aEntry.id < bEntry.id
 	end)
 
-	return e(MenuScreen, {
+	return e(SelectItemMenu, {
 		shown = props.shown,
-		menuTitle = "Swap Tool!",
-		setOpen = props.setOpen and props.setOpen or function() end,
-		children = {
-			e(ScrollingItemLayout, {
-				items = items,
-				tab = "tool",
-				setOpen = props.setOpen,
-				equippedToolId = equippedToolId,
-				clickCallback = props.clickCallback,
-				exitOnPress = true,
-			}),
-		},
+		menuTitle = props.menuTitle or "Select Tool!",
+		setOpen = props.setOpen,
+		items = items,
+		clickCallback = props.clickCallback,
+		changeEquipped = true,
 	})
 end
 
