@@ -8,6 +8,7 @@ local function ScrollingItemLayout(props: {
 	tab: string | Charm.Atom<string>,
 	items: { { id: string, atom: any } },
 	exitOnPress: boolean?,
+	clickCallback: (any) -> any,
 	equippedToolId: string?,
 })
 	local rendered = {}
@@ -24,6 +25,7 @@ local function ScrollingItemLayout(props: {
 					tab = props.tab,
 					entryAtom = data.atom,
 					equippedToolId = props.equippedToolId,
+					clickCallback = props.clickCallback,
 					exitOnPress = exitOnPress,
 					LayoutOrder = index,
 				} :: InventoryItem.InventoryItemProps

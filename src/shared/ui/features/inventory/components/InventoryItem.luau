@@ -8,7 +8,6 @@ local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local ItemImage = require(ReplicatedStorage.Shared.ui.core.components.ItemImage)
 local ItemWithAmount = require(ReplicatedStorage.Shared.ui.core.components.ItemWithAmount)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
-local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local tooltipSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipSlice)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
@@ -22,6 +21,7 @@ export type InventoryItemProps = {
 	tab: string,
 	entryAtom: Atom<InventoryEntry>,
 	equippedToolId: string?,
+	clickCallback: (any) -> any,
 	LayoutOrder: number,
 	exitOnPress: boolean?,
 }
@@ -48,7 +48,10 @@ local function InventoryItem(props: InventoryItemProps)
 		ZIndex = 2,
 		onClick = function()
 			if isTool and entry.guid then
-				toolSlice.actions.setEquipped(entry.guid)
+				if props.clickCallback then
+					props.clickCallback(entry.guid)
+				end
+				--toolSlice.actions.setEquipped(entry.guid)
 			end
 
 			local itemEntry = Items.get(entry.id)

@@ -5,9 +5,9 @@ local atom = Charm.atom
 type Atom<T> = Charm.Atom<T>
 
 local mining: Atom<boolean> = atom(false)
-local swapToolOpen: Atom<boolean> = atom(false)
+local equipToolOpen: Atom<boolean> = atom(false)
 local mainOpen: Atom<boolean> = Charm.computed(function()
-	return mining() and not swapToolOpen()
+	return mining() and not equipToolOpen()
 end)
 local currentTarget: Atom<Part?> = atom(nil)
 local currentHP: Atom<number> = atom(100)
@@ -16,10 +16,10 @@ local currentMaxHP: Atom<number> = atom(100)
 local actions = {
 	setMining = function(value: boolean)
 		mining(value)
-		swapToolOpen(false)
+		equipToolOpen(false)
 	end,
 	setSwapToolOpen = function(value: boolean)
-		swapToolOpen(value)
+		equipToolOpen(value)
 	end,
 	setCurrentTarget = function(value: Part?)
 		currentTarget(value)
@@ -35,7 +35,7 @@ local actions = {
 return {
 	states = {
 		mining = mining,
-		swapToolOpen = swapToolOpen,
+		equipToolOpen = equipToolOpen,
 		mainOpen = mainOpen,
 		currentTarget = currentTarget,
 		currentHP = currentHP,

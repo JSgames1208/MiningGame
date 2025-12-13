@@ -10,10 +10,12 @@ local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.t
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 local e: typeof(React.createElement) = React.createElement
 
-local function SwapToolMenu()
-	local shown = ReactCharm.useAtom(miningSlice.states.swapToolOpen)
-	local mining = ReactCharm.useAtom(miningSlice.states.mining)
+export type SwapToolMenuProps = {
+	clickCallback: (any) -> any,
+	shown: boolean,
+}
 
+local function SwapToolMenu(props: SwapToolMenuProps)
 	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
 
 	local inventory = inventorySlice.states.inventory()
@@ -47,7 +49,7 @@ local function SwapToolMenu()
 	return e(
 		SlideOutFrame,
 		{
-			Shown = shown and mining,
+			Shown = props.shown,
 			Size = UDim2.new(0, 2000, 0, 1500),
 			BackgroundTransparency = 0,
 			BackgroundColor3 = Color3.fromRGB(230, 230, 230),
@@ -139,6 +141,7 @@ local function SwapToolMenu()
 					items = items,
 					equippedToolId = equippedToolId,
 					exitOnPress = true,
+					clickCallback = props.clickCallback,
 					tab = "tool",
 				}),
 			},
