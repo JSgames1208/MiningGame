@@ -55,6 +55,7 @@ local function UpgradesDisplay(props: UpgradesDisplayProps)
 		e(Intersection, {
 			ZIndex = 50002,
 			LayoutOrder = 0,
+			shown = true,
 		}),
 		e(TextLabel, {
 			Visible = #upgradeElements > 0,
