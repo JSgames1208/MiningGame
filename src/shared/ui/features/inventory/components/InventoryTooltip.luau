@@ -40,6 +40,7 @@ local function InventoryTooltip(props: InventoryTooltipProps)
 			e(Intersection, {
 				LayoutOrder = 2,
 				ZIndex = 50002,
+				shown = true,
 			}),
 
 			-- Description
