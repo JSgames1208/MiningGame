@@ -56,11 +56,6 @@ local function InventoryItem(props: InventoryItemProps)
 				end
 			end
 
-			local itemEntry = Items.get(entry.id)
-			if itemEntry.upgrade then
-				print(itemEntry.upgrade.id, itemEntry.upgrade.level)
-			end
-
 			if exitOnPress then
 				if props.setOpen then
 					props.setOpen(false)
@@ -69,6 +64,8 @@ local function InventoryItem(props: InventoryItemProps)
 					inventorySlice.actions.setInventoryOpen(false)
 				end
 			end
+
+			tooltipSlice.actions.hideTooltip()
 		end,
 		onHover = function()
 			local itemEntry = Items.get(entry.id)

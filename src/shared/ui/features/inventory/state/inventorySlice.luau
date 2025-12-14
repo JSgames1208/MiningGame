@@ -38,6 +38,23 @@ local actions = {
 		inventoryOpen(value)
 	end,
 
+	removeItem = function(category: InventoryCategory, key: string)
+		local inv = inventory()
+		local categoryMap = inv[category]
+
+		if not categoryMap[key] then
+			return
+		end
+
+		local newCategoryMap = table.clone(categoryMap)
+		newCategoryMap[key] = nil
+
+		local newInv = table.clone(inv)
+		newInv[category] = newCategoryMap
+
+		inventory(newInv)
+	end,
+
 	-- category: "tool" | "upgrade" | "potion" | "item"
 	setItem = function(category: InventoryCategory, entry: InventoryEntry)
 		if not VALID_CATEGORIES[category] then
@@ -57,9 +74,19 @@ local actions = {
 
 		local existingAtom = categoryMap[key]
 		if existingAtom then
+			if entry.amount == 0 then
+				existingAtom(nil)
+				inventory(inv)
+				return
+			end
 			existingAtom(entry) -- just update that item
 		else
 			-- make a new category table so React re-renders the tab properly
+			if entry.amount == 0 then
+				inv[category][key](nil)
+				inventory(inv)
+				return
+			end
 			local newCategoryMap = table.clone(categoryMap)
 			newCategoryMap[key] = atom(entry)
 			inv[category] = newCategoryMap

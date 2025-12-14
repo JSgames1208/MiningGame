@@ -2,7 +2,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
-local Sift = require(ReplicatedStorage.Packages.Sift)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
 
@@ -47,6 +46,48 @@ function InventoryServiceServer.addItem(self: InventoryServiceServer, player: Pl
 		DataService:set(player, { "inventory", category, key }, entry)
 	end
 	self.networker:fire(player, "setItem", category, DataService:get(player, { "inventory", category, key }))
+end
+
+function InventoryServiceServer.removeItem(
+	self: InventoryServiceServer,
+	player: Player,
+	itemId: string,
+	_amount: number?,
+	itemGuid: string?
+)
+	local amount = _amount or 1
+
+	local key = itemGuid ~= nil and itemGuid or itemId
+
+	local itemEntry = Items.get(itemId)
+	if not itemEntry then
+		return
+	end
+
+	local inventoryEntry: InventoryEntry = DataService:get(player, { "inventory", itemEntry.type, key })
+
+	local category = itemEntry.type
+	if inventoryEntry then
+		local newAmount = inventoryEntry.amount - amount
+
+		if newAmount <= 0 then
+			DataService:set(player, { "inventory", category, key }, nil)
+			self.networker:fire(player, "removeItem", category, key)
+			return
+		end
+
+		DataService:update(player, { "inventory", category, key }, function(currentValue: InventoryEntry)
+			return {
+				amount = (currentValue.amount or 0) - amount,
+				guid = currentValue.guid,
+				id = currentValue.id,
+				type = currentValue.type,
+				toolData = currentValue.toolData,
+			}
+		end)
+
+		self.networker:fire(player, "setItem", category, DataService:get(player, { "inventory", category, key }))
+	end
 end
 
 function InventoryServiceServer.onPlayerAdded(self: InventoryServiceServer, player: Player)

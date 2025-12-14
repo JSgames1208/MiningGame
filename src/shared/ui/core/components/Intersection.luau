@@ -3,8 +3,9 @@ local React = require(ReplicatedStorage.Packages.React)
 local e: typeof(React.createElement) = React.createElement
 
 export type IntersectionProps = {
-	LayoutOrder: number,
-	ZIndex: number,
+	LayoutOrder: number?,
+	ZIndex: number?,
+	shown: boolean?,
 }
 
 --[[local ColorSequence = ColorSequence.new({
@@ -27,7 +28,8 @@ local TransparencySequence = NumberSequence.new({
 
 local function Intersection(props: IntersectionProps)
 	return e("Frame", {
-		Size = UDim2.new(1, 0, 0, 3),
+		Visible = props.shown ~= nil and props.shown,
+		Size = UDim2.new(1, 0, 0, 5),
 		LayoutOrder = props.LayoutOrder or 0,
 		BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 		ZIndex = props.ZIndex or 0,

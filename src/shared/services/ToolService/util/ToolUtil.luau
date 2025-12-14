@@ -14,10 +14,10 @@ type UpgradeData<T> = UpgradeType.UpgradeData<T>
 export type ToolInstance = {
 	id: string,
 	guid: string,
-	toolData: { level: number, xp: number, upgrades: { [string]: number }? },
+	toolData: { level: number, xp: number, upgrades: { [number]: { id: string, level: number } }? },
 }
 
-function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?): ToolStats
+function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [number]: { id: string, level: number } }?): ToolStats
 	local final = {} :: ToolStats
 
 	for k, v in baseStats do
@@ -28,7 +28,10 @@ function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?
 		return final
 	end
 
-	for upgradeId, level in upgrades do
+	for slot, upgradeData in upgrades do
+		local level = upgradeData.level
+		local upgradeId = upgradeData.id
+
 		if type(level) ~= "number" or level <= 0 then
 			continue
 		end
@@ -40,9 +43,17 @@ function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?
 
 		local eff = upgrade.effect
 		if eff and eff.stats then
-			for statName, deltaPerLevel in eff.stats do
-				local add = (deltaPerLevel :: number) * level
-				final[statName] = (final[statName] or 0) + add
+			if eff.scaleType == "add" then
+				for statName, deltaPerLevel in eff.stats do
+					local add = (deltaPerLevel :: number) * level
+					final[statName] = (final[statName] or 0) + add
+				end
+			elseif eff.scaleType == "multiply" then
+				for statName, deltaPerLevel in eff.stats do
+					local add = (deltaPerLevel :: number) * level
+					final[statName] = (final[statName] or 1) * (1 + add)
+					print(final[statName])
+				end
 			end
 		end
 	end
@@ -50,13 +61,15 @@ function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: number }?
 	return final
 end
 
+--DEPRECATED
+--[[
 function ToolUtil.onMine(toolInstance: ToolInstance, ore: any, player: Player)
 	local upgrades = toolInstance.toolData.upgrades
 	if upgrades == nil then
 		return
 	end
 
-	for upgradeId, level in upgrades do
+	for slot, upgradeData in upgrades do
 		if type(level) ~= "number" or level <= 0 then
 			continue
 		end
@@ -71,6 +84,6 @@ function ToolUtil.onMine(toolInstance: ToolInstance, ore: any, player: Player)
 			eff.onMine(toolInstance, ore, player)
 		end
 	end
-end
+end]]
 
 return ToolUtil

@@ -16,7 +16,8 @@ export type SwapToolMenuProps = {
 local function SwapToolMenu(props: SwapToolMenuProps)
 	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
 
-	local inventory = inventorySlice.states.inventory()
+	local inventory = ReactCharm.useAtom(inventorySlice.states.inventory)
+
 	local categoryMap = inventory["tool"]
 
 	local items = {}

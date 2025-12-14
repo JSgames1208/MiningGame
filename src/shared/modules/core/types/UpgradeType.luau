@@ -1,4 +1,5 @@
 export type UpgradeEffect<TItem> = {
+	scaleType: "add" | "multiply",
 	stats: {
 		durability: number?,
 		miningPower: number?,
@@ -17,6 +18,7 @@ export type UpgradeData<TItem> = {
 	levels: {
 		[number]: string,
 	},
+	excludes: { string },
 
 	applicableTo: { string }?,
 

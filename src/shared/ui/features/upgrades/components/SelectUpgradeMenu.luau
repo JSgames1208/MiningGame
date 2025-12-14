@@ -35,11 +35,10 @@ local function SelectUpgradeMenu()
 		showAmount = true,
 		setOpen = upgradeSlice.actions.setSelectUpgradeMenuOpen,
 		clickCallback = function(id)
-			print(id)
 			local itemEntry = Items.get(id)
 			if itemEntry.upgrade then
 				local upgradeData = itemEntry.upgrade
-				upgradeSlice.actions.setSelectedUpgrade({
+				upgradeSlice.actions.attemptSelectUpgrade({
 					slot = upgradeSlot,
 					upgradeData = {
 						id = upgradeData.id,

@@ -28,7 +28,7 @@ function ToolServiceServer.onPlayerAdded(self: ToolServiceServer, player: Player
 		local tool = self:generateTool(player, "wooden_pickaxe")
 		InventoryServiceServer:addItem(player, tool)
 
-		self:applyUpgrade(player, tool.guid, "power", 10)
+		--self:applyUpgrade(player, tool.guid, "power", 10)
 
 		self:equipTool(player, tool)
 	else
@@ -77,6 +77,7 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	humanoid:EquipTool(tool)
 end
 
+-- DEPRECATED, MOVED TO UpgradeServiceServer.luau
 function ToolServiceServer.applyUpgrade(
 	self: ToolServiceServer,
 	player: Player,
@@ -109,6 +110,7 @@ function ToolServiceServer.applyUpgrade(
 	end
 end
 
+-- DEPRECATED
 function ToolServiceServer.incrementUpgrade(
 	self: ToolServiceServer,
 	player: Player,

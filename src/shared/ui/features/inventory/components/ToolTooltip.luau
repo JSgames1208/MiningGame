@@ -26,11 +26,11 @@ local function ToolTooltip(props: ToolTooltipProps)
 		upgrades = props.toolInstance.toolData.upgrades or {}
 
 		if upgrades then
-			for upgrade, level in upgrades do
-				local upgradeEntry = Registries.UPGRADE:get(upgrade)
+			for slot, upgradeData: { id: string, level: number } in ipairs(upgrades) do
+				local upgradeEntry = Registries.UPGRADE:get(upgradeData.id)
 				if upgradeEntry then
-					upgrade = upgradeEntry.name
-					upgradesArray[#upgradesArray + 1] = upgrade .. " " .. level
+					local upgradeName = upgradeEntry.name
+					upgradesArray[#upgradesArray + 1] = upgradeName .. " " .. upgradeData.level
 				end
 			end
 		end

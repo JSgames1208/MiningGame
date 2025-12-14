@@ -18,7 +18,9 @@ local LootTables = {} :: LootTables
 LootTables.DIRT = Registry.register(Registries.LOOTTABLE, "dirt", {
 	maxChance = 10000,
 	drops = {
-		{ id = "efficiency_i", min = 1, max = 3, chance = 10000 },
+		{ id = "efficiency_i", min = 2, max = 3, chance = 10000 },
+		{ id = "power_iii", min = 2, max = 3, chance = 10000 },
+		{ id = "stone_pickaxe", min = 1, max = 1, chance = 10000 },
 	},
 	xp = {
 		mining = 5,

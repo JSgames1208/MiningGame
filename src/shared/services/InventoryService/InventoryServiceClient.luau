@@ -21,6 +21,10 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 	end
 end
 
+function InventoryServiceClient.removeItem(self: InventoryServiceClient, category: InventoryCategory, key: string)
+	inventorySlice.actions.removeItem(category, key)
+end
+
 function InventoryServiceClient.setItem(
 	self: InventoryServiceClient,
 	category: InventoryCategory,

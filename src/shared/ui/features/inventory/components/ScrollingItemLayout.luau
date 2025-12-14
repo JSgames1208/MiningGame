@@ -1,12 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local InventoryItem = require(ReplicatedStorage.Shared.ui.features.inventory.components.InventoryItem)
 local e: typeof(React.createElement) = React.createElement
 
 local function ScrollingItemLayout(props: {
 	tab: string | Charm.Atom<string>,
-	items: { { id: string, atom: any } },
+	items: { { id: string, atom: Charm.Atom<DataTemplate.InventoryEntry> } },
 	exitOnPress: boolean?,
 	setOpen: ((any) -> any)?,
 	clickCallback: (any) -> any,
@@ -17,6 +18,9 @@ local function ScrollingItemLayout(props: {
 	local exitOnPress = props.exitOnPress ~= nil and props.exitOnPress or false
 
 	for index, data in ipairs(props.items) do
+		if data.atom == nil or data.atom().amount == 0 then
+			continue
+		end
 		table.insert(
 			rendered,
 			e(

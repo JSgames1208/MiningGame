@@ -17,7 +17,7 @@ local function SelectToolMenu()
 		shown = shown,
 		menuTitle = "Select Tool!",
 		setOpen = setOpen,
-		clickCallback = upgradeSlice.actions.setSelectedGuid,
+		clickCallback = upgradeSlice.actions.attemptSelectTool,
 	})
 end
 

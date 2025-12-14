@@ -1,7 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
-local upgradeThunk = require(ReplicatedStorage.Shared.ui.features.upgrades.state.upgradeThunk)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local atom: typeof(Charm.atom) = Charm.atom
+
+--state atoms
 
 local upgradeMenuOpen: Charm.Atom<boolean> = atom(false)
 local selectToolMenuOpen: Charm.Atom<boolean> = atom(false)
@@ -14,6 +16,11 @@ end)
 local selectedUpgrades: Charm.Atom<{ [number]: { id: string, level: number } }> = atom({})
 local upgradeSlot: Charm.Atom<number> = atom(1)
 
+--signals
+local selectToolRequest = Signal.new()
+local selectUpgradeRequest = Signal.new()
+
+--setters
 local setOpen = function(open: boolean)
 	upgradeMenuOpen(open)
 
@@ -31,14 +38,23 @@ local setSelectUpgradeMenuOpen = function(open: boolean)
 	selectUpgradeMenuOpen(open)
 end
 local setSelectedUpgrade = function(upgrade: { slot: number, upgradeData: { id: string, level: number } })
-	local upgrades = selectedUpgrades()
-	upgrades[upgrade.slot] = upgrade.upgradeData
-	selectedUpgrades(upgrades)
+	local current = selectedUpgrades()
+	local next = table.clone(current)
+
+	next[upgrade.slot] = upgrade.upgradeData
+
+	selectedUpgrades(next)
+end
+local setSelectedUpgrades = function(upgrades: { [number]: { id: string, level: number } })
+	local next = table.clone(upgrades)
+
+	selectedUpgrades(next)
+end
+local attemptSelectTool = function(guid: string)
+	selectToolRequest:Fire(guid)
 end
 local attemptSelectUpgrade = function(upgrade: { slot: number, upgradeData: { id: string, level: number } })
-	if upgradeThunk.actions.setUpgrade(selectedGuid(), upgrade) then
-		setSelectedUpgrade(upgrade)
-	end
+	selectUpgradeRequest:Fire(upgrade)
 end
 local setUpgradeSlot = function(slot: number)
 	upgradeSlot(slot)
@@ -50,6 +66,8 @@ local actions = {
 	setSelectToolMenuOpen = setSelectToolMenuOpen,
 	setSelectUpgradeMenuOpen = setSelectUpgradeMenuOpen,
 	setSelectedUpgrade = setSelectedUpgrade,
+	setSelectedUpgrades = setSelectedUpgrades,
+	attemptSelectTool = attemptSelectTool,
 	attemptSelectUpgrade = attemptSelectUpgrade,
 	setUpgradeSlot = setUpgradeSlot,
 }
@@ -65,4 +83,8 @@ return {
 		upgradeSlot = upgradeSlot,
 	},
 	actions = actions,
+	signals = {
+		selectToolRequest = selectToolRequest,
+		selectUpgradeRequest = selectUpgradeRequest,
+	},
 }
