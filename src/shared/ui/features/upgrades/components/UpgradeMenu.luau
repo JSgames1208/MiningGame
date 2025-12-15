@@ -43,9 +43,9 @@ local function UpgradeMenu()
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					Padding = UDim.new(0, 50),
 				}),
-				e(SelectedUpgradeFrame, { slot = 1 }),
-				e(SelectedUpgradeFrame, { slot = 2 }),
-				e(SelectedUpgradeFrame, { slot = 3 }),
+				e(SelectedUpgradeFrame, { slot = "1" }),
+				e(SelectedUpgradeFrame, { slot = "2" }),
+				e(SelectedUpgradeFrame, { slot = "3" }),
 			}),
 		},
 	})

@@ -14,10 +14,16 @@ function UpgradeServiceClient.init(self: UpgradeServiceClient)
 		self:attemptSelectTool(guid)
 	end)
 	upgradeSlice.signals.selectUpgradeRequest:Connect(
-		function(upgrade: { slot: number, upgradeData: { id: string, level: number } })
+		function(upgrade: { slot: string, upgradeData: { id: string, level: number } })
 			self:attemptSelectUpgrade(upgrade)
 		end
 	)
+	upgradeSlice.signals.removeUpgradeRequest:Connect(function(slot: string)
+		local guid = upgradeSlice.states.selectedGuid()
+		if self.networker:fetch("removeUpgradeRequest", guid, slot) then
+			self:selectUpgrade({ slot = slot, upgradeData = nil })
+		end
+	end)
 end
 
 function UpgradeServiceClient.selectTool(self: UpgradeServiceClient, guid: string)
@@ -25,7 +31,6 @@ function UpgradeServiceClient.selectTool(self: UpgradeServiceClient, guid: strin
 
 	local tool = DataService:get({ "inventory", "tool", guid })
 	if tool then
-		print(tool)
 		upgradeSlice.actions.setSelectedUpgrades(tool.toolData.upgrades)
 	end
 end
@@ -41,18 +46,17 @@ end
 
 function UpgradeServiceClient.selectUpgrade(
 	self: UpgradeServiceClient,
-	upgrade: { slot: number, upgradeData: { id: string, level: number } }
+	upgrade: { slot: string, upgradeData: { id: string, level: number }? }
 )
 	upgradeSlice.actions.setSelectedUpgrade(upgrade)
 end
 
 function UpgradeServiceClient.attemptSelectUpgrade(
 	self: UpgradeServiceClient,
-	upgrade: { slot: number, upgradeData: { id: string, level: number } }
+	upgrade: { slot: string, upgradeData: { id: string, level: number } }
 )
 	local selectedToolGuid = upgradeSlice.states.selectedGuid()
 	if self.networker:fetch("selectUpgradeRequest", selectedToolGuid, upgrade) then
-		print("SELECTED UPGRADE")
 		self:selectUpgrade(upgrade)
 	end
 end

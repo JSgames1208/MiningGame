@@ -14,10 +14,10 @@ type UpgradeData<T> = UpgradeType.UpgradeData<T>
 export type ToolInstance = {
 	id: string,
 	guid: string,
-	toolData: { level: number, xp: number, upgrades: { [number]: { id: string, level: number } }? },
+	toolData: { level: number, xp: number, upgrades: { [string]: { id: string, level: number } }? },
 }
 
-function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [number]: { id: string, level: number } }?): ToolStats
+function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [string]: { id: string, level: number } }?): ToolStats
 	local final = {} :: ToolStats
 
 	for k, v in baseStats do
@@ -52,7 +52,6 @@ function ToolUtil.getStats(baseStats: ToolStats, upgrades: { [number]: { id: str
 				for statName, deltaPerLevel in eff.stats do
 					local add = (deltaPerLevel :: number) * level
 					final[statName] = (final[statName] or 1) * (1 + add)
-					print(final[statName])
 				end
 			end
 		end

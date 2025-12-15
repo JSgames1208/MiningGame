@@ -13,7 +13,7 @@ export type UpgradesDisplayProps = {
 local function UpgradesDisplay(props: UpgradesDisplayProps)
 	local upgrades = props.upgrades
 
-	if #upgrades == 0 then
+	if not next(upgrades) then
 		return nil
 	end
 

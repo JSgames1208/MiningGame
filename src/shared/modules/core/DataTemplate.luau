@@ -32,7 +32,7 @@ export type InventoryEntry = {
 	toolData: {
 		level: number,
 		xp: number,
-		upgrades: { [number]: { id: string, level: number } },
+		upgrades: { [string]: { id: string, level: number }? },
 	}?,
 }
 

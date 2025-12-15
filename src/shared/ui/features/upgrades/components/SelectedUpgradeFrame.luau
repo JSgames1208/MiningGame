@@ -21,6 +21,8 @@ local function SelectedUpgradeFrame(props: SelectedUpgradeFrameProps)
 	local upgradeName = upgradeEntry and upgradeEntry.name .. " " .. selectedUpgrades[props.slot].level or ""
 	local upgradeDescription = upgradeEntry and upgradeEntry.description or ""
 
+	local upgradeSelected: boolean = selectedUpgrades[props.slot] ~= nil
+
 	return e("Frame", {
 		Size = UDim2.new(1, 0, 0.25, 0),
 		BackgroundTransparency = 1,
@@ -47,17 +49,21 @@ local function SelectedUpgradeFrame(props: SelectedUpgradeFrameProps)
 					Position = UDim2.new(0.5, 0, 1, 0),
 					AnchorPoint = Vector2.new(0.5, 1),
 					BackgroundTransparency = 0,
-					BackgroundColor3 = Color3.fromRGB(0, 225, 0),
+					BackgroundColor3 = upgradeSelected and Color3.fromRGB(225, 0, 0) or Color3.fromRGB(0, 225, 0),
 					ZIndex = 5,
 					onClick = function()
-						upgradeSlice.actions.setSelectUpgradeMenuOpen(true)
-						upgradeSlice.actions.setUpgradeSlot(props.slot)
+						if upgradeSelected then
+							upgradeSlice.actions.attemptRemoveUpgrade(props.slot)
+						else
+							upgradeSlice.actions.setSelectUpgradeMenuOpen(true)
+							upgradeSlice.actions.setUpgradeSlot(props.slot)
+						end
 					end,
 					Children = {
 						e("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
 						e("UIStroke", { Color = Color3.fromRGB(0, 0, 0), Thickness = 10 }),
 						e(TextLabel, {
-							Text = selectedUpgrades[props.slot] ~= nil and "Swap" or "Equip",
+							Text = upgradeSelected and "Remove" or "Equip",
 							TextXAlignment = Enum.TextXAlignment.Center,
 							TextYAlignment = Enum.TextYAlignment.Center,
 							Font = Enum.Font.FredokaOne,

@@ -26,7 +26,10 @@ local function ToolTooltip(props: ToolTooltipProps)
 		upgrades = props.toolInstance.toolData.upgrades or {}
 
 		if upgrades then
-			for slot, upgradeData: { id: string, level: number } in ipairs(upgrades) do
+			for slot, upgradeData in pairs(upgrades) do
+				if not upgradeData then
+					continue
+				end
 				local upgradeEntry = Registries.UPGRADE:get(upgradeData.id)
 				if upgradeEntry then
 					local upgradeName = upgradeEntry.name
@@ -35,6 +38,8 @@ local function ToolTooltip(props: ToolTooltipProps)
 			end
 		end
 	end
+
+	print(upgrades, upgradesArray)
 
 	return e(InventoryTooltip, {
 		shown = props.shown,

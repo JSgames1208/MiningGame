@@ -13,12 +13,13 @@ local mainMenuOpen = Charm.computed(function()
 	return not selectToolMenuOpen() and not selectUpgradeMenuOpen() and upgradeMenuOpen()
 end)
 
-local selectedUpgrades: Charm.Atom<{ [number]: { id: string, level: number } }> = atom({})
-local upgradeSlot: Charm.Atom<number> = atom(1)
+local selectedUpgrades: Charm.Atom<{ [string]: { id: string, level: number } }> = atom({})
+local upgradeSlot: Charm.Atom<string> = atom("1")
 
 --signals
 local selectToolRequest = Signal.new()
 local selectUpgradeRequest = Signal.new()
+local removeUpgradeRequest = Signal.new()
 
 --setters
 local setOpen = function(open: boolean)
@@ -37,7 +38,7 @@ end
 local setSelectUpgradeMenuOpen = function(open: boolean)
 	selectUpgradeMenuOpen(open)
 end
-local setSelectedUpgrade = function(upgrade: { slot: number, upgradeData: { id: string, level: number } })
+local setSelectedUpgrade = function(upgrade: { slot: string, upgradeData: { id: string, level: number } })
 	local current = selectedUpgrades()
 	local next = table.clone(current)
 
@@ -45,7 +46,7 @@ local setSelectedUpgrade = function(upgrade: { slot: number, upgradeData: { id: 
 
 	selectedUpgrades(next)
 end
-local setSelectedUpgrades = function(upgrades: { [number]: { id: string, level: number } })
+local setSelectedUpgrades = function(upgrades: { [string]: { id: string, level: number } })
 	local next = table.clone(upgrades)
 
 	selectedUpgrades(next)
@@ -53,11 +54,14 @@ end
 local attemptSelectTool = function(guid: string)
 	selectToolRequest:Fire(guid)
 end
-local attemptSelectUpgrade = function(upgrade: { slot: number, upgradeData: { id: string, level: number } })
+local attemptSelectUpgrade = function(upgrade: { slot: string, upgradeData: { id: string, level: number } })
 	selectUpgradeRequest:Fire(upgrade)
 end
-local setUpgradeSlot = function(slot: number)
+local setUpgradeSlot = function(slot: string)
 	upgradeSlot(slot)
+end
+local attemptRemoveUpgrade = function(slot: string)
+	removeUpgradeRequest:Fire(slot)
 end
 
 local actions = {
@@ -70,6 +74,7 @@ local actions = {
 	attemptSelectTool = attemptSelectTool,
 	attemptSelectUpgrade = attemptSelectUpgrade,
 	setUpgradeSlot = setUpgradeSlot,
+	attemptRemoveUpgrade = attemptRemoveUpgrade,
 }
 
 return {
@@ -86,5 +91,6 @@ return {
 	signals = {
 		selectToolRequest = selectToolRequest,
 		selectUpgradeRequest = selectUpgradeRequest,
+		removeUpgradeRequest = removeUpgradeRequest,
 	},
 }

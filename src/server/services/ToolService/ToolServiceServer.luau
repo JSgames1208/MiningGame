@@ -157,7 +157,11 @@ function ToolServiceServer.generateTool(
 		toolData = {
 			level = 1,
 			xp = 0,
-			upgrades = {},
+			upgrades = {
+				["1"] = nil,
+				["2"] = nil,
+				["3"] = nil,
+			},
 		},
 	}
 
