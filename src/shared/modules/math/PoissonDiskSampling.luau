@@ -74,6 +74,7 @@ function PoissonDiskSampling.getPoints(
 	return points, grid
 end
 
+-- DON'T USE, DOESN'T WORK YET!
 function PoissonDiskSampling.addPointAdaptive(radius, width, height, grid, points, candidateCount)
 	candidateCount = candidateCount or 20 -- number of random candidates to try
 	local bestCandidate = nil
