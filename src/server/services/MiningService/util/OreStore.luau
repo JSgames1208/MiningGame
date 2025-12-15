@@ -1,15 +1,33 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
 local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 
 type OreData = OreType.OreData
 type OreInstance = OreType.OreInstance
 
+type OreStoreEntry = {
+	id: string,
+}
+
 local OreStore = {}
 
 local oresByInstance: { [Instance]: OreInstance } = {}
 
-function OreStore.add(instance: Instance, oreInstance: OreInstance)
-	oreInstance.health = oreInstance.oreData.maxHealth
+function OreStore.add(instance: Instance, id: string)
+	local oreEntry = Ores.get(id)
+	if not oreEntry then
+		return
+	end
+
+	local guid = HttpService:GenerateGUID()
+
+	local oreInstance = {
+		id = id,
+		guid = guid,
+		health = oreEntry.maxHealth,
+		oreData = oreEntry,
+	}
 	oresByInstance[instance] = oreInstance
 end
 

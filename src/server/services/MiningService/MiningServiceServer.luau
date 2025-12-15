@@ -74,6 +74,16 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		self.networker:fire(player, "mine", target, minableData.health, finalStats.miningSpeed)
 
 		if minableData.health <= 0 then
+			local spawnArea = target.Parent
+			if spawnArea and spawnArea:IsA("BasePart") then
+				local localPoint = Vector2.new(
+					target.Position.X - spawnArea.Position.X + spawnArea.Size.X / 2,
+					target.Position.Z - spawnArea.Position.Z + spawnArea.Size.Z / 2
+				)
+
+				OreGenerator:onOreMined(spawnArea :: Part, localPoint)
+			end
+
 			OreStore.removeOre(target)
 
 			task.delay(0.75, function()

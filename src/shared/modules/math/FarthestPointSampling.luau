@@ -41,12 +41,20 @@ local function farthestPointSampling(
 	end
 
 	-- insert a point into grid
-	local function insertPoint(p: Vector2)
-		table.insert(points, p)
+	local function insertIntoGrid(p: Vector2)
 		local ix, iy = cellIndex(p)
 		grid[ix] = grid[ix] or {}
 		grid[ix][iy] = grid[ix][iy] or {}
 		table.insert(grid[ix][iy], p)
+	end
+
+	local function insertPoint(p: Vector2)
+		table.insert(points, p)
+		insertIntoGrid(p)
+	end
+
+	for _, p in ipairs(points) do
+		insertIntoGrid(p)
 	end
 
 	local heap = MaxHeap.new()
