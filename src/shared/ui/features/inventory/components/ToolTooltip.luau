@@ -39,8 +39,6 @@ local function ToolTooltip(props: ToolTooltipProps)
 		end
 	end
 
-	print(upgrades, upgradesArray)
-
 	return e(InventoryTooltip, {
 		shown = props.shown,
 		anchor = props.anchor,

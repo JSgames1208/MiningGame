@@ -76,7 +76,6 @@ function UpgradeServiceServer.applyUpgrade(
 		if not self:canApplyUpgrade(player, toolGuid, upgrade) then
 			return false
 		end
-		print(upgrade)
 		DataService:update(
 			player,
 			{ "inventory", "tool", toolGuid },
