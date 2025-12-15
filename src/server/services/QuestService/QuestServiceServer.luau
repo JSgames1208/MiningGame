@@ -3,7 +3,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Base = require(ServerScriptService.Server.services.QuestService.QuestTypes._Base)
 local Networker = require(ReplicatedStorage.Packages.Networker)
-local Sift = require(ReplicatedStorage.Packages.Sift)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
 
@@ -11,6 +10,7 @@ type QuestData = QuestType.QuestData
 type Progress = Base.Progress
 type Runtime = Base.Runtime
 type RequirementRuntime = Base.RequirementRuntime
+type QuestTypeModule = Base.QuestTypeModule
 
 local QuestServiceServer = {}
 
@@ -66,6 +66,16 @@ function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: P
 	Active[player.UserId] = nil
 end
 
+local function buildRequirementMap(requirements: { { type: string, target: any, amount: number } })
+	local map: { [string]: number } = {}
+	for _, req in ipairs(requirements) do
+		local reqId = req.type .. "_" .. tostring(req.target)
+		map[reqId] = req.amount
+	end
+
+	return map
+end
+
 function QuestServiceServer.startQuest(
 	self: QuestServiceServer,
 	player: Player,
@@ -78,12 +88,8 @@ function QuestServiceServer.startQuest(
 		return
 	end
 
-	local questModule = require(questData.questType) :: Base.QuestTypeModule
-	local progress = savedProgress
-		or Base.newProgress(Sift.Dictionary.map(questData.requirements, function(acc, req)
-			acc[req.type .. "_" .. tostring(req.target)] = req.amount
-			return acc
-		end))
+	local reqMap = buildRequirementMap(questData.requirements)
+	local progress = savedProgress or Base.newProgress(reqMap)
 
 	local runtime: Runtime
 	runtime = {
@@ -100,37 +106,65 @@ function QuestServiceServer.startQuest(
 	local requirementConnections: { [string]: RBXScriptConnection? } = {}
 	local moduleMap: { [string]: Base.QuestTypeModule } = {}
 
-	for _, req in pairs(progress.requirements) do
+	for _, req in ipairs(questData.requirements) do
 		local reqId = req.type .. "_" .. tostring(req.target)
+
+		local reqProg = progress.requirements[reqId]
+		if not reqProg then
+			progress.requirements[reqId] = { current = 0, target = req.amount }
+			reqProg = progress.requirements[reqId]
+		end
+
 		local reqRuntime: RequirementRuntime = {
 			id = reqId,
-			data = questData,
+			data = req,
 			progress = reqProg,
 			complete = function()
 				reqProg.current = reqProg.target
 
 				local allDone = true
-				for _, r in progress.requirements do
+				for _, r in pairs(progress.requirements) do
 					if r.current < r.target then
 						allDone = false
 						break
 					end
 				end
+
 				if allDone then
 					runtime.complete()
 				end
 			end,
 		}
 
-		if questModule.supports(reqType) then
-			requirementConnections[reqType] = questModule.startRequirement(runtime, reqRuntime)
+		local pickedModule: QuestTypeModule? = nil
+		if type(questData.questType) == "table" then
+			for _, moduleRef in ipairs(questData.questType) do
+				local mod = require(moduleRef) :: QuestTypeModule
+				if mod and mod.supports(req.type) then
+					pickedModule = mod
+					break
+				end
+			end
+		else
+			local mod = require(questData.questType) :: QuestTypeModule
+			if mod and mod.supports(req.type) then
+				pickedModule = mod
+			end
+		end
+
+		if pickedModule then
+			moduleMap[reqId] = pickedModule
+			local conn = pickedModule.startRequirement(runtime, reqRuntime)
+			requirementConnections[reqId] = conn
+		else
+			warn("unknown quest requirement type:", req.type)
 		end
 	end
 
 	Active[player.UserId][questId] = {
 		data = questData,
 		progress = progress,
-		module = questModule,
+		moduleMap = moduleMap,
 		requirementConnections = requirementConnections,
 		runtime = runtime,
 	}
@@ -149,9 +183,12 @@ function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Play
 
 	q.progress.completed = true
 
-	for _, conn in q.requirementConnections do
-		if conn then
-			q.module.stopRequirement(conn)
+	for reqId, conn in pairs(q.requirementConnections) do
+		local mod = q.moduleMap[reqId]
+		if mod then
+			mod.stopRequirement(conn)
+		elseif conn then
+			conn:Disconnect()
 		end
 	end
 

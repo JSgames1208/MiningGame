@@ -13,23 +13,33 @@ function MineQuest.supports(reqType: string): boolean
 	return reqType == "mine"
 end
 
-function MineQuest.startRequirement(runtime: Base.Runtime)
-	return QuestSignals.OreMined:Connect(function(player: Player, oreId)
+function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.RequirementRuntime)
+	local conn
+	conn = QuestSignals.OreMined:Connect(function(player: Player, oreId: string)
 		if player ~= runtime.player then
 			return
 		end
-		if oreId ~= "coal" then
+
+		if oreId ~= reqRuntime.data.target then
 			return
 		end
 
-		local req = runtime.progress.requirements["coal"]
-		req.current += 1
+		local req = runtime.progress.requirements[reqRuntime.id]
+		if not req then
+			return
+		end
+
+		req.current = req.current + 1
+		if req.current > req.target then
+			req.current = req.target
+		end
 
 		if req.current >= req.target then
-			req.current = req.target
-			runtime.complete()
+			reqRuntime.complete()
 		end
 	end)
+
+	return conn
 end
 
 function MineQuest.stopRequirement(conn: RBXScriptConnection?)
