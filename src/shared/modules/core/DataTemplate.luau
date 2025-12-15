@@ -40,6 +40,15 @@ export type Inventory = {
 	[InventoryCategory]: { [string]: InventoryEntry },
 }
 
+export type QuestProgress = {
+	target: any,
+}
+
+export type Quests = {
+	active: { [string]: { any } },
+	completed: { [string]: boolean },
+}
+
 export type ZoneData = {
 	unlockedZones: { [string]: boolean },
 	lastZone: string?,
@@ -67,6 +76,7 @@ export type PlayerData = {
 	currency: Currency,
 	tools: ToolData,
 	inventory: Inventory,
+	--quests: Quests,
 	zones: ZoneData,
 	crafting: Crafting,
 	settings: Settings,
@@ -92,6 +102,7 @@ local DefaultPlayerData: PlayerData = {
 		potion = {},
 		item = {},
 	},
+	--quests = {},
 	zones = {
 		unlockedZones = { ["zone_1"] = true },
 		lastZone = "zone_1",

@@ -9,11 +9,12 @@ local ZoneType = require(ReplicatedStorage.Shared.modules.core.types.ZoneType)
 type Registry<T> = Registry.Registry<T>
 
 export type Registries = {
-	ITEM: Registry.Registry<ItemType.ItemData>,
-	UPGRADE: Registry.Registry<UpgradeType.UpgradeData<any>>,
-	ORE: Registry.Registry<OreType.OreData>,
-	LOOTTABLE: Registry.Registry<LootTableType.LootTable>,
-	ZONE: Registry.Registry<ZoneType.ZoneData>,
+	ITEM: Registry<ItemType.ItemData>,
+	UPGRADE: Registry<UpgradeType.UpgradeData<any>>,
+	ORE: Registry<OreType.OreData>,
+	LOOTTABLE: Registry<LootTableType.LootTable>,
+	ZONE: Registry<ZoneType.ZoneData>,
+	QUEST: Registry<any>,
 }
 
 local Registries: Registries = {
@@ -22,6 +23,7 @@ local Registries: Registries = {
 	ORE = Registry.new() :: Registry<OreType.OreData>,
 	LOOTTABLE = Registry.new() :: Registry<LootTableType.LootTable>,
 	ZONE = Registry.new() :: Registry<ZoneType.ZoneData>,
+	QUEST = Registry.new() :: Registry<any>,
 }
 
 return Registries

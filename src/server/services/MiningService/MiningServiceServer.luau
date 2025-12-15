@@ -8,6 +8,7 @@ local OreGenerator = require(ServerScriptService.Server.services.MiningService.u
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
 local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
+local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local LootTables = require(ReplicatedStorage.Shared.modules.core.registries.LootTables)
@@ -80,6 +81,8 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 					target.Position.X - spawnArea.Position.X + spawnArea.Size.X / 2,
 					target.Position.Z - spawnArea.Position.Z + spawnArea.Size.Z / 2
 				)
+
+				QuestSignals.OreMined:Fire(player, oreData.id)
 
 				OreGenerator:onOreMined(spawnArea :: Part, localPoint)
 			end
