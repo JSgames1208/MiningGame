@@ -47,7 +47,7 @@ local function ScrollingInventory()
 		tab = tab,
 		items = items,
 		exitOnPress = false,
-		clickCallback = toolSlice.actions.setEquipped,
+		clickCallback = tab == "tool" and toolSlice.actions.setEquipped or nil,
 		equippedToolId = equippedToolId,
 	})
 end

@@ -7,6 +7,8 @@ return {
 	["icons"] = {
 		["coin"] = "rbxassetid://76443803906555",
 		["dirt"] = "rbxassetid://135841438755400",
+		["stone"] = "rbxassetid://109322369208833",
+		["coal"] = "rbxassetid://80392309170778",
 		["wooden_pickaxe"] = "rbxassetid://130418748207283",
 		["stone_pickaxe"] = "rbxassetid://92012186181879",
 		["potion_yellow"] = "rbxassetid://122389967727680",

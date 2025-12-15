@@ -14,7 +14,7 @@ export type Zones = {
 local Zones = {} :: Zones
 
 local function register(id: string, data: ZoneType.ZoneData)
-	return Registry.register(Registries.ZONE, "stonehill_fields", data)
+	return Registry.register(Registries.ZONE, id, data)
 end
 
 Zones.STONEHILL_FIELDS = register("stonehill_fields", {

@@ -12,6 +12,8 @@ export type Items = {
 	STONE_PICKAXE: ItemData,
 
 	DIRT: ItemData,
+	STONE: ItemData,
+	COAL: ItemData,
 
 	POTION_RED: ItemData,
 	POTION_GREEN: ItemData,
@@ -60,6 +62,20 @@ Items.DIRT = Registry.register(Registries.ITEM, "dirt", {
 	name = "Dirt",
 	description = "A ball of dirt.",
 	rarity = "common",
+	type = "item",
+})
+
+Items.STONE = Registry.register(Registries.ITEM, "stone", {
+	name = "Stone",
+	description = "A block of stone.",
+	rarity = "common",
+	type = "item",
+})
+
+Items.COAL = Registry.register(Registries.ITEM, "coal", {
+	name = "Coal",
+	description = "A block of coal.",
+	rarity = "uncommon",
 	type = "item",
 })
 

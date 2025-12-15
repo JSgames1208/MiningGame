@@ -35,13 +35,13 @@ function MiningServiceServer.startMining(self: MiningServiceServer, player: Play
 		return
 	end
 
-	local minableData = OreStore.getOreInstance(target)
+	local oreData = OreStore.getOreInstance(target)
 
-	if not minableData then
+	if not oreData then
 		return
 	end
 
-	self.networker:fire(player, "startMining", target, minableData)
+	self.networker:fire(player, "startMining", target, oreData)
 end
 
 function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
@@ -63,17 +63,17 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / finalStats.miningSpeed < tick() then
 		lastMined[player.UserId] = tick()
 
-		local minableData = OreStore.getOreInstance(target)
+		local oreData = OreStore.getOreInstance(target)
 
-		if not minableData then
+		if not oreData then
 			return
 		end
 
-		minableData.health -= finalStats.miningPower
+		oreData.health -= finalStats.miningPower
 
-		self.networker:fire(player, "mine", target, minableData.health, finalStats.miningSpeed)
+		self.networker:fire(player, "mine", target, oreData.health, finalStats.miningSpeed)
 
-		if minableData.health <= 0 then
+		if oreData.health <= 0 then
 			local spawnArea = target.Parent
 			if spawnArea and spawnArea:IsA("BasePart") then
 				local localPoint = Vector2.new(
@@ -91,7 +91,7 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				target:Destroy()
 
 				PlayerServiceServer:addCurrency(player, 100)
-				LootServiceServer:giveLoot(player, LootTables.DIRT)
+				LootServiceServer:giveLoot(player, LootTables.get(oreData.id))
 			end)
 		end
 	end

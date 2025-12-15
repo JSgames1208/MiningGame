@@ -6,7 +6,9 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local Zones = require(ReplicatedStorage.Shared.modules.core.registries.Zones)
 local FarthestPointSampling = require(ReplicatedStorage.Shared.modules.math.FarthestPointSampling)
+local RNGModule = require(ReplicatedStorage.Shared.modules.math.RNGModule)
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 
 local OreGenerator = {}
@@ -32,7 +34,12 @@ function OreGenerator.populateAll(self: OreGenerator)
 end
 
 function OreGenerator.spawnOreAtPoint(self: OreGenerator, spawnArea: Part, point: Vector2)
-	local oreId = "coal"
+	local zoneId = spawnArea.Name
+
+	local zoneEntry = Zones.get(zoneId)
+	if not zoneEntry then
+		warn("Zone not found in registry: " .. zoneId)
+	end
 
 	local rayParams = RaycastParams.new()
 	rayParams.FilterType = Enum.RaycastFilterType.Exclude
@@ -41,6 +48,11 @@ function OreGenerator.spawnOreAtPoint(self: OreGenerator, spawnArea: Part, point
 		point.X + spawnArea.Position.X - spawnArea.Size.X / 2,
 		point.Y + spawnArea.Position.Z - spawnArea.Size.Z / 2
 	)
+
+	local oreId = RNGModule.pickWeighted(zoneEntry.ores.weights)
+	if not oreId then
+		return
+	end
 
 	local part = ReplicatedStorage.Assets.ores:FindFirstChild(oreId):Clone()
 
