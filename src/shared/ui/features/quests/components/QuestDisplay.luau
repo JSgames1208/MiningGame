@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Quests = require(ReplicatedStorage.Shared.modules.core.registries.Quests)
@@ -6,6 +7,8 @@ local Intersection = require(ReplicatedStorage.Shared.ui.core.components.Interse
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
 local ProgressBar = require(ReplicatedStorage.Shared.ui.features.quests.components.ProgressBar)
 local e: typeof(React.createElement) = React.createElement
+
+type Atom<T> = Charm.Atom<T>
 
 type Quest = {
 	id: string,
@@ -22,7 +25,8 @@ export type QuestDisplayProps = {
 }
 
 local function QuestDisplay(props: QuestDisplayProps)
-	local questId = props.quest.id
+	local quest = props.quest
+	local questId = quest.id
 	local questEntry = Quests.get(questId)
 
 	if not questEntry then
@@ -31,7 +35,7 @@ local function QuestDisplay(props: QuestDisplayProps)
 
 	local questName = questEntry.name
 
-	local questProgress = props.quest.progress
+	local questProgress = quest.progress
 
 	local bars = {}
 

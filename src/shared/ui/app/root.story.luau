@@ -98,25 +98,6 @@ return function(parent: Instance)
 
 	questSlice.actions.setQuestsOpen(true)
 
-	QuestServiceClient:setQuests({
-		active = {
-			["mine_coal_1"] = {
-				progress = {
-					["mine_coal"] = {
-						current = 1,
-						target = 1,
-					},
-					["mine_stone"] = {
-						current = 1,
-						target = 3,
-					},
-				},
-				started = os.time(),
-			},
-		},
-		completed = {},
-	})
-
 	PlayerServiceClient:init()
 
 	local root = ReactRoblox.createRoot(parent)

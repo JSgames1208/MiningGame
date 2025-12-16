@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local useSpring = require(ReplicatedStorage.Shared.ui.core.hooks.useSpring)
 local e: typeof(React.createElement) = React.createElement
 
 export type ProgressBarProps = {
@@ -12,6 +13,15 @@ export type ProgressBarProps = {
 }
 
 local function ProgressBar(props: ProgressBarProps)
+	local sizeSpring = useSpring(0, { speed = 12.5 })
+
+	React.useEffect(function()
+		if not props.current or not props.target then
+			return
+		end
+		sizeSpring.setGoal(props.current / props.target)
+	end, { props.current, props.target })
+
 	local text = props.text
 	if props.showNumbers then
 		if not props.current or not props.target then
@@ -25,8 +35,6 @@ local function ProgressBar(props: ProgressBarProps)
 		end
 		text = text .. suffix
 	end
-
-	local percentage = (props.current and props.target) and props.current / props.target or 0
 
 	return e("Frame", {
 		Size = UDim2.new(0.9, 0, 0.075, 0),
@@ -56,7 +64,7 @@ local function ProgressBar(props: ProgressBarProps)
 			}),
 		}),
 		e("Frame", {
-			Size = UDim2.new(percentage, 0, 1, 0),
+			Size = UDim2.new(sizeSpring.binding, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 0,
 			BackgroundColor3 = Color3.fromRGB(19, 211, 115),
