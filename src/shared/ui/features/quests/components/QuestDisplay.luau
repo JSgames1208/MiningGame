@@ -22,6 +22,7 @@ type Quest = {
 
 export type QuestDisplayProps = {
 	quest: Quest,
+	LayoutOrder: number,
 }
 
 local function QuestDisplay(props: QuestDisplayProps)
@@ -63,6 +64,7 @@ local function QuestDisplay(props: QuestDisplayProps)
 		BackgroundTransparency = 0,
 		BackgroundColor3 = Color3.fromRGB(245, 245, 245),
 		AutomaticSize = Enum.AutomaticSize.Y,
+		LayoutOrder = props.LayoutOrder,
 		ZIndex = 5,
 	}, {
 		e("UIStroke", {

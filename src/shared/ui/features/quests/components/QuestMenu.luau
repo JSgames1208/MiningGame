@@ -6,7 +6,7 @@ local QuestDisplay = require(ReplicatedStorage.Shared.ui.features.quests.compone
 local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
 local e: typeof(React.createElement) = React.createElement
 
-local function QuestItem(props: { id: string })
+local function QuestItem(props: { id: string, LayoutOrder: number })
 	local id = props.id
 	local questAtom = questSlice.actions.getQuestById(id)
 
@@ -25,7 +25,7 @@ local function QuestItem(props: { id: string })
 		progress = quest.progress,
 	}
 
-	return e(QuestDisplay, { quest = disp })
+	return e(QuestDisplay, { quest = disp, LayoutOrder = props.LayoutOrder })
 end
 
 local function QuestMenu()
@@ -54,8 +54,8 @@ local function QuestMenu()
 	end)
 
 	local questChildren = {}
-	for _, entry in ipairs(snapshot) do
-		table.insert(questChildren, e(QuestItem, { id = entry.id }))
+	for i, entry in ipairs(snapshot) do
+		table.insert(questChildren, e(QuestItem, { key = entry.id, id = entry.id, LayoutOrder = i }))
 	end
 
 	return e(

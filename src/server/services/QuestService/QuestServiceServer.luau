@@ -137,18 +137,6 @@ function QuestServiceServer.startQuest(
 			progress = reqProg,
 			complete = function()
 				reqProg.current = reqProg.target
-
-				local allDone = true
-				for _, r in pairs(progress.requirements) do
-					if r.current < r.target then
-						allDone = false
-						break
-					end
-				end
-
-				if allDone then
-					runtime.complete()
-				end
 			end,
 		}
 

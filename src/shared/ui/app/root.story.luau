@@ -96,8 +96,6 @@ return function(parent: Instance)
 	DataService:set({ "inventory", "upgrade", item5.id }, item5)
 	InventoryServiceClient:setItem("upgrade", item5)
 
-	questSlice.actions.setQuestsOpen(true)
-
 	PlayerServiceClient:init()
 
 	local root = ReactRoblox.createRoot(parent)

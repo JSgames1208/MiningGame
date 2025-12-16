@@ -13,7 +13,13 @@ export type ProgressBarProps = {
 }
 
 local function ProgressBar(props: ProgressBarProps)
-	local sizeSpring = useSpring(0, { speed = 12.5 })
+	local initialSize = 0
+
+	if props.current and props.target then
+		initialSize = props.current / props.target
+	end
+
+	local sizeSpring = useSpring(initialSize, { speed = 12.5 })
 
 	React.useEffect(function()
 		if not props.current or not props.target then

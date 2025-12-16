@@ -25,12 +25,12 @@ Ores.DIRT = Registry.register(Registries.ORE, "dirt", {
 
 Ores.STONE = Registry.register(Registries.ORE, "stone", {
 	name = "Stone",
-	maxHealth = 20,
+	maxHealth = 5,
 })
 
 Ores.COAL = Registry.register(Registries.ORE, "coal", {
 	name = "Coal",
-	maxHealth = 30,
+	maxHealth = 5,
 })
 
 function Ores.get(id: string)
