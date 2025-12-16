@@ -1,6 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
-local MineQuest = ServerScriptService.Server.services.QuestService.QuestTypes.MineQuest
 local Registry = require(ReplicatedStorage.Shared.modules.core.Registry)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
@@ -16,13 +14,13 @@ export type Quests = {
 
 local Quests = {} :: Quests
 
-local function register(id: string, data: QuestData)
+local function register(id: string, data: QuestData): QuestData
 	return Registry.register(Registries.QUEST, id, data)
 end
 
 Quests.MINE_COAL_1 = register("mine_coal_1", {
 	name = "Mine Coal",
-	questType = MineQuest,
+	questType = { "MineQuest" },
 	requirements = {
 		{ type = "mine", target = "stone", amount = 3 },
 		{ type = "mine", target = "coal", amount = 1 },

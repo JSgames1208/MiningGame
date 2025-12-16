@@ -1,8 +1,12 @@
 --!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local DataService = require(ReplicatedStorage.Packages.DataService).server
+local QuestTypeModules = require(ServerScriptService.Server.services.QuestService.QuestTypes.QuestTypeModules)
 local Base = require(ServerScriptService.Server.services.QuestService.QuestTypes._Base)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
+local Quests = require(ReplicatedStorage.Shared.modules.core.registries.Quests)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
 
@@ -43,7 +47,14 @@ end
 function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Player)
 	Active[player.UserId] = {}
 
-	-- TODO: load saved quests
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+
+	for questId, saved in pairs(playerQuests.active) do
+		self:startQuest(player, questId, {
+			completed = false,
+			requirements = saved.progress,
+		})
+	end
 end
 
 function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: Player)
@@ -137,18 +148,15 @@ function QuestServiceServer.startQuest(
 		}
 
 		local pickedModule: QuestTypeModule? = nil
-		if type(questData.questType) == "table" then
-			for _, moduleRef in ipairs(questData.questType) do
-				local mod = require(moduleRef) :: QuestTypeModule
-				if mod and mod.supports(req.type) then
-					pickedModule = mod
+
+		if type(questData.questType) == "string" then
+			pickedModule = QuestTypeModules[questData.questType]
+		elseif type(questData.questType) == "table" then
+			for _, moduleName in ipairs(questData.questType) do
+				pickedModule = QuestTypeModules[moduleName]
+				if pickedModule and pickedModule.supports(req.type) then
 					break
 				end
-			end
-		else
-			local mod = require(questData.questType) :: QuestTypeModule
-			if mod and mod.supports(req.type) then
-				pickedModule = mod
 			end
 		end
 
@@ -168,6 +176,39 @@ function QuestServiceServer.startQuest(
 		requirementConnections = requirementConnections,
 		runtime = runtime,
 	}
+end
+
+function QuestServiceServer.grantQuest(self: QuestServiceServer, player: Player, questId: string)
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return false
+	end
+
+	if playerQuests.completed[questId] then
+		return false
+	end
+
+	if playerQuests.active[questId] then
+		return false
+	end
+
+	print(Registries.QUEST)
+
+	local questData = Quests.get(questId)
+	if not questData then
+		warn("unknown quest: " .. questId)
+		return false
+	end
+
+	local reqMap = buildRequirementMap(questData.requirements)
+	local progress = Base.newProgress(reqMap)
+
+	playerQuests.active[questId] = { progress = progress.requirements }
+
+	DataService:set(player, { "quests" }, playerQuests)
+
+	self:startQuest(player, questId)
+	return true
 end
 
 function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Player, questId: string)
@@ -192,8 +233,17 @@ function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Play
 		end
 	end
 
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return
+	end
+
+	playerQuests.active[questId] = nil
+	playerQuests.completed[questId] = true
+
+	DataService:set(player, { "quests" }, playerQuests)
+
 	-- TODO: rewards
-	-- TODO: save completed quest id
 
 	userQuests[questId] = nil
 end
@@ -202,4 +252,4 @@ export type QuestServiceServer = typeof(QuestServiceServer) & {
 	networker: Networker.Server,
 }
 
-return QuestServiceServer
+return QuestServiceServer :: QuestServiceServer

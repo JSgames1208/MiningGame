@@ -6,7 +6,7 @@ export type RequirementData = {
 
 export type QuestData = {
 	name: string,
-	questType: { ModuleScript },
+	questType: { string },
 	requirements: { RequirementData },
 	rewards: { items: { { id: string, amount: number } } },
 }

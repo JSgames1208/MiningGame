@@ -40,14 +40,18 @@ export type Inventory = {
 	[InventoryCategory]: { [string]: InventoryEntry },
 }
 
-export type QuestProgress = {
-	current: number,
-	target: number,
+export type SavedQuestProgress = {
+	progress: {
+		[string]: {
+			current: number,
+			target: number,
+		},
+	},
 }
 
 export type Quests = {
-	active: { [string]: { [string]: QuestProgress } },
-	completed: { [string]: boolean },
+	active: { [string]: SavedQuestProgress },
+	completed: { [string]: true },
 }
 
 export type ZoneData = {
