@@ -41,6 +41,7 @@ export type Inventory = {
 }
 
 export type SavedQuestProgress = {
+	started: number,
 	progress: {
 		[string]: {
 			current: number,

@@ -5,6 +5,7 @@ local TooltipProvider = require(ReplicatedStorage.Shared.ui.core.components.Tool
 local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local InventoryScreen = require(ReplicatedStorage.Shared.ui.features.inventory.screens.InventoryScreen)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
+local QuestScreen = require(ReplicatedStorage.Shared.ui.features.quests.screens.QuestScreen)
 local UpgradeScreen = require(ReplicatedStorage.Shared.ui.features.upgrades.screens.UpgradeScreen)
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
@@ -23,6 +24,7 @@ local function RootUI()
 			InventoryScreen = e(InventoryScreen),
 			UpgradeScreen = e(UpgradeScreen),
 			TooltipProvider = e(TooltipProvider),
+			QuestScreen = e(QuestScreen),
 		}),
 	})
 end

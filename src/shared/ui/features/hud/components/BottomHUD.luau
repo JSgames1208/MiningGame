@@ -9,6 +9,7 @@ local hudSlice = require(ReplicatedStorage.Shared.ui.features.hud.state.hudSlice
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.toolSlice)
 local tooltipThunk = require(ReplicatedStorage.Shared.ui.features.inventory.state.tooltipThunk)
+local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
 local upgradeSlice = require(ReplicatedStorage.Shared.ui.features.upgrades.state.upgradeSlice)
 local e: typeof(React.createElement) = React.createElement
 
@@ -40,6 +41,46 @@ local function BottomHUD()
 					HorizontalAlignment = Enum.HorizontalAlignment.Center,
 					SortOrder = Enum.SortOrder.LayoutOrder,
 				}),
+				e(
+					Button,
+					{
+						Size = UDim2.new(1, 0, 1, 0),
+						Position = UDim2.new(0.5, 0, 0.5, 0),
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						SizeConstraint = Enum.SizeConstraint.RelativeYY,
+						BackgroundTransparency = 1,
+						Image = ImageIds.icons.potion_green,
+						ImageRectOffset = Vector2.zero,
+						ImageRectSize = Vector2.new(1028, 1028),
+						Mirror = true,
+						onClick = function()
+							questSlice.actions.setQuestsOpen(true)
+						end,
+						Children = {
+							e(
+								TextLabel,
+								{
+									Text = "Quests",
+									Font = Enum.Font.FredokaOne,
+									Position = UDim2.new(0.5, 0, 1, 0),
+									AnchorPoint = Vector2.new(0.5, 0.75),
+									Size = UDim2.new(1, 0, 0.5, 0),
+									TextScaled = true,
+									TextWrapped = false,
+									TextXAlignment = Enum.TextXAlignment.Center,
+									TextYAlignment = Enum.TextYAlignment.Center,
+									TextColor3 = Color3.fromRGB(255, 255, 255),
+									BackgroundTransparency = 1,
+									ZIndex = 2,
+									Stroke = {
+										Color = Color3.fromRGB(0, 0, 0),
+										Thickness = 10,
+									},
+								} :: TextLabel.Props
+							),
+						},
+					} :: Button.ButtonProps
+				),
 				e(
 					Button,
 					{

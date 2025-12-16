@@ -9,7 +9,9 @@ local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Regi
 require(ReplicatedStorage.Shared.modules.core.RegistryLoader)
 local InventoryServiceClient = require(ReplicatedStorage.Shared.services.InventoryService.InventoryServiceClient)
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
+local QuestServiceClient = require(ReplicatedStorage.Shared.services.QuestService.QuestServiceClient)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
+local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
 
 local e = React.createElement
 
@@ -93,6 +95,27 @@ return function(parent: Instance)
 
 	DataService:set({ "inventory", "upgrade", item5.id }, item5)
 	InventoryServiceClient:setItem("upgrade", item5)
+
+	questSlice.actions.setQuestsOpen(true)
+
+	QuestServiceClient:setQuests({
+		active = {
+			["mine_coal_1"] = {
+				progress = {
+					["mine_coal"] = {
+						current = 1,
+						target = 1,
+					},
+					["mine_stone"] = {
+						current = 1,
+						target = 3,
+					},
+				},
+				started = os.time(),
+			},
+		},
+		completed = {},
+	})
 
 	PlayerServiceClient:init()
 

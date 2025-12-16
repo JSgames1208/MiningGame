@@ -48,6 +48,11 @@ function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Play
 	Active[player.UserId] = {}
 
 	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return
+	end
+
+	--self.networker:fire(player, "setQuests", playerQuests)
 
 	for questId, saved in pairs(playerQuests.active) do
 		self:startQuest(player, questId, {
@@ -192,8 +197,6 @@ function QuestServiceServer.grantQuest(self: QuestServiceServer, player: Player,
 		return false
 	end
 
-	print(Registries.QUEST)
-
 	local questData = Quests.get(questId)
 	if not questData then
 		warn("unknown quest: " .. questId)
@@ -203,7 +206,7 @@ function QuestServiceServer.grantQuest(self: QuestServiceServer, player: Player,
 	local reqMap = buildRequirementMap(questData.requirements)
 	local progress = Base.newProgress(reqMap)
 
-	playerQuests.active[questId] = { progress = progress.requirements }
+	playerQuests.active[questId] = { started = os.time(), progress = progress.requirements }
 
 	DataService:set(player, { "quests" }, playerQuests)
 

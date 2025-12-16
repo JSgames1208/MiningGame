@@ -30,7 +30,7 @@ local function Intersection(props: IntersectionProps)
 	return e("Frame", {
 		Visible = props.shown ~= nil and props.shown,
 		Size = UDim2.new(1, 0, 0, 3),
-		LayoutOrder = props.LayoutOrder or 0,
+		LayoutOrder = props.LayoutOrder or nil,
 		BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 		ZIndex = props.ZIndex or 0,
 		BorderSizePixel = 0,

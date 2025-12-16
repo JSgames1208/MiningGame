@@ -36,4 +36,8 @@ Players.PlayerAdded:Connect(function(player)
 	QuestServiceServer:onPlayerAdded(player)
 
 	QuestServiceServer:grantQuest(player, Quests.idOf(Quests.MINE_COAL_1))
+
+	task.delay(3, function()
+		QuestServiceServer:grantQuest(player, Quests.idOf(Quests.MINE_COAL_2))
+	end)
 end)

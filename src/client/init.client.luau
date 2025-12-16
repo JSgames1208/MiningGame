@@ -8,6 +8,7 @@ local AnimationService = require(ReplicatedStorage.Shared.services.AnimationServ
 local InventoryServiceClient = require(ReplicatedStorage.Shared.services.InventoryService.InventoryServiceClient)
 local MiningServiceClient = require(ReplicatedStorage.Shared.services.MiningService.MiningServiceClient)
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
+local QuestServiceClient = require(ReplicatedStorage.Shared.services.QuestService.QuestServiceClient)
 local ToolServiceClient = require(ReplicatedStorage.Shared.services.ToolService.ToolServiceClient)
 local UpgradeServiceClient = require(ReplicatedStorage.Shared.services.UpgradeService.UpgradeServiceClient)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
@@ -24,6 +25,7 @@ InventoryServiceClient:init()
 AnimationService:init()
 ToolServiceClient:init()
 UpgradeServiceClient:init()
+QuestServiceClient:init()
 
 local uiFolder = Instance.new("Folder")
 uiFolder.Name = "ReactUI"
