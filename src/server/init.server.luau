@@ -11,6 +11,7 @@ local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerSe
 local QuestServiceServer = require(ServerScriptService.Server.services.QuestService.QuestServiceServer)
 local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
 local UpgradeServiceServer = require(ServerScriptService.Server.services.UpgradeService.UpgradeServiceServer)
+local testDialogue = require(ServerScriptService.Server.testDialogue)
 
 DataService:init({
 	template = DataTemplate,
@@ -40,4 +41,6 @@ Players.PlayerAdded:Connect(function(player)
 	task.delay(3, function()
 		QuestServiceServer:grantQuest(player, Quests.idOf(Quests.MINE_COAL_2))
 	end)
+
+	testDialogue()
 end)

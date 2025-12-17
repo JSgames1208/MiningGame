@@ -14,6 +14,22 @@ register("dialogue.miner.idle.line_1", {
 	type = "line",
 	speaker = "npc.miner",
 	text = "Just a miner. Nothing special.",
+	next = "dialogue.miner.idle.line_2",
+})
+
+register("dialogue.miner.idle.line_2", {
+	id = "dialogue.miner.idle.line_2",
+	type = "line",
+	speaker = "npc.miner",
+	text = "It's a boring day today in the mines.",
+	next = "dialogue.miner.idle.line_3",
+})
+
+register("dialogue.miner.idle.line_3", {
+	id = "dialogue.miner.idle.line_3",
+	type = "line",
+	speaker = "npc.miner",
+	text = "I hope a fellow miner comes by soon.",
 	next = nil,
 })
 

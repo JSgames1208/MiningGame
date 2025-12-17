@@ -1,8 +1,8 @@
 export type DialogueContext = {
-	player: Player,
+	player: Player?,
 	entryId: string,
 	currentNodeId: string,
-	flags: { [string]: any },
+	flags: { [string]: any }?,
 	startedAt: number,
 }
 
