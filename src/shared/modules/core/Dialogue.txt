@@ -1,0 +1,31 @@
+=======================
+    DIALOGUE SYSTEM
+=======================
+
+-- server-authoritative
+-- UI -> slice -> DialogueServiceClient -> DialogueServiceServer
+    and the other way around.
+    using Signal between UI and slice
+    using Networker in services on both parties
+    server-client communication strictly happens between the services!!!
+
+    naming conventions (all lowercase and "." in between words):
+        NPC: 
+            npc.<npc_id>
+        Dialogue Entry (starting point) IDs:
+            dialogue.<npc_id>.<entry_id>
+        Dialogue Node IDs:
+            dialogue.<npc_id>.<entry_id>.<node_id>
+        Condition IDs:
+            <domain>.<subject>.<predicate>
+
+            examples:
+            <domain>:
+                quest
+                player
+                npc
+                inventory
+        Command IDs:
+            <domain>.<action>
+            
+        

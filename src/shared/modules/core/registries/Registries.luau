@@ -2,10 +2,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Registry = require(ReplicatedStorage.Shared.modules.core.Registry)
 local ItemType = require(ReplicatedStorage.Shared.modules.core.types.ItemType)
 local LootTableType = require(ReplicatedStorage.Shared.modules.core.types.LootTableType)
+local NPCTypes = require(ReplicatedStorage.Shared.modules.core.types.NPCTypes)
 local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
 local UpgradeType = require(ReplicatedStorage.Shared.modules.core.types.UpgradeType)
 local ZoneType = require(ReplicatedStorage.Shared.modules.core.types.ZoneType)
+local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
 
 type Registry<T> = Registry.Registry<T>
 
@@ -16,6 +18,11 @@ export type Registries = {
 	LOOTTABLE: Registry<LootTableType.LootTable>,
 	ZONE: Registry<ZoneType.ZoneData>,
 	QUEST: Registry<QuestType.QuestData>,
+	DIALOGUE_NODE: Registry<DialogueTypes.DialogueNode>,
+	DIALOGUE_ENTRY: Registry<DialogueTypes.DialogueEntry>,
+	DIALOGUE_CONDITION: Registry<DialogueTypes.DialogueCondition>,
+	DIALOGUE_COMMAND: Registry<DialogueTypes.DialogueCommand>,
+	NPC: Registry<NPCTypes.NPCData>,
 }
 
 local Registries: Registries = {
@@ -25,6 +32,11 @@ local Registries: Registries = {
 	LOOTTABLE = Registry.new() :: Registry<LootTableType.LootTable>,
 	ZONE = Registry.new() :: Registry<ZoneType.ZoneData>,
 	QUEST = Registry.new() :: Registry<QuestType.QuestData>,
+	DIALOGUE_NODE = Registry.new() :: Registry<DialogueTypes.DialogueNode>,
+	DIALOGUE_ENTRY = Registry.new() :: Registry<DialogueTypes.DialogueEntry>,
+	DIALOGUE_CONDITION = Registry.new() :: Registry<DialogueTypes.DialogueCondition>,
+	DIALOGUE_COMMAND = Registry.new() :: Registry<DialogueTypes.DialogueCommand>,
+	NPC = Registry.new() :: Registry<NPCTypes.NPCData>,
 }
 
 return Registries
