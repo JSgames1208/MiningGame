@@ -7,6 +7,7 @@ local e: typeof(React.createElement) = React.createElement
 export type ProgressBarProps = {
 	text: string,
 	showNumbers: boolean?,
+	pinnable: boolean,
 	current: number?,
 	target: number?,
 	LayoutOrder: number?,
@@ -66,7 +67,7 @@ local function ProgressBar(props: ProgressBarProps)
 			}),
 			e("UIStroke", {
 				Color = Color3.fromRGB(0, 0, 0),
-				Thickness = 7.5,
+				Thickness = props.pinnable and 7.5 or 4,
 			}),
 		}),
 		e("Frame", {

@@ -22,7 +22,7 @@ LootTables.DIRT = Registry.register(Registries.LOOTTABLE, "dirt", {
 		{ id = "efficiency_i", min = 1, max = 1, chance = 1000 },
 		{ id = "power_i", min = 1, max = 1, chance = 1000 },
 		{ id = "stone_pickaxe", min = 1, max = 1, chance = 500 },
-		{ id = "dirt", min = 2, max = 4, chance = 10000 },
+		{ id = "dirt", min = 3, max = 6, chance = 10000 },
 	},
 	xp = {
 		mining = 5,
@@ -42,7 +42,7 @@ LootTables.STONE = Registry.register(Registries.LOOTTABLE, "stone", {
 	},
 	xp = {
 		mining = 10,
-		player = 10,
+		player = 20,
 	},
 })
 
@@ -54,7 +54,7 @@ LootTables.COAL = Registry.register(Registries.LOOTTABLE, "coal", {
 		{ id = "efficiency_iii", min = 1, max = 1, chance = 500 },
 		{ id = "power_iii", min = 1, max = 1, chance = 500 },
 		{ id = "stone_pickaxe", min = 1, max = 1, chance = 2500 },
-		{ id = "coal", min = 2, max = 4, chance = 10000 },
+		{ id = "coal", min = 2, max = 3, chance = 10000 },
 	},
 	xp = {
 		mining = 25,

@@ -15,6 +15,7 @@ function QuestServiceClient.init(self: QuestServiceClient)
 
 	local prevQuests: Quests = {
 		active = {},
+		pinned = {},
 		completed = {},
 	}
 
@@ -51,7 +52,7 @@ function QuestServiceClient.init(self: QuestServiceClient)
 
 	local function onQuestsChanged(_newQuests: Quests?)
 		if not _newQuests then
-			_newQuests = { active = {}, completed = {} }
+			_newQuests = { active = {}, pinned = {}, completed = {} }
 		end
 
 		local newQuests: Quests = _newQuests :: Quests
@@ -85,6 +86,7 @@ function QuestServiceClient.init(self: QuestServiceClient)
 
 		prevQuests = {
 			active = newQuests.active,
+			pinned = newQuests.pinned,
 			completed = newQuests.completed,
 		}
 	end
@@ -99,6 +101,26 @@ function QuestServiceClient.init(self: QuestServiceClient)
 			onQuestsChanged(newVal)
 		end)
 	end)
+
+	for questId, _ in pairs(initialQuests.pinned) do
+		questSlice.actions.pinQuest(questId)
+	end
+
+	questSlice.signals.pinSignal:Connect(function(questId)
+		self:pinQuest(questId)
+	end)
+
+	questSlice.signals.unpinSignal:Connect(function(questId)
+		self:unpinQuest(questId)
+	end)
+end
+
+function QuestServiceClient.pinQuest(self: QuestServiceClient, questId: string)
+	self.networker:fire("pinQuest", questId)
+end
+
+function QuestServiceClient.unpinQuest(self: QuestServiceClient, questId: string)
+	self.networker:fire("unpinQuest", questId)
 end
 
 function QuestServiceClient.addQuest(self: QuestServiceClient, questId: string, quest: DataTemplate.SavedQuestProgress)

@@ -52,6 +52,7 @@ export type SavedQuestProgress = {
 
 export type Quests = {
 	active: { [string]: SavedQuestProgress },
+	pinned: { [string]: true },
 	completed: { [string]: true },
 }
 
@@ -110,6 +111,7 @@ local DefaultPlayerData: PlayerData = {
 	},
 	quests = {
 		active = {},
+		pinned = {},
 		completed = {},
 	},
 	zones = {

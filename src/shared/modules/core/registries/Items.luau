@@ -39,7 +39,7 @@ Items.WOODEN_PICKAXE = Registry.register(Registries.ITEM, "wooden_pickaxe", {
 	toolStats = {
 		toolType = "pickaxe",
 		durability = 100,
-		miningPower = 5,
+		miningPower = 1,
 		miningSpeed = 1.0,
 	},
 })
@@ -53,7 +53,7 @@ Items.STONE_PICKAXE = Registry.register(Registries.ITEM, "stone_pickaxe", {
 	toolStats = {
 		toolType = "pickaxe",
 		durability = 200,
-		miningPower = 2,
+		miningPower = 5,
 		miningSpeed = 1.2,
 	},
 })

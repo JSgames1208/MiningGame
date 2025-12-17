@@ -25,12 +25,13 @@ local function QuestItem(props: { id: string, LayoutOrder: number })
 		progress = quest.progress,
 	}
 
-	return e(QuestDisplay, { quest = disp, LayoutOrder = props.LayoutOrder })
+	return e(QuestDisplay, { quest = disp, pinnable = true, LayoutOrder = props.LayoutOrder })
 end
 
 local function QuestMenu()
 	local shown = ReactCharm.useAtom(questSlice.states.questsOpen)
 	local activeIds = ReactCharm.useAtom(questSlice.states.activeQuestIds)
+	ReactCharm.useAtom(questSlice.states.pinnedQuestIds)
 
 	local snapshot = {}
 	for _, id in ipairs(activeIds) do
@@ -67,12 +68,13 @@ local function QuestMenu()
 			children = {
 				e("ScrollingFrame", {
 					BackgroundTransparency = 1,
-					Size = UDim2.new(0.95, 0, 0.9, 0),
+					Size = UDim2.new(0.9, 0, 0.9, 0),
 					Position = UDim2.new(0.5, 0, 1, 0),
 					AnchorPoint = Vector2.new(0.5, 1),
 					ScrollingDirection = Enum.ScrollingDirection.Y,
 					ScrollingEnabled = true,
 					ScrollBarThickness = 20,
+					ClipsDescendants = true,
 					AutomaticCanvasSize = Enum.AutomaticSize.Y,
 					CanvasSize = UDim2.new(0, 0, 0, 0),
 					ZIndex = 5,

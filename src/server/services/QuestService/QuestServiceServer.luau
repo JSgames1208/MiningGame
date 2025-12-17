@@ -5,6 +5,7 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local QuestTypeModules = require(ServerScriptService.Server.services.QuestService.QuestTypes.QuestTypeModules)
 local Base = require(ServerScriptService.Server.services.QuestService.QuestTypes._Base)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Quests = require(ReplicatedStorage.Shared.modules.core.registries.Quests)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
@@ -27,6 +28,7 @@ local QuestServiceServer = {}
         }
     }
 ]]
+
 local Active: {
 	[number]: {
 		[string]: {
@@ -41,7 +43,10 @@ local Active: {
 	{}
 
 function QuestServiceServer.init(self: QuestServiceServer)
-	self.networker = Networker.server.new("QuestService", self, {})
+	self.networker = Networker.server.new("QuestService", self, {
+		self.pinQuest :: any,
+		self.unpinQuest :: any,
+	})
 end
 
 function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Player)
@@ -80,6 +85,40 @@ function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: P
 	end
 
 	Active[player.UserId] = nil
+end
+
+function QuestServiceServer.pinQuest(self: QuestServiceServer, player: Player, questId: string)
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return
+	end
+
+	if not playerQuests.active[questId] then
+		return
+	end
+
+	if playerQuests.pinned[questId] then
+		return
+	end
+
+	playerQuests.pinned = Sift.Dictionary.join(playerQuests.pinned, { [questId] = true })
+
+	DataService:set(player, { "quests" }, playerQuests)
+end
+
+function QuestServiceServer.unpinQuest(self: QuestServiceServer, player: Player, questId: string)
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return
+	end
+
+	if not playerQuests.pinned[questId] then
+		return
+	end
+
+	playerQuests.pinned[questId] = nil
+
+	DataService:set(player, { "quests" }, playerQuests)
 end
 
 local function buildRequirementMap(requirements: { { type: string, target: any, amount: number } })

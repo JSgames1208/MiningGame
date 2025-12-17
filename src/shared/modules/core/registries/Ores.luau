@@ -20,17 +20,17 @@ local Ores = {} :: Ores
 
 Ores.DIRT = Registry.register(Registries.ORE, "dirt", {
 	name = "Dirt",
-	maxHealth = 10,
+	maxHealth = 5,
 })
 
 Ores.STONE = Registry.register(Registries.ORE, "stone", {
 	name = "Stone",
-	maxHealth = 5,
+	maxHealth = 15,
 })
 
 Ores.COAL = Registry.register(Registries.ORE, "coal", {
 	name = "Coal",
-	maxHealth = 5,
+	maxHealth = 25,
 })
 
 function Ores.get(id: string)
