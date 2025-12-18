@@ -4,7 +4,7 @@ local DialogueFSM = require(ServerScriptService.Server.services.DialogueService.
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
 
-local function runTestDialogue()
+--[[local function runTestDialogue()
 	local entryId = "dialogue.miner.idle"
 
 	local entry = Registries.DIALOGUE_ENTRY:get(entryId)
@@ -20,6 +20,6 @@ local function runTestDialogue()
 		wait(1)
 		fsm:step()
 	end
-end
+end]]
 
-return runTestDialogue
+--return runTestDialogue

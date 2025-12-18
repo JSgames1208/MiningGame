@@ -13,23 +13,38 @@ register("dialogue.miner.idle.line_1", {
 	id = "dialogue.miner.idle.line_1",
 	type = "line",
 	speaker = "npc.miner",
-	text = "Just a miner. Nothing special.",
-	next = "dialogue.miner.idle.line_2",
+	text = "Ah, hello there!",
+	next = "dialogue.miner.idle.choice_1",
 })
 
-register("dialogue.miner.idle.line_2", {
-	id = "dialogue.miner.idle.line_2",
-	type = "line",
-	speaker = "npc.miner",
-	text = "It's a boring day today in the mines.",
-	next = "dialogue.miner.idle.line_3",
+register("dialogue.miner.idle.choice_1", {
+	id = "dialogue.miner.idle.choice_1",
+	type = "choice",
+	choices = {
+		{
+			text = "Got any work for me?",
+			next = "dialogue.miner.idle.line_work",
+		},
+		{
+			text = "Goodbye!",
+			next = "dialogue.miner.idle.line_bye",
+		},
+	},
 })
 
-register("dialogue.miner.idle.line_3", {
-	id = "dialogue.miner.idle.line_3",
+register("dialogue.miner.idle.line_work", {
+	id = "dialogue.miner.idle.line_work",
 	type = "line",
 	speaker = "npc.miner",
-	text = "I hope a fellow miner comes by soon.",
+	text = "Come back later, I might.",
+	next = nil,
+})
+
+register("dialogue.miner.idle.line_bye", {
+	id = "dialogue.miner.idle.line_bye",
+	type = "line",
+	speaker = "npc.miner",
+	text = "Goodbye!",
 	next = nil,
 })
 

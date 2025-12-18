@@ -19,8 +19,8 @@ local function register(id: string, data: QuestData): QuestData
 	return Registry.register(Registries.QUEST, id, data)
 end
 
-Quests.MINE_COAL_1 = register("mine_coal_1", {
-	name = "Mine Coal 1",
+Quests.MINE_COAL_1 = register("miner.quest_1", {
+	name = "Miner quest #1",
 	questType = { "MineQuest" },
 	requirements = {
 		{ type = "mine", target = "stone", amount = 3 },
@@ -29,8 +29,8 @@ Quests.MINE_COAL_1 = register("mine_coal_1", {
 	rewards = { items = { { id = "coal", amount = 3 } } },
 })
 
-Quests.MINE_COAL_2 = register("mine_coal_2", {
-	name = "Mine Coal 2",
+Quests.MINE_COAL_2 = register("miner.quest_2", {
+	name = "Miner quest #2",
 	questType = { "MineQuest" },
 	requirements = {
 		{ type = "mine", target = "stone", amount = 25 },

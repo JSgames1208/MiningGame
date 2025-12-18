@@ -11,6 +11,7 @@ local InventoryServiceClient = require(ReplicatedStorage.Shared.services.Invento
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
 local QuestServiceClient = require(ReplicatedStorage.Shared.services.QuestService.QuestServiceClient)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
+local dialogueSlice = require(ReplicatedStorage.Shared.ui.features.dialogue.state.dialogueSlice)
 local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
 
 local e = React.createElement
@@ -97,6 +98,8 @@ return function(parent: Instance)
 	InventoryServiceClient:setItem("upgrade", item5)
 
 	PlayerServiceClient:init()
+
+	dialogueSlice.actions.setDialoguePlaying(true)
 
 	local root = ReactRoblox.createRoot(parent)
 	root:render(e(RootUI))

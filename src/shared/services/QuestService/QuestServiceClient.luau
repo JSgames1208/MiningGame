@@ -139,6 +139,14 @@ function QuestServiceClient.removeQuest(self: QuestServiceClient, questId: strin
 	questSlice.actions.removeQuest(questId)
 end
 
+function QuestServiceClient.isStarted(self: QuestServiceClient, questId: string)
+	return self.networker:fetch("isStarted", questId)
+end
+
+function QuestServiceClient.isCompleted(self: QuestServiceClient, questId: string)
+	return self.networker:fetch("isCompleted", questId)
+end
+
 export type QuestServiceClient = typeof(QuestServiceClient) & {
 	networker: Networker.Client,
 }

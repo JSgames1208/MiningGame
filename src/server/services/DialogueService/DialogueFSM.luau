@@ -9,6 +9,7 @@ type DialogueContext = DialogueTypes.DialogueContext
 local states = {
 	idle = "idle",
 	playingLine = "playingLine",
+	awaitingChoice = "awaitingChoice",
 	finished = "finished",
 }
 
@@ -41,19 +42,47 @@ function DialogueFSM.step(self: DialogueFSM)
 	if self.state == states.playingLine then
 		local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
 		if not node then
-			warn("Node not found: " .. tostring(self.currentNodeId))
+			self.state = states.finished
 			return
 		end
 
-		if node.type == "line" then
-			print(node.speaker .. ": " .. node.text)
-
-			if node.next then
-				self.currentNodeId = node.next
-			else
-				self.state = states.finished
-			end
+		if node.type ~= "line" then
+			error("Expected line node, got " .. node.type)
 		end
+
+		print(node.speaker .. ": " .. node.text)
+
+		if node.next then
+			self.currentNodeId = node.next
+			local nextNode = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+			if nextNode and nextNode.type == "choice" then
+				self.state = states.awaitingChoice
+			end
+		else
+			self.state = states.finished
+		end
+	end
+
+	if self.state == states.awaitingChoice then
+		local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+		if not node or node.type ~= "choice" then
+			self.state = states.finished
+			return
+		end
+
+		print("Choices: ")
+		for i, choice in ipairs(node.choices) do
+			print(i .. ") " .. choice.text)
+		end
+
+		local selected = node.choices[2]
+
+		print(selected)
+
+		print("Selected: ", selected.text)
+
+		self.currentNodeId = selected.next
+		self.state = states.playingLine
 	end
 end
 

@@ -2,8 +2,18 @@ export type DialogueContext = {
 	player: Player?,
 	entryId: string,
 	currentNodeId: string,
-	flags: { [string]: any }?,
+	services: { quest: any },
 	startedAt: number,
+
+	runtime: {
+		[string]: any,
+	},
+}
+
+export type Choice = {
+	text: string,
+	next: string,
+	conditions: { string }?,
 }
 
 export type BaseNode = {
@@ -21,13 +31,7 @@ export type LineNode = BaseNode & {
 
 export type ChoiceNode = BaseNode & {
 	type: "choice",
-	choices: {
-		{
-			text: string,
-			next: string,
-			conditions: { string }?,
-		}
-	},
+	choices: { Choice },
 }
 
 export type EndNode = BaseNode & {
@@ -51,5 +55,12 @@ export type CommandData = {
 }
 
 export type DialogueCommand = (ctx: DialogueContext, data: CommandData) -> ()
+
+export type DialogueSnapshot = {
+	npcId: string,
+	nodeType: string,
+	speaker: string,
+	text: string,
+}
 
 return {}

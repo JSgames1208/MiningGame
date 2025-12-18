@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local React = require(ReplicatedStorage.Packages.React)
 local TooltipProvider = require(ReplicatedStorage.Shared.ui.core.components.TooltipProvider)
+local DialogueScreen = require(ReplicatedStorage.Shared.ui.features.dialogue.screens.DialogueScreen)
 local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local InventoryScreen = require(ReplicatedStorage.Shared.ui.features.inventory.screens.InventoryScreen)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
@@ -25,6 +26,7 @@ local function RootUI()
 			UpgradeScreen = e(UpgradeScreen),
 			TooltipProvider = e(TooltipProvider),
 			QuestScreen = e(QuestScreen),
+			DialogueScreen = e(DialogueScreen),
 		}),
 	})
 end

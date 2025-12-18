@@ -278,6 +278,19 @@ function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Play
 	userQuests[questId] = nil
 end
 
+function QuestServiceServer.isStarted(self: QuestServiceServer, player: Player, questId: string): boolean
+	return Active[player.UserId] and Active[player.UserId][questId] ~= nil
+end
+
+function QuestServiceServer.isCompleted(self: QuestServiceServer, player: Player, questId: string): boolean
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return false
+	end
+
+	return playerQuests.completed[questId]
+end
+
 export type QuestServiceServer = typeof(QuestServiceServer) & {
 	networker: Networker.Server,
 }
