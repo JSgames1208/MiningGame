@@ -99,8 +99,6 @@ return function(parent: Instance)
 
 	PlayerServiceClient:init()
 
-	dialogueSlice.actions.setDialoguePlaying(true)
-
 	local root = ReactRoblox.createRoot(parent)
 	root:render(e(RootUI))
 

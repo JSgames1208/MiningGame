@@ -12,6 +12,7 @@ local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
+local hudSlice = require(ReplicatedStorage.Shared.ui.features.hud.state.hudSlice)
 local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.inventorySlice)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 
@@ -94,7 +95,7 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	end)
 
 	mouse.Button1Down:Connect(function()
-		if self.isHovering and not miningSlice.states.mining() then
+		if self.isHovering and not miningSlice.states.mining() and not hudSlice.states.screenCovered() then
 			self.networker:fire("startMining", mouse.Target)
 		end
 	end)
@@ -134,7 +135,7 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 
 	-- MOBILE TAP SUPPORT
 	UserInputService.TouchTap:Connect(function(touchPositions)
-		if miningSlice.states.mining() then
+		if hudSlice.states.screenCovered() then
 			return
 		end
 

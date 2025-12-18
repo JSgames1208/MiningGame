@@ -5,6 +5,7 @@ local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Regi
 local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
 
 type DialogueContext = DialogueTypes.DialogueContext
+type DialogueSnapshot = DialogueTypes.DialogueSnapshot
 
 local states = {
 	idle = "idle",
@@ -21,7 +22,10 @@ export type DialogueFSM = {
 	state: string,
 	currentNodeId: string,
 
-	step: (self: DialogueFSM) -> (),
+	advance: (self: DialogueFSM) -> DialogueFSM,
+	selectChoice: (self: DialogueFSM, index: number) -> DialogueFSM,
+	isFinished: (self: DialogueFSM) -> boolean,
+	makeSnapshot: (self: DialogueFSM) -> DialogueSnapshot,
 } & typeof(setmetatable({}, DialogueFSM))
 
 function DialogueFSM.new(ctx: DialogueContext): DialogueFSM
@@ -34,13 +38,14 @@ function DialogueFSM.new(ctx: DialogueContext): DialogueFSM
 	return self
 end
 
-function DialogueFSM.step(self: DialogueFSM)
+function DialogueFSM.advance(self: DialogueFSM)
 	if self.state == states.idle then
 		self.state = states.playingLine
 	end
 
 	if self.state == states.playingLine then
 		local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+		print(node)
 		if not node then
 			self.state = states.finished
 			return
@@ -49,8 +54,6 @@ function DialogueFSM.step(self: DialogueFSM)
 		if node.type ~= "line" then
 			error("Expected line node, got " .. node.type)
 		end
-
-		print(node.speaker .. ": " .. node.text)
 
 		if node.next then
 			self.currentNodeId = node.next
@@ -64,30 +67,72 @@ function DialogueFSM.step(self: DialogueFSM)
 	end
 
 	if self.state == states.awaitingChoice then
-		local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
-		if not node or node.type ~= "choice" then
-			self.state = states.finished
-			return
-		end
-
-		print("Choices: ")
-		for i, choice in ipairs(node.choices) do
-			print(i .. ") " .. choice.text)
-		end
-
-		local selected = node.choices[2]
-
-		print(selected)
-
-		print("Selected: ", selected.text)
-
-		self.currentNodeId = selected.next
-		self.state = states.playingLine
+		return self
 	end
+
+	return self
 end
 
-function DialogueFSM:isFinished()
+function DialogueFSM.selectChoice(self: DialogueFSM, index: number): DialogueFSM
+	if self.state ~= states.awaitingChoice then
+		error("Cannot select choice when not awaitingChoice!")
+	end
+
+	local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+	if not node or node.type ~= "choice" then
+		error("Current node is not a choice node!")
+	end
+
+	local choice = node.choices[index]
+	if not choice then
+		error("Invalid choice index: " .. index)
+	end
+
+	self.currentNodeId = choice.next
+	self.state = states.playingLine
+
+	return self
+end
+
+function DialogueFSM.isFinished(self: DialogueFSM)
 	return self.state == states.finished
+end
+
+function DialogueFSM.makeSnapshot(self: DialogueFSM): DialogueSnapshot
+	if self.state == states.finished then
+		return {
+			npcId = self.ctx.npcId,
+			nodeType = "end",
+		}
+	end
+
+	local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+	if not node then
+		return {
+			npcId = self.ctx.npcId,
+			nodeType = "end",
+		}
+	end
+
+	if node.type == "line" then
+		return {
+			npcId = self.ctx.npcId,
+			nodeType = "line",
+			speaker = node.speaker,
+			text = node.text,
+		}
+	end
+
+	if node.type == "choice" then
+		return {
+			npcId = self.ctx.npcId,
+			prompt = node.prompt,
+			nodeType = "choice",
+			choices = node.choices,
+		}
+	end
+
+	error("Unknown node type: " .. node.type)
 end
 
 return DialogueFSM

@@ -32,6 +32,9 @@ local function ThemedFrame(props: ThemedFrameProps)
 			e("UICorner", {
 				CornerRadius = UDim.new(0.05, 0),
 			}),
+			props.children,
 		},
 	})
 end
+
+return ThemedFrame

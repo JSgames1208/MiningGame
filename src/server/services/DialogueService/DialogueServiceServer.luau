@@ -12,7 +12,14 @@ type DialogueFSM = DialogueFSM.DialogueFSM
 local DialogueServiceServer = {}
 
 function DialogueServiceServer.init(self: DialogueServiceServer)
-	self.networker = Networker.server.new("DialogueService", self, {})
+	self.networker = Networker.server.new("DialogueService", self, {
+		self.startDialogue :: any,
+		self.advance :: any,
+		self.selectChoice :: any,
+		self.finish :: any,
+	})
+
+	self.activeDialogs = {}
 end
 
 function DialogueServiceServer.startDialogue(
@@ -22,6 +29,7 @@ function DialogueServiceServer.startDialogue(
 	entryId: string
 )
 	local entry = Registries.DIALOGUE_ENTRY:get(entryId)
+
 	if not entry then
 		return
 	end
@@ -42,6 +50,38 @@ function DialogueServiceServer.startDialogue(
 
 	local fsm = DialogueFSM.new(ctx)
 	self.activeDialogs[player.UserId] = fsm
+
+	local snapshot = fsm:makeSnapshot()
+
+	self.networker:fire(player, "snapshot", snapshot)
+end
+
+function DialogueServiceServer.advance(self: DialogueServiceServer, player: Player)
+	local fsm = self.activeDialogs[player.UserId]
+	if not fsm then
+		return
+	end
+
+	local snapshot = fsm:advance():makeSnapshot()
+
+	print(snapshot)
+
+	self.networker:fire(player, "snapshot", snapshot)
+end
+
+function DialogueServiceServer.selectChoice(self: DialogueServiceServer, player: Player, index: number)
+	local fsm = self.activeDialogs[player.UserId]
+	if not fsm then
+		return
+	end
+
+	local snapshot = fsm:selectChoice(index):makeSnapshot()
+
+	self.networker:fire(player, "snapshot", snapshot)
+end
+
+function DialogueServiceServer.finish(self: DialogueServiceServer, player: Player)
+	self.activeDialogs[player.UserId] = nil
 end
 
 export type DialogueServiceServer = typeof(DialogueServiceServer) & {
@@ -49,4 +89,4 @@ export type DialogueServiceServer = typeof(DialogueServiceServer) & {
 	activeDialogs: { [number]: DialogueFSM },
 }
 
-return DialogueServiceServer
+return DialogueServiceServer :: DialogueServiceServer

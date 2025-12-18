@@ -1,8 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
-local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Shared.ui.core.components.TextLabel)
+local ThemedFrame = require(ReplicatedStorage.Shared.ui.core.components.ThemedFrame)
 local e: typeof(React.createElement) = React.createElement
 
 export type MenuScreenProps = {
@@ -14,25 +14,15 @@ export type MenuScreenProps = {
 
 local function MenuScreen(props: MenuScreenProps)
 	return e(
-		SlideOutFrame,
+		ThemedFrame,
 		{
-			Shown = props.shown,
+			shown = props.shown,
 			Size = UDim2.new(0, 2000, 0, 1500),
-			BackgroundTransparency = 0,
-			BackgroundColor3 = Color3.fromRGB(245, 245, 245),
 			From = UDim2.new(0.5, 0, 0.5, 0),
 			To = UDim2.new(0.5, 0, -0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Speed = 10,
 			children = {
-				e("UIStroke", {
-					Color = Color3.fromRGB(0, 0, 0),
-					Thickness = 10,
-					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-				}),
-				e("UICorner", {
-					CornerRadius = UDim.new(0.05, 0),
-				}),
 				e(TextLabel, {
 					Text = props.menuTitle,
 					Font = Enum.Font.FredokaOne,
@@ -88,7 +78,7 @@ local function MenuScreen(props: MenuScreenProps)
 				}),
 				table.unpack(props.children),
 			},
-		} :: SlideOutFrame.SlideOutProps
+		} :: ThemedFrame.ThemedFrameProps
 	)
 end
 
