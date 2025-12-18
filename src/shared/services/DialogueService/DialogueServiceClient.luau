@@ -14,7 +14,7 @@ local DialogueServiceClient = {}
 function DialogueServiceClient.init(self: DialogueServiceClient)
 	self.networker = Networker.client.new("DialogueService", self)
 
-	self.startDialogue(self, "npc.miner", "dialogue.miner.idle")
+	--self.startDialogue(self, "npc.miner", "dialogue.miner.idle")
 
 	self.clickConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		if gameProcessed then
@@ -22,6 +22,9 @@ function DialogueServiceClient.init(self: DialogueServiceClient)
 		end
 
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if not dialogueSlice.states.dialoguePlaying() then
+				return
+			end
 			self:advance()
 		end
 	end)
@@ -32,7 +35,6 @@ function DialogueServiceClient.init(self: DialogueServiceClient)
 end
 
 function DialogueServiceClient.startDialogue(self: DialogueServiceClient, npcId: string, entryId: string)
-	self.networker:fire("startDialogue", npcId, entryId)
 	dialogueSlice.actions.setDialoguePlaying(true)
 end
 

@@ -20,6 +20,35 @@ function DialogueServiceServer.init(self: DialogueServiceServer)
 	})
 
 	self.activeDialogs = {}
+
+	local npcFolder = workspace:FindFirstChild("NPCs")
+	if not npcFolder then
+		npcFolder = Instance.new("Folder", workspace)
+		npcFolder.Name = "NPCs"
+	end
+
+	for _, npc in npcFolder:GetChildren() do
+		local npcId = npc:GetAttribute("id")
+		if not npcId then
+			continue
+		end
+
+		local npcEntry = Registries.NPC:get(npcId)
+
+		if not npcEntry then
+			continue
+		end
+
+		local proxPrompt: ProximityPrompt? = npc:FindFirstChild("ProximityPrompt")
+
+		if not proxPrompt then
+			continue
+		end
+
+		proxPrompt.Triggered:Connect(function(player: Player)
+			self:startDialogue(player, npcId, npcEntry.dialogues[1])
+		end)
+	end
 end
 
 function DialogueServiceServer.startDialogue(
@@ -33,6 +62,8 @@ function DialogueServiceServer.startDialogue(
 	if not entry then
 		return
 	end
+
+	self.networker:fire(player, "startDialogue", npcId, entryId)
 
 	local ctx = {
 		player = player,
