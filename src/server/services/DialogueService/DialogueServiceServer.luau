@@ -87,17 +87,29 @@ function DialogueServiceServer.startDialogue(
 	self.networker:fire(player, "snapshot", snapshot)
 end
 
-function DialogueServiceServer.advance(self: DialogueServiceServer, player: Player)
+function DialogueServiceServer.sendSnapshot(self: DialogueServiceServer, player: Player)
 	local fsm = self.activeDialogs[player.UserId]
 	if not fsm then
 		return
 	end
 
-	local snapshot = fsm:advance():makeSnapshot()
-
-	print(snapshot)
+	local snapshot = fsm:makeSnapshot()
 
 	self.networker:fire(player, "snapshot", snapshot)
+end
+
+function DialogueServiceServer.advance(self: DialogueServiceServer, player: Player)
+	local fsm: DialogueFSM = self.activeDialogs[player.UserId]
+	if not fsm then
+		return
+	end
+
+	fsm:advance()
+	self:sendSnapshot(player)
+
+	if fsm:isFinished() then
+		self:finish(player)
+	end
 end
 
 function DialogueServiceServer.selectChoice(self: DialogueServiceServer, player: Player, index: number)
@@ -106,9 +118,8 @@ function DialogueServiceServer.selectChoice(self: DialogueServiceServer, player:
 		return
 	end
 
-	local snapshot = fsm:selectChoice(index):makeSnapshot()
-
-	self.networker:fire(player, "snapshot", snapshot)
+	fsm:selectChoice(index)
+	self:sendSnapshot(player)
 end
 
 function DialogueServiceServer.finish(self: DialogueServiceServer, player: Player)

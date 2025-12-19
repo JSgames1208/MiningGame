@@ -82,8 +82,8 @@ register("dialogue.miner.idle.line_bye_4", {
 	},
 })
 
-register("dialogue.miner.idle.line_bye_6", {
-	id = "dialogue.miner.idle.line_bye_6",
+register("dialogue.miner.idle.line_bye_5", {
+	id = "dialogue.miner.idle.line_bye_5",
 	type = "line",
 	speaker = "npc.miner",
 	text = "Bye!",
