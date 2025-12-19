@@ -14,6 +14,19 @@ register("dialogue.miner.idle", {
 	conditions = nil,
 })
 
+register("dialogue.miner.quest", {
+	start = "dialogue.miner.quest.line_1",
+	priority = 1,
+	conditions = {
+		{
+			type = "quest.not_started",
+			data = {
+				questId = "miner.quest_1",
+			},
+		},
+	},
+})
+
 function DialogueEntries.get(id: string): DialogueEntry?
 	return Registries.DIALOGUE_ENTRY:get(id)
 end

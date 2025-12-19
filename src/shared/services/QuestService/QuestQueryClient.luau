@@ -10,4 +10,8 @@ function QuestQuery:isCompleted(player: Player, questId: string)
 	return QuestServiceClient:isCompleted(questId)
 end
 
+function QuestQuery:grantQuest(player, questId: string)
+	warn("Can't grant quests from client!")
+end
+
 return QuestQuery

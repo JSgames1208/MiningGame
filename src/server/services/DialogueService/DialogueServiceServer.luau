@@ -6,8 +6,13 @@ local DialogueFSM = require(ServerScriptService.Server.services.DialogueService.
 local QuestQueryServer = require(ServerScriptService.Server.services.QuestService.QuestQueryServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
 
 type DialogueFSM = DialogueFSM.DialogueFSM
+
+local services = {
+	quest = QuestQueryServer,
+}
 
 local DialogueServiceServer = {}
 
@@ -46,9 +51,80 @@ function DialogueServiceServer.init(self: DialogueServiceServer)
 		end
 
 		proxPrompt.Triggered:Connect(function(player: Player)
-			self:startDialogue(player, npcId, npcEntry.dialogues[1])
+			local entry = self:pickEntry(player, npcId)
+
+			if entry then
+				self:startDialogue(player, npcId, entry)
+			end
 		end)
 	end
+end
+
+function DialogueServiceServer.checkConditions(
+	self: DialogueServiceServer,
+	player: Player,
+	conditions: {
+		{
+			type: string,
+			data: {
+				[string]: any,
+			},
+		}
+	}
+): boolean
+	if not conditions then
+		return true
+	end
+
+	for _, cond in conditions do
+		local entry = Registries.DIALOGUE_CONDITION:get(cond.type)
+
+		if not entry then
+			continue
+		end
+
+		local dialogue = self.activeDialogs[player.UserId]
+
+		if not dialogue then
+			continue
+		end
+
+		if not entry(dialogue.ctx, cond.data) then
+			return false
+		end
+	end
+
+	return true
+end
+
+function DialogueServiceServer.pickEntry(self: DialogueServiceServer, player: Player, npcId: string): string?
+	local npcEntry = Registries.NPC:get(npcId)
+	if not npcEntry then
+		return
+	end
+
+	local maxPriority: number = -math.huge
+	local maxEntry: string = nil
+
+	for _, d in npcEntry.dialogues do
+		local entry = Registries.DIALOGUE_ENTRY:get(d)
+
+		if not entry then
+			continue
+		end
+
+		entry.priority = entry.priority or 0
+		if entry.priority > maxPriority then
+			if entry.conditions and not self:checkConditions(player, entry.conditions) then
+				continue
+			end
+
+			maxPriority = entry.priority :: number
+			maxEntry = d
+		end
+	end
+
+	return maxEntry
 end
 
 function DialogueServiceServer.startDialogue(

@@ -23,13 +23,22 @@ Quests.MINE_COAL_1 = register("miner.quest_1", {
 	name = "Miner quest #1",
 	questType = { "MineQuest" },
 	requirements = {
-		{ type = "mine", target = "stone", amount = 3 },
-		{ type = "mine", target = "coal", amount = 1 },
+		{ type = "mine", target = "dirt", amount = 2 },
 	},
-	rewards = { items = { { id = "coal", amount = 3 } } },
+	rewards = { items = { { id = "efficiency_i", amount = 1 } } },
 })
 
-Quests.MINE_COAL_2 = register("miner.quest_2", {
+Quests.MINE_COAL_1 = register("miner.quest_2", {
+	name = "Miner quest #1",
+	questType = { "MineQuest" },
+	requirements = {
+		{ type = "mine", target = "dirt", amount = 3 },
+		{ type = "mine", target = "stone", amount = 1 },
+	},
+	rewards = { items = { { id = "power_ii", amount = 1 } } },
+})
+
+Quests.MINE_COAL_2 = register("miner.quest_3", {
 	name = "Miner quest #2",
 	questType = { "MineQuest" },
 	requirements = {

@@ -10,4 +10,8 @@ function QuestQuery:isCompleted(player: Player, questId: string): boolean
 	return QuestServiceServer:isCompleted(player, questId)
 end
 
+function QuestQuery:grantQuest(player: Player, questId: string)
+	QuestServiceServer:grantQuest(player, questId)
+end
+
 return QuestQuery

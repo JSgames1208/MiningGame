@@ -9,6 +9,10 @@ local function register(id: string, data: DialogueCommand)
 	return Registries.DIALOGUE_COMMAND:register(id, data)
 end
 
+register("grant_quest", function(ctx: DialogueTypes.DialogueContext, data: DialogueTypes.CommandData)
+	ctx.services.quest:grantQuest(ctx.player, data.questId)
+end)
+
 function DialogueCommands.get(id: string): DialogueCommand?
 	return Registries.DIALOGUE_COMMAND:get(id)
 end

@@ -45,11 +45,12 @@ function DialogueFSM.advance(self: DialogueFSM)
 
 	if self.state == states.playingLine then
 		local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
-		print(node)
 		if not node then
 			self.state = states.finished
 			return
 		end
+
+		self:runCommands(node)
 
 		if node.type ~= "line" then
 			error("Expected line node, got " .. node.type)
@@ -79,6 +80,9 @@ function DialogueFSM.selectChoice(self: DialogueFSM, index: number): DialogueFSM
 	end
 
 	local node = Registries.DIALOGUE_NODE:get(self.currentNodeId)
+	if node then
+		self:runCommands(node)
+	end
 	if not node or node.type ~= "choice" then
 		error("Current node is not a choice node!")
 	end
@@ -90,6 +94,28 @@ function DialogueFSM.selectChoice(self: DialogueFSM, index: number): DialogueFSM
 
 	self.currentNodeId = choice.next
 	self.state = states.playingLine
+
+	return self
+end
+
+function DialogueFSM.runCommands(self: DialogueFSM, node: DialogueTypes.DialogueNode): DialogueFSM
+	if node.type ~= "line" then
+		return self
+	end
+
+	if not node.commands then
+		return self
+	end
+
+	for _, command in node.commands do
+		local fn = Registries.DIALOGUE_COMMAND:get(command.type)
+		if not fn then
+			warn("Unknown dialogue command: " .. command.type)
+			continue
+		end
+
+		fn(self.ctx, command)
+	end
 
 	return self
 end

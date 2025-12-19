@@ -46,12 +46,17 @@ export type DialogueNode = LineNode | ChoiceNode | EndNode
 
 export type DialogueEntry = {
 	start: string,
-	conditions: { string }?,
+	conditions: {
+		{
+			type: string,
+			data: any,
+		}
+	}?,
 	priority: number?,
 	weight: number?,
 }
 
-export type DialogueCondition = (context: DialogueContext) -> boolean
+export type DialogueCondition = (context: DialogueContext, data: any) -> boolean
 
 export type CommandData = {
 	type: string,
