@@ -222,6 +222,7 @@ function QuestServiceServer.startQuest(
 		end
 
 		if pickedModule then
+			print(reqId, pickedModule)
 			moduleMap[reqId] = pickedModule
 			local conn = pickedModule.startRequirement(runtime, reqRuntime)
 			requirementConnections[reqId] = conn

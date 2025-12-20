@@ -3,6 +3,7 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Quests = require(ReplicatedStorage.Shared.modules.core.registries.Quests)
+local QuestFormatter = require(ReplicatedStorage.Shared.services.QuestService.QuestFormatter)
 local ImageIds = require(ReplicatedStorage.Shared.ui.core.ImageIds)
 local Button = require(ReplicatedStorage.Shared.ui.core.components.Button)
 local Intersection = require(ReplicatedStorage.Shared.ui.core.components.Intersection)
@@ -53,7 +54,7 @@ local function QuestDisplay(props: QuestDisplayProps)
 			bars = Sift.Array.push(
 				bars,
 				e(ProgressBar, {
-					text = `{requirement.type} {requirement.amount} {requirement.target}`,
+					text = QuestFormatter(requirement.type, requirement.target, requirement.amount),
 					pinnable = props.pinnable,
 					showNumbers = true,
 					current = reqProgress.current,

@@ -10,10 +10,7 @@ function CurrencyQuest.supports(reqType: string): boolean
 	return reqType == "currency"
 end
 
-function CurrencyQuest.startRequirements(
-	runtime: Base.Runtime,
-	reqRuntime: Base.RequirementRuntime
-): RBXScriptConnection
+function CurrencyQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.RequirementRuntime): RBXScriptConnection
 	local conn
 	conn = QuestSignals.CurrencyAdded:Connect(function(player: Player, currencyType: string, amount: number)
 		assert(player, "Player is missing from CurrencyAdded signal")

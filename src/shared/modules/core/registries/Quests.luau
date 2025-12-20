@@ -66,9 +66,9 @@ Quests.MINE_COAL_2 = register("miner.quest_5", {
 
 Quests.BLACKSMITH_1 = register("blacksmith.quest_1", {
 	name = "Blacksmith quest #1",
-	questType = { "CollectQuest" },
+	questType = { "CurrencyQuest" },
 	requirements = {
-		{ type = "collect", target = "dirt", amount = 1 },
+		{ type = "currency", target = "coins", amount = 150 },
 	},
 	rewards = { items = { { id = "efficiency_i", amount = 1 } } },
 })
