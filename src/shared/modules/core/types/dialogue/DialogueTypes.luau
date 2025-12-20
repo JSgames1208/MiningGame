@@ -57,17 +57,30 @@ export type EndNode = BaseNode & {
 
 export type DialogueNode = LineNode | ChoiceNode | EndNode
 
-export type DialogueEntry = {
+export type DialogueConditionBlock = {
+	type: string,
+	data: any,
+}
+
+export type DialogueStage = {
+	when: { DialogueConditionBlock }?,
 	start: string,
-	conditions: {
-		{
-			type: string,
-			data: any,
-		}
-	}?,
 	priority: number?,
 	weight: number?,
 }
+
+export type SimpleDialogueEntry = {
+	start: string,
+	conditions: { DialogueConditionBlock }?,
+	priority: number?,
+	weight: number?,
+}
+
+export type StagedDialogueEntry = {
+	stages: { DialogueStage },
+}
+
+export type DialogueEntry = SimpleDialogueEntry | StagedDialogueEntry
 
 export type DialogueCondition = (context: DialogueQueryContext, data: any) -> boolean
 

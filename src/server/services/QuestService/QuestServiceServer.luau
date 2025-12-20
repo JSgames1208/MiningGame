@@ -90,6 +90,32 @@ function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: P
 	Active[player.UserId] = nil
 end
 
+function QuestServiceServer.getCurrentQuest(
+	self: QuestServiceServer,
+	player: Player,
+	questline: QuestType.Questline
+): string?
+	for _, questId in ipairs(questline.quests) do
+		if not self:isFinished(player, questId) then
+			return questId
+		end
+	end
+	return nil
+end
+
+function QuestServiceServer.getNextQuest(
+	self: QuestServiceServer,
+	player: Player,
+	questline: QuestType.Questline
+): string?
+	for _, questId in ipairs(questline.quests) do
+		if not self:isStarted(player, questId) and not self:isFinished(player, questId) then
+			return questId
+		end
+	end
+	return nil
+end
+
 function QuestServiceServer.pinQuest(self: QuestServiceServer, player: Player, questId: string)
 	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
 	if not playerQuests then

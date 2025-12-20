@@ -11,33 +11,14 @@ end
 
 register("dialogue.miner.idle", {
 	start = "dialogue.miner.idle.line_1",
-	conditions = nil,
 })
 
-register("dialogue.miner.quest", {
-	start = "dialogue.miner.quest.line_1",
-	priority = 1,
-	conditions = {
-		{
-			type = "quest.not_started",
-			data = {
-				questId = "miner.quest_1",
-			},
-		},
-	},
+register("dialogue.miner.quest.main.offer", {
+	start = "dialogue.miner.quest.main.offer.line_1",
 })
 
-register("dialogue.miner.quest_complete", {
-	start = "dialogue.miner.quest_complete.line_1",
-	priority = 2,
-	conditions = {
-		{
-			type = "quest.completed",
-			data = {
-				questId = "miner.quest_1",
-			},
-		},
-	},
+register("dialogue.miner.quest.main.turnin", {
+	start = "dialogue.miner.quest.main.turnin.line_1",
 })
 
 function DialogueEntries.get(id: string): DialogueEntry?

@@ -1,6 +1,10 @@
 export type NPCData = {
 	name: string,
-	dialogues: { string }, -- entry IDs in priority order
+	idleDialogue: string,
+	questTurninDialogue: string,
+	questOfferDialogue: string,
+	dialogues: { string }?,
+	questline: string,
 }
 
 return {}

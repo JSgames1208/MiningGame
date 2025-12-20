@@ -9,12 +9,57 @@ local function register(id: string, data: DialogueCommand)
 	return Registries.DIALOGUE_COMMAND:register(id, data)
 end
 
-register("grant_quest", function(ctx: DialogueTypes.DialogueRuntimeContext, data: DialogueTypes.CommandData)
-	ctx.services.quest:grantQuest(ctx.player, data.questId)
+register("grant_quest", function(ctx: DialogueTypes.DialogueRuntimeContext)
+	assert(ctx.player, "Dialogue command missing player!")
+
+	local questService = ctx.services.quest
+	local npcId = ctx.npcId
+
+	local npcEntry = Registries.NPC:get(npcId)
+	local questline = npcEntry and npcEntry.questline
+	assert(questline, "No questline for NPC: " .. npcId)
+
+	local questlineEntry = Registries.QUESTLINE:get(questline)
+
+	if not questlineEntry then
+		warn("No questline entry for questline: " .. questline)
+		return
+	end
+
+	local nextQuest = questService:getNextQuest(ctx.player, questlineEntry)
+
+	if not nextQuest then
+		warn("No next quest for questline: " .. questline)
+		return
+	end
+
+	ctx.services.quest:grantQuest(ctx.player, nextQuest)
 end)
 
-register("complete_quest", function(ctx: DialogueTypes.DialogueRuntimeContext, data: DialogueTypes.CommandData)
-	ctx.services.quest:completeQuest(ctx.player, data.questId)
+register("complete_quest", function(ctx: DialogueTypes.DialogueRuntimeContext)
+	assert(ctx.player, "Dialogue command missing player!")
+
+	local questService = ctx.services.quest
+	local npcId = ctx.npcId
+
+	local npcEntry = Registries.NPC:get(npcId)
+	local questline = npcEntry and npcEntry.questline
+	assert(questline, "No questline for NPC: " .. npcId)
+
+	local questlineEntry = Registries.QUESTLINE:get(questline)
+
+	if not questlineEntry then
+		warn("No questline entry for questline: " .. questline)
+		return
+	end
+
+	local currentQuest = questService:getCurrentQuest(ctx.player, questlineEntry)
+	if not currentQuest then
+		warn("No current quest for questline: " .. questline)
+		return
+	end
+
+	ctx.services.quest:completeQuest(ctx.player, currentQuest)
 end)
 
 function DialogueCommands.get(id: string): DialogueCommand?

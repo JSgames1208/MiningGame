@@ -12,11 +12,11 @@ end
 
 register("npc.miner", {
 	name = "Miner",
-	dialogues = {
-		"dialogue.miner.idle",
-		"dialogue.miner.quest",
-		"dialogue.miner.quest_complete",
-	},
+	idleDialogue = "dialogue.miner.idle",
+	questTurninDialogue = "dialogue.miner.quest.turnin.line_1",
+	questOfferDialogue = "dialogue.miner.quest.offer.line_1",
+	questline = "miner.quest.main",
+	dialogues = {},
 })
 
 function NPCs.get(id: string): NPCTypes.NPCData?

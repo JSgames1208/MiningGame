@@ -1,44 +1,20 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local registerQuestDialogue = require(ReplicatedStorage.Shared.modules.core.registries.dialogue.registerQuestDialogue)
 local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
-local BASE = "dialogue.miner.quest."
 
 type DialogueNode = DialogueTypes.DialogueNode
 
-local r = function(id: string, data: DialogueNode)
-	return Registries.DIALOGUE_NODE:register(BASE .. id, Sift.Dictionary.join(data, { id = BASE .. id }))
-end
-
 local function registerAll()
-	r("line_1", {
-		id = "line_1",
-		type = "line",
-		speaker = "npc.miner",
-		text = "Ah, hello there!",
-		next = BASE .. "line_2",
+	registerQuestDialogue({
+		npcId = "npc.miner",
+		questId = "miner.quest_1",
+		stage = "offer",
 	})
 
-	r("line_2", {
-		id = "line_2",
-		type = "line",
-		speaker = "npc.miner",
-		text = "Oh, so you want a quest?",
-		next = BASE .. "line_3",
-	})
-
-	r("line_3", {
-		id = "line_3",
-		type = "line",
-		speaker = "npc.miner",
-		text = "Sure, here is your quest!",
-		commands = {
-			{
-				type = "grant_quest",
-				questId = "miner.quest_1",
-			},
-		},
-		next = nil,
+	registerQuestDialogue({
+		npcId = "npc.miner",
+		questId = "miner.quest_1",
+		stage = "complete",
 	})
 end
 

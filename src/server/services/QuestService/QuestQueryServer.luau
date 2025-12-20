@@ -1,4 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
 local QuestServiceServer = require(ServerScriptService.Server.services.QuestService.QuestServiceServer)
 local QuestQuery = {}
 
@@ -12,6 +14,14 @@ end
 
 function QuestQuery:isFinished(player: Player, questId: string): boolean
 	return QuestServiceServer:isFinished(player, questId)
+end
+
+function QuestQuery:getNextQuest(player: Player, questline: QuestType.Questline)
+	return QuestServiceServer:getNextQuest(player, questline)
+end
+
+function QuestQuery:getCurrentQuest(player: Player, questline: QuestType.Questline)
+	return QuestServiceServer:getCurrentQuest(player, questline)
 end
 
 function QuestQuery:grantQuest(player: Player, questId: string)

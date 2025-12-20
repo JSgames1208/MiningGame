@@ -23,6 +23,7 @@ export type Registries = {
 	DIALOGUE_CONDITION: Registry<DialogueTypes.DialogueCondition>,
 	DIALOGUE_COMMAND: Registry<DialogueTypes.DialogueCommand>,
 	NPC: Registry<NPCTypes.NPCData>,
+	QUESTLINE: Registry<QuestType.Questline>,
 }
 
 local Registries: Registries = {
@@ -37,6 +38,7 @@ local Registries: Registries = {
 	DIALOGUE_CONDITION = Registry.new() :: Registry<DialogueTypes.DialogueCondition>,
 	DIALOGUE_COMMAND = Registry.new() :: Registry<DialogueTypes.DialogueCommand>,
 	NPC = Registry.new() :: Registry<NPCTypes.NPCData>,
+	QUESTLINE = Registry.new() :: Registry<QuestType.Questline>,
 }
 
 return Registries
