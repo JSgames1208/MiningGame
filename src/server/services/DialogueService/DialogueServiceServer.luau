@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DialogueFSM = require(ServerScriptService.Server.services.DialogueService.DialogueFSM)
 local QuestQueryServer = require(ServerScriptService.Server.services.QuestService.QuestQueryServer)
+local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
@@ -267,7 +268,7 @@ function DialogueServiceServer.startDialogue(
 		return
 	end
 
-	local startNode, priority = self:resolveEntryStart(player, npcId, entry)
+	local startNode = self:resolveEntryStart(player, npcId, entry)
 
 	dprint("startNode: ", startNode)
 
@@ -275,6 +276,7 @@ function DialogueServiceServer.startDialogue(
 		return
 	end
 
+	QuestSignals.TalkedTo:Fire(player, npcId)
 	self.networker:fire(player, "startDialogue", npcId, entryId)
 
 	local ctx = {

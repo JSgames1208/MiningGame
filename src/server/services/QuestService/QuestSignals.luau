@@ -6,5 +6,6 @@ local QuestSignals = {}
 QuestSignals.OreMined = Signal.new()
 QuestSignals.ItemCollected = Signal.new()
 QuestSignals.CurrencyAdded = Signal.new()
+QuestSignals.TalkedTo = Signal.new()
 
 return QuestSignals
