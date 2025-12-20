@@ -66,45 +66,45 @@ Quests.MINE_COAL_2 = register("miner.quest_5", {
 
 Quests.BLACKSMITH_1 = register("blacksmith.quest_1", {
 	name = "Blacksmith quest #1",
-	questType = { "MineQuest" },
+	questType = { "CollectQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 1 },
+		{ type = "collect", target = "dirt", amount = 1 },
 	},
 	rewards = { items = { { id = "efficiency_i", amount = 1 } } },
 })
 
 Quests.BLACKSMITH_2 = register("blacksmith.quest_2", {
 	name = "Blacksmith quest #2",
-	questType = { "MineQuest" },
+	questType = { "CollectQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 1 },
+		{ type = "collect", target = "stone", amount = 1 },
 	},
 	rewards = { items = { { id = "power_ii", amount = 1 } } },
 })
 
 Quests.BLACKSMITH_3 = register("blacksmith.quest_3", {
 	name = "Blacksmith quest #3",
-	questType = { "MineQuest" },
+	questType = { "CollectQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 1 },
+		{ type = "collect", target = "dirt", amount = 1 },
 	},
 	rewards = { items = { { id = "coal", amount = 25 } } },
 })
 
 Quests.BLACKSMITH_4 = register("blacksmith.quest_4", {
 	name = "Blacksmith quest #4",
-	questType = { "MineQuest" },
+	questType = { "CollectQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 1 },
+		{ type = "collect", target = "dirt", amount = 1 },
 	},
 	rewards = { items = { { id = "coal", amount = 25 } } },
 })
 
 Quests.BLACKSMITH_5 = register("blacksmith.quest_5", {
 	name = "Blacksmith quest #5",
-	questType = { "MineQuest" },
+	questType = { "CollectQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 1 },
+		{ type = "collect", target = "dirt", amount = 1 },
 	},
 	rewards = { items = { { id = "coal", amount = 25 } } },
 })

@@ -27,9 +27,12 @@ export type RequirementRuntime = {
 	complete: () -> (),
 }
 
+--[[
+ALL QUEST TYPE MODULES HAVE TO IMPLEMENT THIS INTERFACE
+]]
 export type QuestTypeModule = {
 	supports: (reqType: string) -> boolean,
-	startRequirement: (runtime: Runtime, req: RequirementRuntime) -> RBXScriptConnection?,
+	startRequirement: (runtime: Runtime, req: RequirementRuntime) -> RBXScriptConnection,
 	stopRequirement: (conn: RBXScriptConnection?) -> (),
 }
 

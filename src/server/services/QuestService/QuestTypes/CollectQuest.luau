@@ -1,27 +1,28 @@
---!strict
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Base = require(ServerScriptService.Server.services.QuestService.QuestTypes._Base)
-local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
-type QuestData = QuestType.QuestData
 
-local MineQuest = {} :: Base.QuestTypeModule
+local CollectQuest = {} :: Base.QuestTypeModule
 
-function MineQuest.supports(reqType: string): boolean
-	return reqType == "mine"
+function CollectQuest.supports(reqType: string): boolean
+	return reqType == "collect"
 end
 
-function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.RequirementRuntime): RBXScriptConnection
+function CollectQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.RequirementRuntime): RBXScriptConnection
 	local conn
-	conn = QuestSignals.OreMined:Connect(function(player: Player, oreId: string)
+	conn = QuestSignals.ItemCollected:Connect(function(player, itemId, amount)
+		assert(player, "Player is missing from ItemCollected signal")
+		assert(itemId, "Item ID is missing from ItemCollected signal")
+
+		amount = amount or 1
+
 		if player ~= runtime.player then
 			return
 		end
 
-		if oreId ~= reqRuntime.data.target then
+		if itemId ~= reqRuntime.data.target then
 			return
 		end
 
@@ -30,7 +31,7 @@ function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.Requ
 			return
 		end
 
-		req.current = req.current + 1
+		req.current = req.current + amount
 		if req.current > req.target then
 			req.current = req.target
 		end
@@ -43,7 +44,7 @@ function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.Requ
 			}
 		end
 
-		DataService:set(player, { "quests" }, playerQuests)
+		DataService:set(runtime.player, { "quests" }, playerQuests)
 
 		if req.current >= req.target then
 			reqRuntime.complete()
@@ -53,11 +54,11 @@ function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.Requ
 	return conn
 end
 
-function MineQuest.stopRequirement(conn: RBXScriptConnection?)
+function CollectQuest.stopRequirement(conn: RBXScriptConnection?)
 	if conn then
 		conn:Disconnect()
 		conn = nil
 	end
 end
 
-return MineQuest
+return CollectQuest

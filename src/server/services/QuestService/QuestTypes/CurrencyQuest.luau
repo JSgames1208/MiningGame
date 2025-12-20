@@ -1,27 +1,28 @@
---!strict
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Base = require(ServerScriptService.Server.services.QuestService.QuestTypes._Base)
-local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
-type QuestData = QuestType.QuestData
 
-local MineQuest = {} :: Base.QuestTypeModule
+local CurrencyQuest = {} :: Base.QuestTypeModule
 
-function MineQuest.supports(reqType: string): boolean
-	return reqType == "mine"
+function CurrencyQuest.supports(reqType: string): boolean
+	return reqType == "currency"
 end
 
-function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.RequirementRuntime): RBXScriptConnection
+function CurrencyQuest.startRequirements(
+	runtime: Base.Runtime,
+	reqRuntime: Base.RequirementRuntime
+): RBXScriptConnection
 	local conn
-	conn = QuestSignals.OreMined:Connect(function(player: Player, oreId: string)
+	conn = QuestSignals.CurrencyAdded:Connect(function(player: Player, currencyType: string, amount: number)
+		assert(player, "Player is missing from CurrencyAdded signal")
+
 		if player ~= runtime.player then
 			return
 		end
 
-		if oreId ~= reqRuntime.data.target then
+		if currencyType ~= reqRuntime.data.target then
 			return
 		end
 
@@ -30,7 +31,7 @@ function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.Requ
 			return
 		end
 
-		req.current = req.current + 1
+		req.current = req.current + amount
 		if req.current > req.target then
 			req.current = req.target
 		end
@@ -53,11 +54,11 @@ function MineQuest.startRequirement(runtime: Base.Runtime, reqRuntime: Base.Requ
 	return conn
 end
 
-function MineQuest.stopRequirement(conn: RBXScriptConnection?)
+function CurrencyQuest.stopRequirement(conn: RBXScriptConnection?)
 	if conn then
 		conn:Disconnect()
 		conn = nil
 	end
 end
 
-return MineQuest
+return CurrencyQuest

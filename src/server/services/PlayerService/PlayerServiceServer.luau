@@ -1,7 +1,9 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 
 local PlayerServiceServer = {}
@@ -14,6 +16,8 @@ function PlayerServiceServer.addCurrency(self: PlayerServiceServer, player: Play
 	DataService:update(player, { "currency", "coins" }, function(currentValue: number)
 		return currentValue + amount
 	end)
+
+	QuestSignals.CurrencyAdded:Fire(player, "coins", amount)
 
 	self.networker:fire(player, "setCurrency", DataService:get(player, { "currency", "coins" }))
 end
