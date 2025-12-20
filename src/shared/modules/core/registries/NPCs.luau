@@ -19,6 +19,15 @@ register("npc.miner", {
 	dialogues = {},
 })
 
+register("npc.blacksmith", {
+	name = "Blacksmith",
+	idleDialogue = "dialogue.blacksmith.idle",
+	questTurninDialogue = "dialogue.blacksmith.quest.turnin.line_1",
+	questOfferDialogue = "dialogue.blacksmith.quest.offer.line_1",
+	questline = "blacksmith.quest.main",
+	dialogues = {},
+})
+
 function NPCs.get(id: string): NPCTypes.NPCData?
 	return Registries.NPC:get(id)
 end

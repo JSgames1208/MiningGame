@@ -1,7 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local quest = require(ReplicatedStorage.Shared.modules.core.registries.dialogue.miner.quest)
 local SlideOutFrame = require(ReplicatedStorage.Shared.ui.core.components.SlideOutFrame)
 local hudSlice = require(ReplicatedStorage.Shared.ui.features.hud.state.hudSlice)
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)

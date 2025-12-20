@@ -21,6 +21,18 @@ register("dialogue.miner.quest.main.turnin", {
 	start = "dialogue.miner.quest.main.turnin.line_1",
 })
 
+register("dialogue.blacksmith.idle", {
+	start = "dialogue.blacksmith.idle.line_1",
+})
+
+register("dialogue.blacksmith.quest.main.offer", {
+	start = "dialogue.blacksmith.quest.main.offer.line_1",
+})
+
+register("dialogue.blacksmith.quest.main.turnin", {
+	start = "dialogue.blacksmith.quest.main.turnin.line_1",
+})
+
 function DialogueEntries.get(id: string): DialogueEntry?
 	return Registries.DIALOGUE_ENTRY:get(id)
 end

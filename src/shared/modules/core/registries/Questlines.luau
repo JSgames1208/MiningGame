@@ -16,4 +16,15 @@ register("miner.quest.main", {
 	},
 })
 
+register("blacksmith.quest.main", {
+	id = "blacksmith.quest.main",
+	quests = {
+		"blacksmith.quest_1",
+		"blacksmith.quest_2",
+		"blacksmith.quest_3",
+		"blacksmith.quest_4",
+		"blacksmith.quest_5",
+	},
+})
+
 return {}
