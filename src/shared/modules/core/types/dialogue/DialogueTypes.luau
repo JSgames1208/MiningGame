@@ -1,4 +1,17 @@
-export type DialogueContext = {
+export type DialogueQueryContext = {
+	player: Player?,
+	npcId: string,
+
+	services: {
+		quest: any,
+	},
+
+	runtime: {
+		[string]: any,
+	}?,
+}
+
+export type DialogueRuntimeContext = {
 	player: Player?,
 	entryId: string,
 	npcId: string,
@@ -56,14 +69,14 @@ export type DialogueEntry = {
 	weight: number?,
 }
 
-export type DialogueCondition = (context: DialogueContext, data: any) -> boolean
+export type DialogueCondition = (context: DialogueQueryContext, data: any) -> boolean
 
 export type CommandData = {
 	type: string,
 	[string]: any,
 }
 
-export type DialogueCommand = (ctx: DialogueContext, data: CommandData) -> ()
+export type DialogueCommand = (ctx: DialogueRuntimeContext, data: CommandData) -> ()
 
 export type BaseSnapshot<T = NodeType> = {
 	npcId: string,

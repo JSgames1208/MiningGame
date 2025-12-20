@@ -9,9 +9,14 @@ local function register(id: string, data: DialogueCondition)
 	return Registries.DIALOGUE_CONDITION:register(id, data)
 end
 
-register("quest.not_started", function(ctx: DialogueTypes.DialogueContext, data)
-	print(ctx, data.questId)
-	return not ctx.services.quest:isStarted(ctx.player, data.questId)
+register("quest.not_started", function(ctx: DialogueTypes.DialogueQueryContext, data)
+	return not ctx.services.quest:isActive(ctx.player, data.questId)
+		and not ctx.services.quest:isCompleted(ctx.player, data.questId)
+		and not ctx.services.quest:isFinished(ctx.player, data.questId)
+end)
+
+register("quest.completed", function(ctx: DialogueTypes.DialogueQueryContext, data)
+	return ctx.services.quest:isCompleted(ctx.player, data.questId)
 end)
 
 function DialogueConditions.get(id: string): DialogueCondition?

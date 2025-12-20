@@ -15,6 +15,7 @@ register("npc.miner", {
 	dialogues = {
 		"dialogue.miner.idle",
 		"dialogue.miner.quest",
+		"dialogue.miner.quest_complete",
 	},
 })
 

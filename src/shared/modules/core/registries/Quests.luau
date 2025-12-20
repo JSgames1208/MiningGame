@@ -23,7 +23,7 @@ Quests.MINE_COAL_1 = register("miner.quest_1", {
 	name = "Miner quest #1",
 	questType = { "MineQuest" },
 	requirements = {
-		{ type = "mine", target = "dirt", amount = 2 },
+		{ type = "mine", target = "dirt", amount = 1 },
 	},
 	rewards = { items = { { id = "efficiency_i", amount = 1 } } },
 })

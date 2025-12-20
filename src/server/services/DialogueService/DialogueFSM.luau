@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialogue.DialogueTypes)
 
-type DialogueContext = DialogueTypes.DialogueContext
+type DialogueRuntimeContext = DialogueTypes.DialogueRuntimeContext
 type DialogueSnapshot = DialogueTypes.DialogueSnapshot
 
 local states = {
@@ -18,7 +18,7 @@ local DialogueFSM = {}
 DialogueFSM.__index = DialogueFSM
 
 export type DialogueFSM = {
-	ctx: DialogueContext,
+	ctx: DialogueRuntimeContext,
 	state: string,
 	currentNodeId: string,
 
@@ -28,7 +28,7 @@ export type DialogueFSM = {
 	makeSnapshot: (self: DialogueFSM) -> DialogueSnapshot,
 } & typeof(setmetatable({}, DialogueFSM))
 
-function DialogueFSM.new(ctx: DialogueContext): DialogueFSM
+function DialogueFSM.new(ctx: DialogueRuntimeContext): DialogueFSM
 	local self = setmetatable({}, DialogueFSM) :: DialogueFSM
 
 	self.ctx = ctx

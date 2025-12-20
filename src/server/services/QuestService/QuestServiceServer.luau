@@ -46,6 +46,9 @@ function QuestServiceServer.init(self: QuestServiceServer)
 	self.networker = Networker.server.new("QuestService", self, {
 		self.pinQuest :: any,
 		self.unpinQuest :: any,
+		self.isStarted :: any,
+		self.isCompleted :: any,
+		self.isFinished :: any,
 	})
 end
 
@@ -248,6 +251,7 @@ function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Play
 	end
 
 	local q = userQuests[questId]
+
 	if not q then
 		return
 	end
@@ -288,7 +292,28 @@ function QuestServiceServer.isCompleted(self: QuestServiceServer, player: Player
 		return false
 	end
 
-	return playerQuests.completed[questId]
+	if playerQuests.active and playerQuests.active[questId] then
+		local quest = playerQuests.active[questId]
+
+		for _, req in pairs(quest.progress) do
+			if req.current < req.target then
+				return false
+			end
+		end
+
+		return true
+	end
+
+	return false
+end
+
+function QuestServiceServer.isFinished(self: QuestServiceServer, player: Player, questId: string): boolean
+	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
+	if not playerQuests then
+		return false
+	end
+
+	return playerQuests.completed and playerQuests.completed[questId]
 end
 
 export type QuestServiceServer = typeof(QuestServiceServer) & {

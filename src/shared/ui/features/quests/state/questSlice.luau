@@ -65,11 +65,18 @@ return {
 			end
 		end,
 		removeQuest = function(questId: string)
+			unpinSignal:Fire(questId)
+			pinnedQuestIds(function(list)
+				return Sift.Array.filter(list, function(id)
+					return id ~= questId
+				end)
+			end)
 			activeQuestIds(function(list)
 				return Sift.Array.filter(list, function(id)
 					return id ~= questId
 				end)
 			end)
+			questById[questId] = nil
 		end,
 		getQuestById = function(id: string)
 			return questById[id]

@@ -147,6 +147,10 @@ function QuestServiceClient.isCompleted(self: QuestServiceClient, questId: strin
 	return self.networker:fetch("isCompleted", questId)
 end
 
+function QuestServiceClient.isFinished(self: QuestServiceClient, questId: string)
+	return self.networker:fetch("isFinished", questId)
+end
+
 export type QuestServiceClient = typeof(QuestServiceClient) & {
 	networker: Networker.Client,
 }

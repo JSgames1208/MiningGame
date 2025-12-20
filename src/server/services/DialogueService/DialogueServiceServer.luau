@@ -10,10 +10,6 @@ local DialogueTypes = require(ReplicatedStorage.Shared.modules.core.types.dialog
 
 type DialogueFSM = DialogueFSM.DialogueFSM
 
-local services = {
-	quest = QuestQueryServer,
-}
-
 local DialogueServiceServer = {}
 
 function DialogueServiceServer.init(self: DialogueServiceServer)
@@ -63,6 +59,7 @@ end
 function DialogueServiceServer.checkConditions(
 	self: DialogueServiceServer,
 	player: Player,
+	npcId: string,
 	conditions: {
 		{
 			type: string,
@@ -76,20 +73,23 @@ function DialogueServiceServer.checkConditions(
 		return true
 	end
 
+	local ctx: DialogueTypes.DialogueQueryContext = {
+		player = player,
+		npcId = npcId,
+		services = {
+			quest = QuestQueryServer,
+		},
+	}
+
 	for _, cond in conditions do
-		local entry = Registries.DIALOGUE_CONDITION:get(cond.type)
+		local fn = Registries.DIALOGUE_CONDITION:get(cond.type)
 
-		if not entry then
+		if not fn then
+			warn("Missing dialogue condition:", cond.type)
 			continue
 		end
 
-		local dialogue = self.activeDialogs[player.UserId]
-
-		if not dialogue then
-			continue
-		end
-
-		if not entry(dialogue.ctx, cond.data) then
+		if not fn(ctx, cond.data) then
 			return false
 		end
 	end
@@ -115,7 +115,7 @@ function DialogueServiceServer.pickEntry(self: DialogueServiceServer, player: Pl
 
 		entry.priority = entry.priority or 0
 		if entry.priority > maxPriority then
-			if entry.conditions and not self:checkConditions(player, entry.conditions) then
+			if entry.conditions and not self:checkConditions(player, npcId, entry.conditions) then
 				continue
 			end
 

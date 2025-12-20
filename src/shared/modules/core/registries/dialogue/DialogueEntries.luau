@@ -27,6 +27,19 @@ register("dialogue.miner.quest", {
 	},
 })
 
+register("dialogue.miner.quest_complete", {
+	start = "dialogue.miner.quest_complete.line_1",
+	priority = 2,
+	conditions = {
+		{
+			type = "quest.completed",
+			data = {
+				questId = "miner.quest_1",
+			},
+		},
+	},
+})
+
 function DialogueEntries.get(id: string): DialogueEntry?
 	return Registries.DIALOGUE_ENTRY:get(id)
 end
