@@ -62,6 +62,7 @@ local function QuestMenu()
 	return e(
 		MenuScreen,
 		{
+			addCloseButton = true,
 			shown = shown,
 			menuTitle = "Quests",
 			setOpen = questSlice.actions.setQuestsOpen,

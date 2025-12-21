@@ -22,6 +22,7 @@ local function SelectItemMenu(props: SelectItemMenuProps)
 	local equippedToolGuid = ReactCharm.useAtom(toolSlice.states.equipped)
 
 	return e(MenuScreen, {
+		addCloseButton = true,
 		shown = props.shown,
 		menuTitle = props.menuTitle or "Select Item!",
 		setOpen = props.setOpen,

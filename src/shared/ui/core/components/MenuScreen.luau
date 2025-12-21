@@ -14,12 +14,14 @@ export type MenuScreenProps = {
 }
 
 local function MenuScreen(props: MenuScreenProps)
-	props.addCloseButton = props.addCloseButton ~= nil and props.addCloseButton or true
+	if props.addCloseButton == nil then
+		props.addCloseButton = true
+	end
 
 	local closeButton = nil
 
 	if props.addCloseButton then
-		e(Button, {
+		closeButton = e(Button, {
 			Size = UDim2.new(0.1, 0, 0.1, 0),
 			SizeConstraint = Enum.SizeConstraint.RelativeYY,
 			Position = UDim2.new(1, 0, 0, 0),
@@ -29,7 +31,7 @@ local function MenuScreen(props: MenuScreenProps)
 			onClick = function()
 				props.setOpen(false)
 			end,
-			ZIndex = 5,
+			ZIndex = 6,
 			Children = {
 				e(TextLabel, {
 					Text = "X",

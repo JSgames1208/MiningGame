@@ -14,6 +14,7 @@ local function MainInventory()
 	local tab = ReactCharm.useAtom(inventorySlice.states.tab)
 
 	return e(MenuScreen, {
+		addCloseButton = true,
 		shown = shown,
 		menuTitle = "Inventory!",
 		setOpen = inventorySlice.actions.setInventoryOpen,

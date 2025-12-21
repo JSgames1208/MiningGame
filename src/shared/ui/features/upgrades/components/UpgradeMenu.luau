@@ -14,6 +14,7 @@ local function UpgradeMenu()
 	local selectedTool = tooltipThunk.actions.getToolInstance(selectedGuid) or { id = "" }
 
 	return e(MenuScreen, {
+		addCloseButton = true,
 		shown = shown,
 		menuTitle = "Upgrades!",
 		setOpen = upgradeSlice.actions.setOpen,

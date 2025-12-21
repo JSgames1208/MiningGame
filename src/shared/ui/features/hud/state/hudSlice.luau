@@ -5,6 +5,7 @@ local inventorySlice = require(ReplicatedStorage.Shared.ui.features.inventory.st
 local miningSlice = require(ReplicatedStorage.Shared.ui.features.mining.state.miningSlice)
 local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
 local upgradeSlice = require(ReplicatedStorage.Shared.ui.features.upgrades.state.upgradeSlice)
+local zoneSlice = require(ReplicatedStorage.Shared.ui.features.zones.state.zoneSlice)
 local atom: typeof(Charm.atom) = Charm.atom
 
 local screenCovered = Charm.computed(function()
@@ -13,6 +14,7 @@ local screenCovered = Charm.computed(function()
 		or upgradeSlice.states.upgradeMenuOpen()
 		or questSlice.states.questsOpen()
 		or dialogueSlice.states.dialoguePlaying()
+		or zoneSlice.states.confirmMenuOpen()
 end)
 
 local shown = Charm.computed(function()
