@@ -22,6 +22,7 @@ export type ItemData = {
 
 	toolStats: ToolStats?,
 	upgrade: UpgradeData?,
+	modifierId: string?,
 }
 
 return {}

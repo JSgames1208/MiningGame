@@ -13,6 +13,9 @@ export type XP = {
 export type LootTable = {
 	maxChance: number,
 	drops: { Drop }?,
+	currency: {
+		coins: number?,
+	}?,
 	xp: XP?,
 }
 

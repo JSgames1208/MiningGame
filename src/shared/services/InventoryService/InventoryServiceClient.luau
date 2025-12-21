@@ -19,6 +19,10 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 			inventorySlice.actions.setItem(categoryName, entry)
 		end
 	end
+
+	inventorySlice.signals.itemPressedSignal:Connect(function(entry: InventoryEntry)
+		self.networker:fire("itemPressed", entry)
+	end)
 end
 
 function InventoryServiceClient.removeItem(self: InventoryServiceClient, category: InventoryCategory, key: string)

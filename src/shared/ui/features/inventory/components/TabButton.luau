@@ -10,7 +10,7 @@ local e: typeof(React.createElement) = React.createElement
 local TAB_IMAGES = {
 	tool = ImageIds.icons.stone_pickaxe,
 	upgrade = ImageIds.icons.placeholder,
-	potion = ImageIds.icons.potion_green,
+	potion = ImageIds.icons["potion.potion.mining_speed_1"],
 	item = ImageIds.icons.dirt,
 }
 

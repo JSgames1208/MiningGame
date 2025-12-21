@@ -2,10 +2,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local AttributeServiceServer = require(ServerScriptService.Server.services.AttributeService.AttributeServiceServer)
 local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Items = require(ReplicatedStorage.Shared.modules.core.registries.Items)
+local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 
 local InventoryServiceServer = {}
 
@@ -13,7 +15,9 @@ type InventoryEntry = DataTemplate.InventoryEntry
 type InventoryCategory = DataTemplate.InventoryCategory
 
 function InventoryServiceServer.init(self: InventoryServiceServer)
-	self.networker = Networker.server.new("InventoryService", self, {})
+	self.networker = Networker.server.new("InventoryService", self, {
+		self.itemPressed :: any,
+	})
 end
 
 local function getInventoryKey(entry: InventoryEntry): string
@@ -90,6 +94,30 @@ function InventoryServiceServer.removeItem(
 		end)
 
 		self.networker:fire(player, "setItem", category, DataService:get(player, { "inventory", category, key }))
+	end
+end
+
+function InventoryServiceServer.itemPressed(self: InventoryServiceServer, player: Player, entry: InventoryEntry)
+	local itemEntry = Items.get(entry.id)
+
+	if not itemEntry then
+		return
+	end
+
+	if itemEntry.type == "tool" then
+		return
+	elseif itemEntry.type == "potion" then
+		local modifierId = itemEntry.modifierId
+		if modifierId then
+			local modifier = Registries.MODIFIER:get(modifierId)
+
+			if modifier then
+				modifier = table.clone(modifier)
+				AttributeServiceServer:addModifier(player, modifier)
+
+				self:removeItem(player, entry.id)
+			end
+		end
 	end
 end
 

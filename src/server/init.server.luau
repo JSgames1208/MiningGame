@@ -17,7 +17,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 })
 
 AttributeServiceServer:init()
@@ -38,13 +38,4 @@ Players.PlayerAdded:Connect(function(player)
 	UpgradeServiceServer:onPlayerAdded(player)
 	InventoryServiceServer:onPlayerAdded(player)
 	QuestServiceServer:onPlayerAdded(player)
-
-	AttributeServiceServer:addModifier(player, {
-		id = "test",
-		attribute = "mining_power",
-		type = "ADD",
-		value = 1,
-		persistent = true,
-		expiresAt = os.time() + 15,
-	})
 end)

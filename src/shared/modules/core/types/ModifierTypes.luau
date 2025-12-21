@@ -6,6 +6,11 @@ export type Modifier = {
 	attribute: string,
 	value: number,
 	persistent: boolean,
+
+	icon: string?,
+	displayName: string?,
+
+	duration: number?,
 	expiresAt: number?,
 	source: string?,
 }

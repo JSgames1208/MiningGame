@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local atom: typeof(Charm.atom) = Charm.atom
 
@@ -9,6 +10,8 @@ type ToolInstance = DataTemplate.ToolInstance
 type Item = ToolInstance | { id: string }
 type InventoryEntry = DataTemplate.InventoryEntry
 type InventoryCategory = DataTemplate.InventoryCategory
+
+local itemPressedSignal = Signal.new()
 
 local inventoryOpen: Atom<boolean> = atom(false)
 local tab = atom("tool")
@@ -107,6 +110,9 @@ return {
 		inventoryOpen = inventoryOpen,
 		inventory = inventory,
 		tab = tab,
+	},
+	signals = {
+		itemPressedSignal = itemPressedSignal,
 	},
 	actions = actions,
 }

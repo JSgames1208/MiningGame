@@ -7,15 +7,11 @@ local toolSlice = require(ReplicatedStorage.Shared.ui.features.inventory.state.t
 local e: typeof(React.createElement) = React.createElement
 
 local function ScrollingInventory()
-	local inventoryOpen = ReactCharm.useAtom(inventorySlice.states.inventoryOpen)
+	--local inventoryOpen = ReactCharm.useAtom(inventorySlice.states.inventoryOpen)
 	local tab = ReactCharm.useAtom(inventorySlice.states.tab)
 	local equippedToolId = ReactCharm.useAtom(toolSlice.states.equipped)
 
-	if not inventoryOpen then
-		return nil
-	end
-
-	local inventory = inventorySlice.states.inventory()
+	local inventory = ReactCharm.useAtom(inventorySlice.states.inventory)
 	local categoryMap = inventory[tab]
 
 	local items = {}

@@ -59,11 +59,11 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		error("[MiningServiceServer] TOOL HAS NO STATS!")
 	end
 
-	--local finalStats = ToolUtil.getStats(toolStats, (toolInstance.toolData :: any).upgrades)
-	local miningSpeed = toolStats.miningSpeed / AttributeServiceServer:get(player, "mining_speed")
+	local miningSpeed = AttributeServiceServer:get(player, "mining_speed")
+	local miningLength = toolStats.miningSpeed / miningSpeed
 	local miningPower = toolStats.miningPower * AttributeServiceServer:get(player, "mining_power")
 
-	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / miningSpeed < tick() then
+	if not lastMined[player.UserId] or lastMined[player.UserId] + miningLength < tick() then
 		lastMined[player.UserId] = tick()
 
 		local oreData = OreStore.getOreInstance(target)
@@ -95,7 +95,6 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 				self.networker:fire(player, "stopMining")
 				target:Destroy()
 
-				PlayerServiceServer:addCurrency(player, 100)
 				LootServiceServer:giveLoot(player, LootTables.get(oreData.id))
 			end)
 		end

@@ -30,6 +30,12 @@ Attributes.MINING_POWER = register("mining_power", {
 	maxValue = math.huge,
 })
 
+Attributes.COINS = register("coins", {
+	defaultValue = 1,
+	minValue = 0.01,
+	maxValue = math.huge,
+})
+
 function Attributes.get(id: string): Attribute?
 	return Registries.ATTRIBUTE:get(id)
 end

@@ -43,7 +43,7 @@ return function(parent: Instance)
 	end
 
 	local item1 = {
-		id = "potion_yellow",
+		id = "potion.coins_1",
 		amount = 10,
 		type = "item",
 		data = {},
@@ -54,7 +54,7 @@ return function(parent: Instance)
 	InventoryServiceClient:setItem("potion", item1)
 
 	local item2 = {
-		id = "potion_green",
+		id = "potion.mining_speed_1",
 		amount = 5,
 		type = "item",
 		data = {},

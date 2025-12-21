@@ -15,9 +15,9 @@ export type Items = {
 	STONE: ItemData,
 	COAL: ItemData,
 
-	POTION_RED: ItemData,
-	POTION_GREEN: ItemData,
-	POTION_YELLOW: ItemData,
+	POTION_MINING_POWER_1: ItemData,
+	POTION_MINING_SPEED_1: ItemData,
+	POTION_COINS_1: ItemData,
 
 	EFFICIENCY_I: ItemData,
 	EFFICIENCY_II: ItemData,
@@ -79,25 +79,31 @@ Items.COAL = Registry.register(Registries.ITEM, "coal", {
 	type = "item",
 })
 
-Items.POTION_RED = Registry.register(Registries.ITEM, "potion_red", {
-	name = "Red Potion",
-	description = "A red potion.",
+Items.POTION_MINING_POWER_1 = Registry.register(Registries.ITEM, "potion.mining_power_1", {
+	name = "Mining Power Potion I",
+	description = "A mining power potion.",
 	rarity = "rare",
 	type = "potion",
+
+	modifierId = "potion.mining_power_1",
 })
 
-Items.POTION_GREEN = Registry.register(Registries.ITEM, "potion_green", {
-	name = "Green Potion",
-	description = "A green potion.",
+Items.POTION_MINING_SPEED_1 = Registry.register(Registries.ITEM, "potion.mining_speed_1", {
+	name = "Mining Speed Potion I",
+	description = "A mining speed potion.",
 	rarity = "rare",
 	type = "potion",
+
+	modifierId = "potion.mining_speed_1",
 })
 
-Items.POTION_YELLOW = Registry.register(Registries.ITEM, "potion_yellow", {
-	name = "Yellow Potion",
-	description = "A yellow potion.",
+Items.POTION_COINS_1 = Registry.register(Registries.ITEM, "potion.coins_1", {
+	name = "Coin Potion I",
+	description = "A coins potion.",
 	rarity = "rare",
 	type = "potion",
+
+	modifierId = "potion.coins_1",
 })
 
 Items.EFFICIENCY_I = Registry.register(Registries.ITEM, "efficiency_i", {

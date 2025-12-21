@@ -167,6 +167,11 @@ function AttributeServiceServer.get(self: AttributeServiceServer, player: Player
 	end
 
 	local attrState = attributesState[attributeId]
+	if not attrState then
+		warn("AttributeServiceServer: get called for unknown attribute:", attributeId)
+		return 0
+	end
+
 	if not attrState.dirty then
 		return attrState.cachedValue
 	else
@@ -292,9 +297,67 @@ function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServe
 	return total
 end
 
+function AttributeServiceServer.hasActiveModifier(self: AttributeServiceServer, player: Player, modifierId: string)
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		return false
+	end
+
+	for _, attrState in pairs(attributesState) do
+		if attrState.modifiers[modifierId] then
+			return true
+		end
+	end
+
+	return false
+end
+
+function AttributeServiceServer.updateModifier(
+	self: AttributeServiceServer,
+	player: Player,
+	modifierId: string,
+	newModifier: Modifier
+)
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: updateModifier called before initialization!")
+		return
+	end
+
+	for _, attrState in pairs(attributesState) do
+		local oldModifier = attrState.modifiers[modifierId]
+		if oldModifier then
+			local oldExpiresAt = oldModifier.expiresAt or 0
+
+			local newExpiresAt = newModifier.duration and oldExpiresAt + newModifier.duration
+				or newModifier.expiresAt
+				or oldExpiresAt
+
+			if newExpiresAt and os.time() > newExpiresAt then
+				return
+			end
+
+			newModifier.expiresAt = newExpiresAt
+			attrState.modifiers[modifierId] = newModifier
+			attrState.dirty = true
+
+			if newModifier.persistent then
+				self:savePlayerAttributes(player)
+			end
+
+			return
+		end
+	end
+end
+
 function AttributeServiceServer.addModifier(self: AttributeServiceServer, player: Player, modifier: Modifier)
 	assert(type(modifier) == "table" and type(modifier.id) == "string", "invalid modifier")
 	assert(modifier.attribute, "modifier must target attribute")
+
+	if self:hasActiveModifier(player, modifier.id) then
+		self:updateModifier(player, modifier.id, modifier)
+		return
+	end
 
 	local attributeId = modifier.attribute
 	local attributesState = self.playerAttributes[player.UserId]
@@ -313,10 +376,15 @@ function AttributeServiceServer.addModifier(self: AttributeServiceServer, player
 		return
 	end
 
+	if modifier.duration then
+		modifier.expiresAt = os.time() + modifier.duration
+	end
+
 	attrState.modifiers[modifier.id] = modifier
 	attrState.dirty = true
 
 	if modifier.persistent then
+		print(modifier)
 		self:savePlayerAttributes(player)
 	end
 end

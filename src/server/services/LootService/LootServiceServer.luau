@@ -67,6 +67,12 @@ function LootServiceServer.giveLoot(self: LootServiceServer, player: Player, loo
 		end
 	end
 
+	if lootTable.currency then
+		for currencyType, amount in pairs(lootTable.currency) do
+			PlayerServiceServer:addCurrency(player, currencyType, amount)
+		end
+	end
+
 	if lootTable.xp then
 		task.delay(1, function()
 			PlayerServiceServer:addXP(player, lootTable.xp.player)

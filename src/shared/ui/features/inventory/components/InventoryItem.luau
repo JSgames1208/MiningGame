@@ -66,6 +66,8 @@ local function InventoryItem(props: InventoryItemProps)
 			end
 
 			tooltipSlice.actions.hideTooltip()
+
+			inventorySlice.signals.itemPressedSignal:Fire(entry)
 		end,
 		onHover = function()
 			local itemEntry = Items.get(entry.id)
