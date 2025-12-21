@@ -38,18 +38,17 @@ function AttributeServiceServer.startLoop(self: AttributeServiceServer)
 		for userId, attributesState in pairs(self.playerAttributes) do
 			local dirty = false
 
+			local player = Players:GetPlayerByUserId(userId)
+
 			for attrId, attrState in pairs(attributesState) do
 				for modId, mod in pairs(attrState.modifiers) do
 					if mod.expiresAt and os.time() > mod.expiresAt then
-						attrState.modifiers[modId] = nil
-						attrState.dirty = true
-						dirty = true
+						self:removeModifier(player, modId)
 					end
 				end
 			end
 
 			if dirty then
-				local player = Players:GetPlayerByUserId(userId)
 				if player then
 					self:recalculateAll(player)
 				end
@@ -151,6 +150,9 @@ function AttributeServiceServer.loadPlayer(self: AttributeServiceServer, player:
 	end
 
 	for _, attr in pairs(attributesState) do
+		for _, mod in pairs(attr.modifiers) do
+			self.networker:fire(player, "addModifier", mod)
+		end
 		attr.dirty = true
 	end
 
@@ -345,6 +347,8 @@ function AttributeServiceServer.updateModifier(
 				self:savePlayerAttributes(player)
 			end
 
+			self.networker:fire(player, "updateModifier", newModifier)
+
 			return
 		end
 	end
@@ -384,9 +388,10 @@ function AttributeServiceServer.addModifier(self: AttributeServiceServer, player
 	attrState.dirty = true
 
 	if modifier.persistent then
-		print(modifier)
 		self:savePlayerAttributes(player)
 	end
+
+	self.networker:fire(player, "addModifier", modifier)
 end
 
 function AttributeServiceServer.removeModifier(self: AttributeServiceServer, player: Player, modifierId: string)
@@ -404,6 +409,8 @@ function AttributeServiceServer.removeModifier(self: AttributeServiceServer, pla
 	end
 
 	self:savePlayerAttributes(player)
+
+	self.networker:fire(player, "removeModifier", modifierId)
 end
 
 function AttributeServiceServer.setBaseValue(
@@ -465,19 +472,22 @@ function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, 
 		return
 	end
 
-	for upgradeId, upgradeInstance in pairs(toolData.upgrades) do
+	for _, upgradeInstance in pairs(toolData.upgrades) do
+		local upgradeId = upgradeInstance.id
 		local upgradeDef = Registries.UPGRADE:get(upgradeId)
 		if upgradeDef then
 			local effect = upgradeDef.effect
 			if effect.stats then
-				for statName, value in pairs(effect.stats) do
+				for statName, value: number in pairs(effect.stats) do
 					local modifier: Modifier = {
 						id = upgradeId,
 						attribute = statName,
 						type = "ADD",
-						value = value,
+						value = value * upgradeInstance.level,
 						persistent = false,
 					}
+
+					print("add tool modifier: ", modifier)
 
 					self:addModifier(player, modifier)
 				end
@@ -489,6 +499,7 @@ function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, 
 end
 
 function AttributeServiceServer.onToolEquipped(self: AttributeServiceServer, player: Player, toolData: any)
+	print(toolData)
 	self:applyToolUpgrades(player, toolData)
 end
 

@@ -6,6 +6,7 @@ local DialogueScreen = require(ReplicatedStorage.Shared.ui.features.dialogue.scr
 local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local InventoryScreen = require(ReplicatedStorage.Shared.ui.features.inventory.screens.InventoryScreen)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
+local ModifierScreen = require(ReplicatedStorage.Shared.ui.features.modifiers.screens.ModifierScreen)
 local QuestScreen = require(ReplicatedStorage.Shared.ui.features.quests.screens.QuestScreen)
 local UpgradeScreen = require(ReplicatedStorage.Shared.ui.features.upgrades.screens.UpgradeScreen)
 
@@ -27,6 +28,7 @@ local function RootUI()
 			TooltipProvider = e(TooltipProvider),
 			QuestScreen = e(QuestScreen),
 			DialogueScreen = e(DialogueScreen),
+			ModifierScreen = e(ModifierScreen),
 		}),
 	})
 end

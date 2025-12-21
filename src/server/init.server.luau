@@ -17,7 +17,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = true,
+	resetData = false,
 })
 
 AttributeServiceServer:init()

@@ -8,7 +8,6 @@ local LootServiceServer = require(ServerScriptService.Server.services.LootServic
 local OreGenerator = require(ServerScriptService.Server.services.MiningService.util.OreGenerator)
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 local MiningFXServer = require(ServerScriptService.Server.services.MiningService.util.MiningFXServer)
-local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerService.PlayerServiceServer)
 local QuestSignals = require(ServerScriptService.Server.services.QuestService.QuestSignals)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
@@ -73,6 +72,9 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		end
 
 		oreData.health -= miningPower
+
+		print(miningSpeed)
+		print(miningPower)
 
 		self.networker:fire(player, "mine", target, oreData.health, miningSpeed)
 

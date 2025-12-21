@@ -23,10 +23,12 @@ Modifiers.MINING_SPEED_1 = register("potion.mining_speed_1", {
 	id = "potion.mining_speed_1",
 	type = "MULTIPLY_TOTAL",
 	attribute = "mining_speed",
-	duration = 3,
+	duration = 100,
 	value = 0.5,
 
 	icon = ImageIds.icons["potion.mining_speed_1"],
+	displayName = "Mining Speed Potion I",
+	description = "Increases mining speed by 50% for 3 seconds.",
 
 	persistent = true,
 })
@@ -35,8 +37,13 @@ Modifiers.MINING_POWER_1 = register("potion.mining_power_1", {
 	id = "potion.mining_power_1",
 	type = "MULTIPLY_TOTAL",
 	attribute = "mining_power",
-	duration = 3,
+	duration = 100,
 	value = 0.5,
+
+	icon = ImageIds.icons["potion.mining_power_1"],
+	displayName = "Mining Power Potion I",
+	description = "Increases mining power by 50% for 3 seconds.",
+
 	persistent = true,
 })
 
@@ -44,8 +51,13 @@ Modifiers.COINS_1 = register("potion.coins_1", {
 	id = "potion.coins_1",
 	type = "MULTIPLY_TOTAL",
 	attribute = "coins",
-	duration = 3,
+	duration = 100,
 	value = 0.25,
+
+	icon = ImageIds.icons["potion.coins_1"],
+	displayName = "Coins Potion I",
+	description = "Increases coins by 25% for 3 seconds.",
+
 	persistent = true,
 })
 

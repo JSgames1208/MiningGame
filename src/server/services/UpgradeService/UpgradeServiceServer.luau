@@ -4,6 +4,7 @@ local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local AttributeServiceServer = require(ServerScriptService.Server.services.AttributeService.AttributeServiceServer)
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
@@ -96,8 +97,13 @@ function UpgradeServiceServer.applyUpgrade(
 				} :: DataTemplate.InventoryEntry
 			end
 		)
+		AttributeServiceServer:onToolEquipped(
+			player,
+			DataService:get(player, { "inventory", "tool", toolGuid }).toolData
+		)
 		return true
 	end
+
 	return false
 end
 
@@ -147,6 +153,10 @@ function UpgradeServiceServer.removeUpgrade(
 							},
 						} :: DataTemplate.InventoryEntry
 					end
+				)
+				AttributeServiceServer:onToolEquipped(
+					player,
+					DataService:get(player, { "inventory", "tool", toolGuid }).toolData
 				)
 				return true
 			end

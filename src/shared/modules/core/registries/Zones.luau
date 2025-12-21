@@ -17,6 +17,16 @@ local function register(id: string, data: ZoneType.ZoneData)
 	return Registry.register(Registries.ZONE, id, data)
 end
 
+Zones.GRASSLANDS = register("grasslands", {
+	name = "Grasslands",
+	description = "Grasslands",
+	ores = {
+		weights = {
+			[Ores.idOf(Ores.DIRT) :: string] = 100,
+		},
+	},
+})
+
 Zones.STONEHILL_FIELDS = register("stonehill_fields", {
 	name = "Stonehill Fields",
 	description = "Stonehill Fields",
