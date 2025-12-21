@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local AttributeServiceServer = require(ServerScriptService.Server.services.AttributeService.AttributeServiceServer)
 local LootServiceServer = require(ServerScriptService.Server.services.LootService.LootServiceServer)
 local OreGenerator = require(ServerScriptService.Server.services.MiningService.util.OreGenerator)
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
@@ -13,7 +14,6 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local LootTables = require(ReplicatedStorage.Shared.modules.core.registries.LootTables)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
-local ToolUtil = require(ReplicatedStorage.Shared.services.ToolService.util.ToolUtil)
 
 MiningFXServer:init()
 OreGenerator:init()
@@ -59,9 +59,11 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 		error("[MiningServiceServer] TOOL HAS NO STATS!")
 	end
 
-	local finalStats = ToolUtil.getStats(toolStats, (toolInstance.toolData :: any).upgrades)
+	--local finalStats = ToolUtil.getStats(toolStats, (toolInstance.toolData :: any).upgrades)
+	local miningSpeed = toolStats.miningSpeed / AttributeServiceServer:get(player, "mining_speed")
+	local miningPower = toolStats.miningPower * AttributeServiceServer:get(player, "mining_power")
 
-	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / finalStats.miningSpeed < tick() then
+	if not lastMined[player.UserId] or lastMined[player.UserId] + 1.5 / miningSpeed < tick() then
 		lastMined[player.UserId] = tick()
 
 		local oreData = OreStore.getOreInstance(target)
@@ -70,9 +72,9 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 			return
 		end
 
-		oreData.health -= finalStats.miningPower
+		oreData.health -= miningPower
 
-		self.networker:fire(player, "mine", target, oreData.health, finalStats.miningSpeed)
+		self.networker:fire(player, "mine", target, oreData.health, miningSpeed)
 
 		if oreData.health <= 0 then
 			local spawnArea = target.Parent

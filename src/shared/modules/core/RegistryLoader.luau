@@ -1,4 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+require(ReplicatedStorage.Shared.modules.core.registries.Attributes)
+require(ReplicatedStorage.Shared.modules.core.registries.Modifiers)
+
 require(ReplicatedStorage.Shared.modules.core.registries.Questlines)
 require(ReplicatedStorage.Shared.modules.core.registries.Quests)
 require(ReplicatedStorage.Shared.modules.core.registries.Zones)

@@ -29,9 +29,9 @@ Upgrades.EFFICIENCY = Registry.register(Registries.UPGRADE, "efficiency", {
 	excludes = { "efficiency" },
 
 	effect = {
-		scaleType = "add",
+		scaleType = "ADD",
 		stats = {
-			miningSpeed = 0.2,
+			mining_speed = 0.2,
 		},
 	},
 })
@@ -48,9 +48,9 @@ Upgrades.POWER = Registry.register(Registries.UPGRADE, "power", {
 	excludes = { "power" },
 
 	effect = {
-		scaleType = "multiply",
+		scaleType = "MULTIPLY_BASE",
 		stats = {
-			miningPower = 0.2,
+			mining_power = 0.2,
 		},
 	},
 })
@@ -67,7 +67,7 @@ Upgrades.FORTUNE = Registry.register(Registries.UPGRADE, "fortune", {
 	excludes = { "fortune" },
 
 	effect = {
-		scaleType = "add",
+		scaleType = "ADD",
 		dropMultiplier = 1,
 	},
 })

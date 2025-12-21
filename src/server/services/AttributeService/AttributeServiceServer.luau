@@ -1,6 +1,8 @@
 --!strict
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
@@ -16,6 +18,44 @@ local AttributeServiceServer = {}
 function AttributeServiceServer.init(self: AttributeServiceServer)
 	self.networker = Networker.server.new("AttributeService", self, {})
 	self.playerAttributes = {}
+
+	self:startLoop()
+end
+
+function AttributeServiceServer.startLoop(self: AttributeServiceServer)
+	local CHECK_INTERVAL = 0.5
+
+	local timeAccumulator = 0
+
+	RunService.Heartbeat:Connect(function(dt: number)
+		timeAccumulator += dt
+
+		if timeAccumulator < CHECK_INTERVAL then
+			return
+		end
+		timeAccumulator -= CHECK_INTERVAL
+
+		for userId, attributesState in pairs(self.playerAttributes) do
+			local dirty = false
+
+			for attrId, attrState in pairs(attributesState) do
+				for modId, mod in pairs(attrState.modifiers) do
+					if mod.expiresAt and os.time() > mod.expiresAt then
+						attrState.modifiers[modId] = nil
+						attrState.dirty = true
+						dirty = true
+					end
+				end
+			end
+
+			if dirty then
+				local player = Players:GetPlayerByUserId(userId)
+				if player then
+					self:recalculateAll(player)
+				end
+			end
+		end
+	end)
 end
 
 function AttributeServiceServer.getAttributeDefinition(self: AttributeServiceServer, attributeId: string): Attribute?
@@ -54,53 +94,91 @@ function AttributeServiceServer.loadPlayer(self: AttributeServiceServer, player:
 
 	local dataAttributes: DataTemplate.Attributes = DataService:get(player, { "attributes" })
 
-	if dataAttributes then
-		if dataAttributes.baseValues then
-			for attrId, v in pairs(dataAttributes.baseValues) do
-				local attr = attributesState[attrId]
-				if attr then
-					attr.baseValue = v
-					attr.dirty = true
-				else
-					warn("AttributeServiceServer: saved baseValue for unknown attribute:", attrId)
-				end
-			end
+	if not dataAttributes or next(dataAttributes.baseValues or {}) == nil then
+		local defaults = {
+			baseValues = {},
+			persistentModifiers = {},
+		}
+
+		for attrId, attrState in pairs(attributesState) do
+			defaults.baseValues[attrId] = attrState.baseValue
 		end
 
-		if dataAttributes.persistentModifiers then
-			for modId, mod in pairs(dataAttributes.persistentModifiers) do
-				if type(mod) ~= "table" or type(mod.id) ~= "string" or type(mod.type) ~= "string" then
-					warn("AttributeServiceServer: invalid saved modifier for:", player.Name, modId)
-					continue
-				end
-				if mod.expiresAt and type(mod.expiresAt) == "number" then
-					if os.time() > mod.expiresAt then
-						continue
-					end
-				end
+		DataService:set(player, { "attributes" }, defaults)
+		dataAttributes = defaults
+	end
 
-				local targetAttr = mod.attribute
-				if not targetAttr then
-					warn("AttributeServiceServer: saved modifier missing attribute:", player.Name, modId)
-					continue
-				end
-
-				local attrState = attributesState[targetAttr]
-				if not attrState then
-					warn("AttributeServiceServer: saved modifier for unknown attribute:", player.Name, modId)
-					continue
-				end
-
-				attrState.modifiers[mod.id] = mod :: Modifier
-
-				attrState.dirty = true
+	if dataAttributes.baseValues then
+		for attrId, v in pairs(dataAttributes.baseValues) do
+			local attr = attributesState[attrId]
+			if attr then
+				attr.baseValue = v
+				attr.dirty = true
+			else
+				warn("AttributeServiceServer: saved baseValue for unknown attribute:", attrId)
 			end
+		end
+	end
+
+	if dataAttributes.persistentModifiers then
+		for modId, mod in pairs(dataAttributes.persistentModifiers) do
+			if type(mod) ~= "table" or type(mod.id) ~= "string" or type(mod.type) ~= "string" then
+				warn("AttributeServiceServer: invalid saved modifier for:", player.Name, modId)
+				continue
+			end
+			if mod.expiresAt and type(mod.expiresAt) == "number" then
+				if os.time() > mod.expiresAt then
+					continue
+				end
+			end
+
+			local targetAttr = mod.attribute
+			if not targetAttr then
+				warn("AttributeServiceServer: saved modifier missing attribute:", player.Name, modId)
+				continue
+			end
+
+			local attrState = attributesState[targetAttr]
+			if not attrState then
+				warn("AttributeServiceServer: saved modifier for unknown attribute:", player.Name, modId)
+				continue
+			end
+
+			attrState.modifiers[mod.id] = mod :: Modifier
+
+			attrState.dirty = true
 		end
 	end
 
 	for _, attr in pairs(attributesState) do
 		attr.dirty = true
 	end
+
+	self.playerAttributes[player.UserId] = attributesState
+
+	self:savePlayerAttributes(player)
+end
+
+function AttributeServiceServer.get(self: AttributeServiceServer, player: Player, attributeId: string): number
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: get called before initialization!")
+		return 0
+	end
+
+	local attrState = attributesState[attributeId]
+	if not attrState.dirty then
+		return attrState.cachedValue
+	else
+		local attribute = self:recalculateAttribute(player, attributeId)
+		if attribute then
+			attrState.cachedValue = attribute
+			attrState.dirty = false
+			return attrState.cachedValue
+		end
+	end
+
+	return 0
 end
 
 function AttributeServiceServer.savePlayerAttributes(self: AttributeServiceServer, player: Player)
@@ -119,6 +197,8 @@ function AttributeServiceServer.savePlayerAttributes(self: AttributeServiceServe
 
 		if attrState.baseValue ~= default then
 			baseValues[attrId] = attrState.baseValue
+		else
+			baseValues[attrId] = default
 		end
 
 		for modId, mod in pairs(attrState.modifiers) do
@@ -164,13 +244,13 @@ function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServe
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
 		warn("AttributeServiceServer: recalculateAttribute called before initialization!")
-		return
+		return 0
 	end
 
 	local attrState = attributesState[attributeId]
 	if not attrState then
 		warn("AttributeServiceServer: recalculateAttribute called for unknown attribute:", attributeId)
-		return
+		return 0
 	end
 
 	if not attrState.dirty then
@@ -205,6 +285,10 @@ function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServe
 	attrState.cachedValue = total
 	attrState.dirty = false
 
+	if attrState.dirty then
+		self:savePlayerAttributes(player)
+	end
+
 	return total
 end
 
@@ -231,6 +315,10 @@ function AttributeServiceServer.addModifier(self: AttributeServiceServer, player
 
 	attrState.modifiers[modifier.id] = modifier
 	attrState.dirty = true
+
+	if modifier.persistent then
+		self:savePlayerAttributes(player)
+	end
 end
 
 function AttributeServiceServer.removeModifier(self: AttributeServiceServer, player: Player, modifierId: string)
@@ -246,6 +334,8 @@ function AttributeServiceServer.removeModifier(self: AttributeServiceServer, pla
 			attrState.dirty = true
 		end
 	end
+
+	self:savePlayerAttributes(player)
 end
 
 function AttributeServiceServer.setBaseValue(
@@ -268,6 +358,8 @@ function AttributeServiceServer.setBaseValue(
 
 	attrState.baseValue = value
 	attrState.dirty = true
+
+	self:savePlayerAttributes(player)
 end
 
 function AttributeServiceServer.recalculateAll(self: AttributeServiceServer, player: Player)
@@ -280,6 +372,56 @@ function AttributeServiceServer.recalculateAll(self: AttributeServiceServer, pla
 	for attrId, attrState in pairs(attributesState) do
 		self:recalculateAttribute(player, attrId)
 	end
+
+	self:savePlayerAttributes(player)
+end
+
+function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, player: Player, toolData: any)
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: applyToolUpgrades called before initialization!")
+		return
+	end
+
+	for _, attrState in pairs(attributesState) do
+		for modId, mod in pairs(attrState.modifiers) do
+			if not mod.persistent then
+				attrState.modifiers[modId] = nil
+				attrState.dirty = true
+			end
+		end
+	end
+
+	if not toolData or not toolData.upgrades then
+		self:recalculateAll(player)
+		return
+	end
+
+	for upgradeId, upgradeInstance in pairs(toolData.upgrades) do
+		local upgradeDef = Registries.UPGRADE:get(upgradeId)
+		if upgradeDef then
+			local effect = upgradeDef.effect
+			if effect.stats then
+				for statName, value in pairs(effect.stats) do
+					local modifier: Modifier = {
+						id = upgradeId,
+						attribute = statName,
+						type = "ADD",
+						value = value,
+						persistent = false,
+					}
+
+					self:addModifier(player, modifier)
+				end
+			end
+		end
+	end
+
+	self:recalculateAll(player)
+end
+
+function AttributeServiceServer.onToolEquipped(self: AttributeServiceServer, player: Player, toolData: any)
+	self:applyToolUpgrades(player, toolData)
 end
 
 export type AttributeServiceServer = typeof(AttributeServiceServer) & {

@@ -4,6 +4,7 @@ local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local AttributeServiceServer = require(ServerScriptService.Server.services.AttributeService.AttributeServiceServer)
 local InventoryServiceServer = require(ServerScriptService.Server.services.InventoryService.InventoryServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
@@ -61,6 +62,11 @@ function ToolServiceServer.equipTool(self: ToolServiceServer, player: Player, to
 	end
 
 	DataService:set(player, { "tools", "equipped" }, toolGuid)
+
+	local toolData = toolEntry.toolData
+	if toolData then
+		AttributeServiceServer:onToolEquipped(player, toolData)
+	end
 
 	local toolId = toolEntry.id
 	if not toolId then
