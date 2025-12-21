@@ -13,6 +13,7 @@ local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerServ
 local QuestServiceClient = require(ReplicatedStorage.Shared.services.QuestService.QuestServiceClient)
 local ToolServiceClient = require(ReplicatedStorage.Shared.services.ToolService.ToolServiceClient)
 local UpgradeServiceClient = require(ReplicatedStorage.Shared.services.UpgradeService.UpgradeServiceClient)
+local ZoneServiceClient = require(ReplicatedStorage.Shared.services.ZoneService.ZoneServiceClient)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -30,6 +31,7 @@ UpgradeServiceClient:init()
 QuestServiceClient:init()
 DialogueServiceClient:init()
 AttributeServiceClient:init()
+ZoneServiceClient:init()
 
 local uiFolder = Instance.new("Folder")
 uiFolder.Name = "ReactUI"

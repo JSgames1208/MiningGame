@@ -22,7 +22,6 @@ function AttributeServiceClient.updateModifier(self: AttributeServiceClient, mod
 end
 
 function AttributeServiceClient.removeModifier(self: AttributeServiceClient, modifierId: string)
-	print("removing modifier", modifierId)
 	modifierSlice.actions.removeModifier(modifierId)
 end
 

@@ -487,8 +487,6 @@ function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, 
 						persistent = false,
 					}
 
-					print("add tool modifier: ", modifier)
-
 					self:addModifier(player, modifier)
 				end
 			end
@@ -499,7 +497,6 @@ function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, 
 end
 
 function AttributeServiceServer.onToolEquipped(self: AttributeServiceServer, player: Player, toolData: any)
-	print(toolData)
 	self:applyToolUpgrades(player, toolData)
 end
 

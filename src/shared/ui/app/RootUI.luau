@@ -9,6 +9,8 @@ local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens
 local ModifierScreen = require(ReplicatedStorage.Shared.ui.features.modifiers.screens.ModifierScreen)
 local QuestScreen = require(ReplicatedStorage.Shared.ui.features.quests.screens.QuestScreen)
 local UpgradeScreen = require(ReplicatedStorage.Shared.ui.features.upgrades.screens.UpgradeScreen)
+local ZoneGateUI = require(ReplicatedStorage.Shared.ui.features.zones.screens.ZoneGateUI)
+local ZoneScreen = require(ReplicatedStorage.Shared.ui.features.zones.screens.ZoneScreen)
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
@@ -29,6 +31,8 @@ local function RootUI()
 			QuestScreen = e(QuestScreen),
 			DialogueScreen = e(DialogueScreen),
 			ModifierScreen = e(ModifierScreen),
+			ZoneGateUI = e(ZoneGateUI),
+			ZoneScreen = e(ZoneScreen),
 		}),
 	})
 end

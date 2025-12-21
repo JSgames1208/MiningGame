@@ -10,6 +10,7 @@ require(ReplicatedStorage.Shared.modules.core.RegistryLoader)
 local InventoryServiceClient = require(ReplicatedStorage.Shared.services.InventoryService.InventoryServiceClient)
 local PlayerServiceClient = require(ReplicatedStorage.Shared.services.PlayerService.PlayerServiceClient)
 local QuestServiceClient = require(ReplicatedStorage.Shared.services.QuestService.QuestServiceClient)
+local ZoneServiceClient = require(ReplicatedStorage.Shared.services.ZoneService.ZoneServiceClient)
 local RootUI = require(ReplicatedStorage.Shared.ui.app.RootUI)
 local dialogueSlice = require(ReplicatedStorage.Shared.ui.features.dialogue.state.dialogueSlice)
 local questSlice = require(ReplicatedStorage.Shared.ui.features.quests.state.questSlice)
@@ -98,6 +99,8 @@ return function(parent: Instance)
 	InventoryServiceClient:setItem("upgrade", item5)
 
 	PlayerServiceClient:init()
+
+	ZoneServiceClient:populateZoneGates()
 
 	local root = ReactRoblox.createRoot(parent)
 	root:render(e(RootUI))

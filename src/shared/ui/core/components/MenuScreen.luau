@@ -10,9 +10,52 @@ export type MenuScreenProps = {
 	menuTitle: string,
 	setOpen: (any) -> any?,
 	children: { React.ReactElement<any> },
+	addCloseButton: boolean?,
 }
 
 local function MenuScreen(props: MenuScreenProps)
+	props.addCloseButton = props.addCloseButton ~= nil and props.addCloseButton or true
+
+	local closeButton = nil
+
+	if props.addCloseButton then
+		e(Button, {
+			Size = UDim2.new(0.1, 0, 0.1, 0),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+			Position = UDim2.new(1, 0, 0, 0),
+			AnchorPoint = Vector2.new(0.8, 0.2),
+			BackgroundTransparency = 0,
+			BackgroundColor3 = Color3.fromRGB(225, 0, 0),
+			onClick = function()
+				props.setOpen(false)
+			end,
+			ZIndex = 5,
+			Children = {
+				e(TextLabel, {
+					Text = "X",
+					Font = Enum.Font.FredokaOne,
+					Position = UDim2.new(0.5, 0, 0.5, 0),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.new(0.8, 0, 0.8, 0),
+					TextScaled = true,
+					TextWrapped = true,
+					TextXAlignment = Enum.TextXAlignment.Center,
+					TextYAlignment = Enum.TextYAlignment.Center,
+					ZIndex = 10,
+					Children = {},
+				}),
+				e("UICorner", {
+					CornerRadius = UDim.new(0.2, 0),
+				}),
+				e("UIStroke", {
+					Color = Color3.fromRGB(0, 0, 0),
+					Thickness = 10,
+					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+				}),
+			},
+		})
+	end
+
 	return e(
 		ThemedFrame,
 		{
@@ -41,41 +84,7 @@ local function MenuScreen(props: MenuScreenProps)
 						Color = Color3.fromRGB(0, 0, 0),
 					},
 				}),
-				e(Button, {
-					Size = UDim2.new(0.1, 0, 0.1, 0),
-					SizeConstraint = Enum.SizeConstraint.RelativeYY,
-					Position = UDim2.new(1, 0, 0, 0),
-					AnchorPoint = Vector2.new(0.8, 0.2),
-					BackgroundTransparency = 0,
-					BackgroundColor3 = Color3.fromRGB(225, 0, 0),
-					onClick = function()
-						props.setOpen(false)
-					end,
-					ZIndex = 5,
-					Children = {
-						e(TextLabel, {
-							Text = "X",
-							Font = Enum.Font.FredokaOne,
-							Position = UDim2.new(0.5, 0, 0.5, 0),
-							AnchorPoint = Vector2.new(0.5, 0.5),
-							Size = UDim2.new(0.8, 0, 0.8, 0),
-							TextScaled = true,
-							TextWrapped = true,
-							TextXAlignment = Enum.TextXAlignment.Center,
-							TextYAlignment = Enum.TextYAlignment.Center,
-							ZIndex = 10,
-							Children = {},
-						}),
-						e("UICorner", {
-							CornerRadius = UDim.new(0.2, 0),
-						}),
-						e("UIStroke", {
-							Color = Color3.fromRGB(0, 0, 0),
-							Thickness = 10,
-							ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-						}),
-					},
-				}),
+				closeButton,
 				table.unpack(props.children),
 			},
 		} :: ThemedFrame.ThemedFrameProps

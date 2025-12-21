@@ -73,9 +73,6 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 
 		oreData.health -= miningPower
 
-		print(miningSpeed)
-		print(miningPower)
-
 		self.networker:fire(player, "mine", target, oreData.health, miningSpeed)
 
 		if oreData.health <= 0 then

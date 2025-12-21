@@ -16,7 +16,6 @@ local modifierById: { [string]: Atom<Modifier> } = {}
 -- ACTIONS
 local actions = {
 	addModifier = function(modifier: Modifier)
-		print("modifier", modifier)
 		modifierById[modifier.id] = atom(modifier)
 		modifierIds(function(list)
 			return Sift.Array.push(list, modifier.id)

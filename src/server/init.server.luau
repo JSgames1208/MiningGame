@@ -12,6 +12,7 @@ local PlayerServiceServer = require(ServerScriptService.Server.services.PlayerSe
 local QuestServiceServer = require(ServerScriptService.Server.services.QuestService.QuestServiceServer)
 local ToolServiceServer = require(ServerScriptService.Server.services.ToolService.ToolServiceServer)
 local UpgradeServiceServer = require(ServerScriptService.Server.services.UpgradeService.UpgradeServiceServer)
+local ZoneServiceServer = require(ServerScriptService.Server.services.ZoneService.ZoneServiceServer)
 
 DataService:init({
 	template = DataTemplate,
@@ -28,6 +29,7 @@ InventoryServiceServer:init()
 UpgradeServiceServer:init()
 QuestServiceServer:init()
 DialogueServiceServer:init()
+ZoneServiceServer:init()
 
 Players.PlayerAdded:Connect(function(player)
 	DataService:waitForData(player)
