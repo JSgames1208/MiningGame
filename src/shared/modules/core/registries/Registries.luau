@@ -1,7 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Registry = require(ReplicatedStorage.Shared.modules.core.Registry)
+local AttributeTypes = require(ReplicatedStorage.Shared.modules.core.types.AttributeTypes)
 local ItemType = require(ReplicatedStorage.Shared.modules.core.types.ItemType)
 local LootTableType = require(ReplicatedStorage.Shared.modules.core.types.LootTableType)
+local ModifierTypes = require(ReplicatedStorage.Shared.modules.core.types.ModifierTypes)
 local NPCTypes = require(ReplicatedStorage.Shared.modules.core.types.NPCTypes)
 local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
 local QuestType = require(ReplicatedStorage.Shared.modules.core.types.QuestType)
@@ -24,6 +26,8 @@ export type Registries = {
 	DIALOGUE_COMMAND: Registry<DialogueTypes.DialogueCommand>,
 	NPC: Registry<NPCTypes.NPCData>,
 	QUESTLINE: Registry<QuestType.Questline>,
+	ATTRIBUTE: Registry<AttributeTypes.Attribute>,
+	MODIFIER: Registry<ModifierTypes.Modifier>,
 }
 
 local Registries: Registries = {
@@ -39,6 +43,8 @@ local Registries: Registries = {
 	DIALOGUE_COMMAND = Registry.new() :: Registry<DialogueTypes.DialogueCommand>,
 	NPC = Registry.new() :: Registry<NPCTypes.NPCData>,
 	QUESTLINE = Registry.new() :: Registry<QuestType.Questline>,
+	ATTRIBUTE = Registry.new() :: Registry<AttributeTypes.Attribute>,
+	MODIFIER = Registry.new() :: Registry<ModifierTypes.Modifier>,
 }
 
 return Registries

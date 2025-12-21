@@ -1,9 +1,16 @@
 --!strict
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ModifierTypes = require(ReplicatedStorage.Shared.modules.core.types.ModifierTypes)
 
 export type PlayerStats = {
 	xp: number,
 	mined: number,
 	playTime: number,
+}
+
+export type Attributes = {
+	baseValues: { [string]: number },
+	persistentModifiers: { [string]: ModifierTypes.Modifier },
 }
 
 export type Currency = {
@@ -80,6 +87,7 @@ export type StatsTracking = {
 export type PlayerData = {
 	version: number,
 	stats: PlayerStats,
+	attributes: Attributes,
 	currency: Currency,
 	tools: ToolData,
 	inventory: Inventory,
@@ -96,6 +104,10 @@ local DefaultPlayerData: PlayerData = {
 		xp = 0,
 		mined = 0,
 		playTime = 0,
+	},
+	attributes = {
+		baseValues = {},
+		persistentModifiers = {},
 	},
 	currency = {
 		coins = 0,
