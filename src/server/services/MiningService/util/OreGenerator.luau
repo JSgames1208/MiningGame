@@ -9,6 +9,7 @@ local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Regi
 local Zones = require(ReplicatedStorage.Shared.modules.core.registries.Zones)
 local FarthestPointSampling = require(ReplicatedStorage.Shared.modules.math.FarthestPointSampling)
 local RNGModule = require(ReplicatedStorage.Shared.modules.math.RNGModule)
+local ModelUtils = require(ReplicatedStorage.Shared.modules.util.ModelUtils)
 local OreStore = require(ServerScriptService.Server.services.MiningService.util.OreStore)
 
 local OreGenerator = {}
@@ -54,7 +55,7 @@ function OreGenerator.spawnOreAtPoint(self: OreGenerator, spawnArea: Part, point
 		return
 	end
 
-	local part = ReplicatedStorage.Assets.ores:FindFirstChild(oreId):Clone()
+	local model: Model = ReplicatedStorage.Assets.ores:FindFirstChild(oreId):Clone()
 
 	rayParams.FilterDescendantsInstances = { spawnArea }
 	for _, player in Players:GetPlayers() do
@@ -68,19 +69,23 @@ function OreGenerator.spawnOreAtPoint(self: OreGenerator, spawnArea: Part, point
 		rayParams
 	)
 
+	local size = ModelUtils.getSize(model)
+
 	if rayResult then
-		part.Position = rayResult.Position + Vector3.new(0, part.Size.Y / 2, 0)
+		ModelUtils.setPosition(model, rayResult.Position + Vector3.new(0, size.Y / 2, 0))
 	else
-		part.Position =
-			Vector3.new(worldPoint.X, spawnArea.Position.Y + spawnArea.Size.Y + part.Size.Y / 2, worldPoint.Y)
+		ModelUtils.setPosition(
+			model,
+			Vector3.new(worldPoint.X, spawnArea.Position.Y + spawnArea.Size.Y + size.Y / 2, worldPoint.Y)
+		)
 	end
 
 	local particleAttachment = ReplicatedStorage.ParticleAttachment:Clone()
-	particleAttachment.Parent = part
+	particleAttachment.Parent = model
 
-	part.Parent = spawnArea
+	model.Parent = spawnArea
 
-	OreStore.add(part, oreId)
+	OreStore.add(model, oreId)
 end
 
 function OreGenerator.populate(self: OreGenerator, spawnArea: Part)
@@ -126,20 +131,37 @@ function OreGenerator.startRegenLoop(self: OreGenerator, spawnArea: Part)
 	state.regenerating = true
 
 	task.spawn(function()
-		while #state.points < state.targetCount do
-			task.wait(Random:NextNumber(1, 5))
+		local function pointExists(p: Vector2, pts)
+			for _, q in ipairs(pts) do
+				if (p - q).Magnitude < 0.01 then
+					return true
+				end
+			end
+			return false
+		end
 
-			local before = #state.points
+		while #state.points < state.targetCount do
+			task.wait(Random:NextNumber(2, 5))
+
+			local old = table.clone(state.points)
 
 			local updated =
-				FarthestPointSampling(spawnArea.Size.X, spawnArea.Size.Z, state.radius, state.points, before + 1)
+				FarthestPointSampling(spawnArea.Size.X, spawnArea.Size.Z, state.radius, state.points, #state.points + 1)
 
-			if #updated > before then
-				local newPoint = updated[#updated]
-				table.insert(state.points, newPoint)
+			local newPoint
+			for _, cand in ipairs(updated) do
+				if not pointExists(cand, old) then
+					newPoint = cand
+					break
+				end
+			end
+
+			if newPoint then
+				--table.insert(state.points, newPoint)
 				self:spawnOreAtPoint(spawnArea, newPoint)
+				print("spawned new point", newPoint)
 			else
-				break
+				-- no valid new point found, just wait and retry next loop
 			end
 		end
 

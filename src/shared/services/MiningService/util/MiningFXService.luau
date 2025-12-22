@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local ModelUtils = require(ReplicatedStorage.Shared.modules.util.ModelUtils)
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local hrp: BasePart = character:WaitForChild("HumanoidRootPart")
@@ -32,7 +33,7 @@ function MiningFXService.init(self: MiningFXService)
 	return
 end
 
-function MiningFXService.startMining(self: MiningFXService, target: BasePart)
+function MiningFXService.startMining(self: MiningFXService, target: Model)
 	local cameraCFrame = self:getCameraCFrame(target)
 
 	Controls:Disable()
@@ -53,11 +54,14 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 		end
 	end)
 
-	local direction = Vector3.new((hrp.Position - target.Position).X, 0, (hrp.Position - target.Position).Z)
+	local targetPosition = ModelUtils.getPosition(target)
+	local targetSize = ModelUtils.getSize(target)
 
-	turningCircle.Position = target.Position + direction.Unit * 4 + Vector3.new(0, -target.Size.Y / 2 + 0.05, 0)
+	local direction = Vector3.new((hrp.Position - targetPosition).X, 0, (hrp.Position - targetPosition).Z)
 
-	self.networker:fire("walkTo", humanoid, target.Position + direction.Unit * 7)
+	turningCircle.Position = targetPosition + direction.Unit * 4 + Vector3.new(0, -targetSize.Y / 2 + 0.05, 0)
+
+	self.networker:fire("walkTo", humanoid, targetPosition + direction.Unit * 7)
 
 	self.moveToConn = humanoid.MoveToFinished:Connect(function()
 		if self.moveToConn then
@@ -66,11 +70,11 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 
 		self.turnConn = RunService.RenderStepped:Connect(function(dt: number)
 			hrp.CFrame = hrp.CFrame:Lerp(
-				CFrame.new(hrp.Position, Vector3.new(target.Position.X, hrp.Position.Y, target.Position.Z)),
+				CFrame.new(hrp.Position, Vector3.new(targetPosition.X, hrp.Position.Y, targetPosition.Z)),
 				dt * 4
 			)
 
-			local facingDiff = (hrp.CFrame.LookVector - (target.Position - hrp.Position).Unit).Magnitude
+			local facingDiff = (hrp.CFrame.LookVector - (targetPosition - hrp.Position).Unit).Magnitude
 			if facingDiff < 0.01 then
 				if self.turnConn then
 					self.turnConn:Disconnect()
@@ -81,33 +85,33 @@ function MiningFXService.startMining(self: MiningFXService, target: BasePart)
 	end)
 end
 
-function MiningFXService.mine(self: MiningFXService, target: BasePart)
+function MiningFXService.mine(self: MiningFXService, target: Model)
 	local particleAttachment: Attachment = target:FindFirstChild("ParticleAttachment") :: Attachment
 
 	if not particleAttachment then
 		return
 	end
 
-	particleAttachment.Position = (workspace.CurrentCamera.CFrame.Position - target.Position) / 3
+	local targetPosition = ModelUtils.getPosition(target)
+
+	particleAttachment.Position = (workspace.CurrentCamera.CFrame.Position - targetPosition) / 3
 
 	local particleEmitter: ParticleEmitter = particleAttachment:FindFirstChild("ParticleEmitter") :: ParticleEmitter
 
 	particleEmitter:Emit(1)
 
-	local function bobTarget(target: BasePart)
-		local originalOrientation: Vector3 = target.Orientation
-		local orientation = originalOrientation + Vector3.new(0, (math.random(1, 2) - 1.5) * 2 * 10, 0)
-		local originalSize = target.Size
-		local size = originalSize + Vector3.new(0.1, 0.1, 0.1)
-
-		local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, true)
-		local tween = TweenService:Create(target, tweenInfo, { Orientation = orientation, Size = size })
-		tween:Play()
-		tween.Completed:Wait()
-
-		target.Orientation = originalOrientation
-		tween:Destroy()
-		tween = nil
+	local function bobTarget(target: Model)
+		for _, part in ipairs(target:GetDescendants()) do
+			if part:IsA("BasePart") then
+				local originalCFrame = part.CFrame
+				local bobCFrame = originalCFrame
+					* CFrame.Angles(0, math.rad(math.random(-5, 5)), 0)
+					* CFrame.new(0.05, 0.05, 0.05)
+				local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, true)
+				local tween = TweenService:Create(part, tweenInfo, { CFrame = bobCFrame })
+				tween:Play()
+			end
+		end
 	end
 
 	bobTarget(target)
@@ -138,18 +142,23 @@ function MiningFXService.stopMining(self: MiningFXService)
 	workspace.Camera.CFrame = cameraCFrame
 end
 
-function MiningFXService.getCameraCFrame(self: MiningFXService, target: BasePart): CFrame
+function MiningFXService.getCameraCFrame(self: MiningFXService, target: Model): CFrame
 	local distance = 10
-	local direction = Vector3.new((hrp.Position - target.Position).X, 0, (hrp.Position - target.Position).Z).Unit
+	local direction = Vector3.new(
+		(hrp.Position - ModelUtils.getPosition(target)).X,
+		0,
+		(hrp.Position - ModelUtils.getPosition(target)).Z
+	).Unit
 	local rightDirection = direction:Cross(Vector3.new(0, -1, 0)).Unit
 	local height = 4
 
-	local cameraPos = target.Position
+	local cameraPos = ModelUtils.getPosition(target)
 		+ direction * distance
 		+ Vector3.new(0, height, 0)
 		+ (rightDirection * distance / 1.5)
 
-	local cf = CFrame.new(cameraPos, target.Position - rightDirection * distance / 3 + Vector3.new(0, -2, 0))
+	local cf =
+		CFrame.new(cameraPos, ModelUtils.getPosition(target) - rightDirection * distance / 3 + Vector3.new(0, -2, 0))
 	return cf
 end
 

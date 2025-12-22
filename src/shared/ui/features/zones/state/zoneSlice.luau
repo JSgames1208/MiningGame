@@ -15,7 +15,6 @@ local confirmMenuZoneId: Atom<string> = atom("")
 
 local actions = {
 	lockZone = function(zone: ZoneData)
-		print("lockzone bruh")
 		zoneById[zone.id] = atom(zone)
 		lockedZoneIds(function(list)
 			return Sift.Array.push(list, zone.id)

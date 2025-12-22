@@ -9,6 +9,8 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local OreType = require(ReplicatedStorage.Shared.modules.core.types.OreType)
+local HighlightUtils = require(ReplicatedStorage.Shared.modules.util.HighlightUtils)
+local ModelUtils = require(ReplicatedStorage.Shared.modules.util.ModelUtils)
 local AnimationIds = require(ReplicatedStorage.Shared.services.AnimationService.AnimationIds)
 local AnimationService = require(ReplicatedStorage.Shared.services.AnimationService.AnimationService)
 local MiningFXService = require(ReplicatedStorage.Shared.services.MiningService.util.MiningFXService)
@@ -52,51 +54,36 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 	UserInputService.InputChanged:Connect(function(input, gameProcessed)
 		if gameProcessed or miningSlice.states.mining() then
 			self.isHovering = false
-			if self.highlight then
-				self.highlight:Destroy()
-				self.highlight = nil
-			end
+			HighlightUtils.removeAll()
 			return
 		end
 
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			if mouse.Target and mouse.Target:HasTag("minable") then
+			local model = ModelUtils.findTaggedParent(mouse.Target, "minable")
+
+			if model then
 				self.isHovering = true
 
-				if self.highlight then
-					self.highlight:Destroy()
-				end
+				HighlightUtils.removeAll()
 
-				self.highlight = Instance.new("Highlight")
+				local highlight = HighlightUtils.apply(model, Color3.fromRGB(255, 0, 0))
 
-				if not self.highlight then
-					return
-				end
-
-				self.highlight.FillColor = Color3.fromRGB(255, 0, 0)
-				self.highlight.Parent = mouse.Target
-				self.highlight.Adornee = mouse.Target
-				self.highlight.Enabled = true
-				self.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-
-				if (hrp.Position - mouse.Target.Position).Magnitude > 40 then
-					self.highlight.FillTransparency = 0.75
-				else
-					self.highlight.FillTransparency = 1
-				end
+				local distance = (hrp.Position - ModelUtils.getPosition(model)).Magnitude
+				highlight.FillTransparency = distance > 40 and 0.75 or 1
 			else
 				self.isHovering = false
-				if self.highlight then
-					self.highlight:Destroy()
-					self.highlight = nil
-				end
+				HighlightUtils.removeAll()
 			end
 		end
 	end)
 
 	mouse.Button1Down:Connect(function()
 		if self.isHovering and not miningSlice.states.mining() and not hudSlice.states.screenCovered() then
-			self.networker:fire("startMining", mouse.Target)
+			local model = ModelUtils.findTaggedParent(mouse.Target, "minable")
+
+			if model then
+				self.networker:fire("startMining", model)
+			end
 		end
 	end)
 
@@ -106,30 +93,20 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 		end
 
 		local result = mobileRaycast(touch.Position)
-		if not result or not result.Instance or not result.Instance:HasTag("minable") then
+		local model = result and ModelUtils.findTaggedParent(result.Instance, "minable")
+
+		if model then
+			self.isHovering = true
+
+			HighlightUtils.removeAll()
+
+			local highlight = HighlightUtils.apply(model, Color3.fromRGB(255, 0, 0))
+
+			local distance = (hrp.Position - ModelUtils.getPosition(model)).Magnitude
+			highlight.FillTransparency = distance > 40 and 0.75 or 1
+		else
 			self.isHovering = false
-			if self.highlight then
-				self.highlight:Destroy()
-				self.highlight = nil
-			end
-			return
-		end
-
-		self.isHovering = true
-
-		if self.highlight then
-			self.highlight:Destroy()
-		end
-
-		self.highlight = Instance.new("Highlight")
-		if self.highlight then
-			self.highlight.FillColor = Color3.fromRGB(255, 0, 0)
-			self.highlight.Parent = result.Instance
-			self.highlight.Adornee = result.Instance
-			self.highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-
-			local dist = (hrp.Position - result.Position).Magnitude
-			self.highlight.FillTransparency = dist > 40 and 0.75 or 1
+			HighlightUtils.removeAll()
 		end
 	end)
 
@@ -142,22 +119,17 @@ function MiningServiceClient.handleInput(self: MiningServiceClient)
 		local pos = touchPositions[1]
 		local result = mobileRaycast(pos)
 
-		if result and result.Instance and result.Instance:HasTag("minable") then
-			if not result or not result.Instance then
-				return
-			end
+		local model = result and ModelUtils.findTaggedParent(result.Instance, "minable")
 
-			self.networker:fire("startMining", result.Instance)
+		if model then
+			self.networker:fire("startMining", model)
 		end
 	end)
 end
 
-function MiningServiceClient.startMining(self: MiningServiceClient, target: Part, minableData: OreInstance)
+function MiningServiceClient.startMining(self: MiningServiceClient, target: Model, minableData: OreInstance)
 	self.isHovering = false
-	if self.highlight then
-		self.highlight:Destroy()
-		self.highlight = nil
-	end
+	HighlightUtils.removeAll()
 
 	miningSlice.actions.setMining(true)
 	miningSlice.actions.setCurrentTarget(target)
@@ -171,7 +143,7 @@ function MiningServiceClient.startMining(self: MiningServiceClient, target: Part
 	end)
 end
 
-function MiningServiceClient.mine(self: MiningServiceClient, target: Part, currentHP: number, speed: number)
+function MiningServiceClient.mine(self: MiningServiceClient, target: Model, currentHP: number, speed: number)
 	miningSlice.actions.setCurrentHP(miningSlice.states.currentHP(currentHP))
 
 	task.delay(0.3, function()
@@ -227,7 +199,6 @@ type MiningServiceClient = typeof(MiningServiceClient) & {
 	isHovering: boolean,
 	mouseConn: RBXScriptConnection?,
 	animation: AnimationTrack?,
-	highlight: Highlight?,
 }
 
 return MiningServiceClient :: MiningServiceClient

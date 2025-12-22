@@ -13,6 +13,7 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local LootTables = require(ReplicatedStorage.Shared.modules.core.registries.LootTables)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local ModelUtils = require(ReplicatedStorage.Shared.modules.util.ModelUtils)
 
 MiningFXServer:init()
 OreGenerator:init()
@@ -28,10 +29,10 @@ function MiningServiceServer.init(self: MiningServiceServer)
 	})
 end
 
-function MiningServiceServer.startMining(self: MiningServiceServer, player: Player, target: BasePart)
+function MiningServiceServer.startMining(self: MiningServiceServer, player: Player, target: Model)
 	local character = player.Character or player.CharacterAdded:Wait()
 	local hrp: BasePart = character:WaitForChild("HumanoidRootPart") :: BasePart
-	if (hrp.Position - target.Position).Magnitude > 40 then
+	if (hrp.Position - ModelUtils.getPosition(target)).Magnitude > 40 then
 		return
 	end
 
@@ -44,7 +45,7 @@ function MiningServiceServer.startMining(self: MiningServiceServer, player: Play
 	self.networker:fire(player, "startMining", target, oreData)
 end
 
-function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: BasePart)
+function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Player, target: Model)
 	local toolId: string = DataService:get(player, { "tools", "equipped" })
 	local toolInstance: DataTemplate.InventoryEntry = DataService:get(player, { "inventory", "tool", toolId })
 	local toolData = Registries.ITEM:get(toolInstance.id)
@@ -79,8 +80,8 @@ function MiningServiceServer.attemptMine(self: MiningServiceServer, player: Play
 			local spawnArea = target.Parent
 			if spawnArea and spawnArea:IsA("BasePart") then
 				local localPoint = Vector2.new(
-					target.Position.X - spawnArea.Position.X + spawnArea.Size.X / 2,
-					target.Position.Z - spawnArea.Position.Z + spawnArea.Size.Z / 2
+					ModelUtils.getPosition(target).X - spawnArea.Position.X + spawnArea.Size.X / 2,
+					ModelUtils.getPosition(target).Z - spawnArea.Position.Z + spawnArea.Size.Z / 2
 				)
 
 				QuestSignals.OreMined:Fire(player, oreData.id)
