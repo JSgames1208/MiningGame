@@ -1,11 +1,8 @@
 --!strict
-local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Sift = require(ReplicatedStorage.Packages.Sift)
-local Ores = require(ReplicatedStorage.Shared.modules.core.registries.Ores)
-local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
 local Zones = require(ReplicatedStorage.Shared.modules.core.registries.Zones)
 local FarthestPointSampling = require(ReplicatedStorage.Shared.modules.math.FarthestPointSampling)
 local RNGModule = require(ReplicatedStorage.Shared.modules.math.RNGModule)
@@ -159,7 +156,6 @@ function OreGenerator.startRegenLoop(self: OreGenerator, spawnArea: Part)
 			if newPoint then
 				--table.insert(state.points, newPoint)
 				self:spawnOreAtPoint(spawnArea, newPoint)
-				print("spawned new point", newPoint)
 			else
 				-- no valid new point found, just wait and retry next loop
 			end

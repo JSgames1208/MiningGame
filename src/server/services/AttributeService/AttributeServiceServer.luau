@@ -1,5 +1,23 @@
 --!strict
 
+--[[
+Demo usage:
+
+local AttributeServiceServer = require($path_to_module)
+AttributeServiceServer:init()
+
+Players.PlayerAdded:Connect(function(player)
+	AttributeServiceServer:onPlayerAdded(player)
+
+	-- example: read and print an attribute
+	print("speed:", AttributeServiceServer:get(player, "player_speed"))
+end)
+]]
+
+-- =============================================================================
+-- Services and Dependencies
+-- =============================================================================
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -7,11 +25,20 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Shared.modules.core.DataTemplate)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+
+-- =============================================================================
+-- Types
+-- =============================================================================
+
 local AttributeTypes = require(ReplicatedStorage.Shared.modules.core.types.AttributeTypes)
 local ModifierTypes = require(ReplicatedStorage.Shared.modules.core.types.ModifierTypes)
 
 type Attribute = AttributeTypes.Attribute
 type Modifier = ModifierTypes.Modifier
+
+-- =============================================================================
+-- Initialization
+-- =============================================================================
 
 local AttributeServiceServer = {}
 
@@ -44,6 +71,7 @@ function AttributeServiceServer.startLoop(self: AttributeServiceServer)
 				for modId, mod in pairs(attrState.modifiers) do
 					if mod.expiresAt and os.time() > mod.expiresAt then
 						self:removeModifier(player, modId)
+						dirty = true
 					end
 				end
 			end
@@ -57,6 +85,11 @@ function AttributeServiceServer.startLoop(self: AttributeServiceServer)
 	end)
 end
 
+-- =============================================================================
+-- Definitions
+-- =============================================================================
+
+-- get definitions from registries
 function AttributeServiceServer.getAttributeDefinition(self: AttributeServiceServer, attributeId: string): Attribute?
 	return Registries.ATTRIBUTE:get(attributeId)
 end
@@ -65,6 +98,11 @@ function AttributeServiceServer.getModifierDefinition(self: AttributeServiceServ
 	return Registries.MODIFIER:get(modifierId)
 end
 
+-- =============================================================================
+-- Player Lifecycle
+-- =============================================================================
+
+-- initialize the player
 function AttributeServiceServer.onPlayerAdded(self: AttributeServiceServer, player: Player)
 	self:initializePlayer(player)
 end
@@ -161,33 +199,7 @@ function AttributeServiceServer.loadPlayer(self: AttributeServiceServer, player:
 	self:savePlayerAttributes(player)
 end
 
-function AttributeServiceServer.get(self: AttributeServiceServer, player: Player, attributeId: string): number
-	local attributesState = self.playerAttributes[player.UserId]
-	if not attributesState then
-		warn("AttributeServiceServer: get called before initialization!")
-		return 0
-	end
-
-	local attrState = attributesState[attributeId]
-	if not attrState then
-		warn("AttributeServiceServer: get called for unknown attribute:", attributeId)
-		return 0
-	end
-
-	if not attrState.dirty then
-		return attrState.cachedValue
-	else
-		local attribute = self:recalculateAttribute(player, attributeId)
-		if attribute then
-			attrState.cachedValue = attribute
-			attrState.dirty = false
-			return attrState.cachedValue
-		end
-	end
-
-	return 0
-end
-
+-- saves the player's attributes from playerAttributes to the player's data
 function AttributeServiceServer.savePlayerAttributes(self: AttributeServiceServer, player: Player)
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
@@ -226,6 +238,39 @@ function AttributeServiceServer.savePlayerAttributes(self: AttributeServiceServe
 	DataService:set(player, { "attributes" }, toSave)
 end
 
+-- =============================================================================
+-- Attributes
+-- =============================================================================
+
+-- get attribute for player by id
+function AttributeServiceServer.get(self: AttributeServiceServer, player: Player, attributeId: string): number
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: get called before initialization!")
+		return 0
+	end
+
+	local attrState = attributesState[attributeId]
+	if not attrState then
+		warn("AttributeServiceServer: get called for unknown attribute:", attributeId)
+		return 0
+	end
+
+	if not attrState.dirty then
+		return attrState.cachedValue
+	else
+		local attribute = self:recalculateAttribute(player, attributeId)
+		if attribute then
+			attrState.cachedValue = attribute
+			attrState.dirty = false
+			return attrState.cachedValue
+		end
+	end
+
+	return 0
+end
+
+-- helper: makes sure attributes don't exceed min/max
 function AttributeServiceServer.clampAttribute(
 	self: AttributeServiceServer,
 	player: Player,
@@ -247,6 +292,7 @@ function AttributeServiceServer.clampAttribute(
 	return value
 end
 
+-- recalculate the value of an attribute, for example when an upgrade or modifier changes
 function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServer, player: Player, attributeId: string)
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
@@ -283,7 +329,7 @@ function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServe
 	for _, mod in pairs(attrState.modifiers) do
 		if mod.type == "MULTIPLY_TOTAL" then
 			local v = mod.value or 0
-			total += (1 * v)
+			total *= (1 + v)
 		end
 	end
 
@@ -299,6 +345,52 @@ function AttributeServiceServer.recalculateAttribute(self: AttributeServiceServe
 	return total
 end
 
+-- recalculate all attributes
+--		this is useful for example when modifiers change in a batch
+function AttributeServiceServer.recalculateAll(self: AttributeServiceServer, player: Player)
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: recalculateAll called before initialization!")
+		return
+	end
+
+	for attrId, attrState in pairs(attributesState) do
+		self:recalculateAttribute(player, attrId)
+	end
+
+	self:savePlayerAttributes(player)
+end
+
+-- set the base value to a custom value
+function AttributeServiceServer.setBaseValue(
+	self: AttributeServiceServer,
+	player: Player,
+	attributeId: string,
+	value: number
+)
+	local attributesState = self.playerAttributes[player.UserId]
+	if not attributesState then
+		warn("AttributeServiceServer: setBaseValue called before initialization!")
+		return
+	end
+
+	local attrState = attributesState[attributeId]
+	if not attrState then
+		warn("AttributeServiceServer: setBaseValue called for unknown attribute:", attributeId)
+		return
+	end
+
+	attrState.baseValue = value
+	attrState.dirty = true
+
+	self:savePlayerAttributes(player)
+end
+
+-- =============================================================================
+-- Modifiers
+-- =============================================================================
+
+-- check if the player has an active modifier by id
 function AttributeServiceServer.hasActiveModifier(self: AttributeServiceServer, player: Player, modifierId: string)
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
@@ -314,6 +406,7 @@ function AttributeServiceServer.hasActiveModifier(self: AttributeServiceServer, 
 	return false
 end
 
+-- if the player has a modifier already, then we update it here
 function AttributeServiceServer.updateModifier(
 	self: AttributeServiceServer,
 	player: Player,
@@ -354,6 +447,9 @@ function AttributeServiceServer.updateModifier(
 	end
 end
 
+-- add a new modifier:
+-- 		player has modifier -> update it
+-- 		player doesn't have modifier -> add it
 function AttributeServiceServer.addModifier(self: AttributeServiceServer, player: Player, modifier: Modifier)
 	assert(type(modifier) == "table" and type(modifier.id) == "string", "invalid modifier")
 	assert(modifier.attribute, "modifier must target attribute")
@@ -394,6 +490,7 @@ function AttributeServiceServer.addModifier(self: AttributeServiceServer, player
 	self.networker:fire(player, "addModifier", modifier)
 end
 
+-- remove a modifier
 function AttributeServiceServer.removeModifier(self: AttributeServiceServer, player: Player, modifierId: string)
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
@@ -413,44 +510,11 @@ function AttributeServiceServer.removeModifier(self: AttributeServiceServer, pla
 	self.networker:fire(player, "removeModifier", modifierId)
 end
 
-function AttributeServiceServer.setBaseValue(
-	self: AttributeServiceServer,
-	player: Player,
-	attributeId: string,
-	value: number
-)
-	local attributesState = self.playerAttributes[player.UserId]
-	if not attributesState then
-		warn("AttributeServiceServer: setBaseValue called before initialization!")
-		return
-	end
+-- ==============================================================================
+-- Tool Integration
+-- ==============================================================================
 
-	local attrState = attributesState[attributeId]
-	if not attrState then
-		warn("AttributeServiceServer: setBaseValue called for unknown attribute:", attributeId)
-		return
-	end
-
-	attrState.baseValue = value
-	attrState.dirty = true
-
-	self:savePlayerAttributes(player)
-end
-
-function AttributeServiceServer.recalculateAll(self: AttributeServiceServer, player: Player)
-	local attributesState = self.playerAttributes[player.UserId]
-	if not attributesState then
-		warn("AttributeServiceServer: recalculateAll called before initialization!")
-		return
-	end
-
-	for attrId, attrState in pairs(attributesState) do
-		self:recalculateAttribute(player, attrId)
-	end
-
-	self:savePlayerAttributes(player)
-end
-
+-- apply upgrades from a tool (used in ToolServiceServer)
 function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, player: Player, toolData: any)
 	local attributesState = self.playerAttributes[player.UserId]
 	if not attributesState then
@@ -496,6 +560,7 @@ function AttributeServiceServer.applyToolUpgrades(self: AttributeServiceServer, 
 	self:recalculateAll(player)
 end
 
+-- called when a player equips a tool
 function AttributeServiceServer.onToolEquipped(self: AttributeServiceServer, player: Player, toolData: any)
 	self:applyToolUpgrades(player, toolData)
 end
