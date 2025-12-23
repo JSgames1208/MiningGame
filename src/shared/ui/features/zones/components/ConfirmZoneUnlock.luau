@@ -89,6 +89,7 @@ local function ConfirmZoneUnlock()
 							onClick = function()
 								-- fire signal, unlock zone in server
 
+								zoneSlice.signals.attemptUnlockSignal:Fire(zoneId)
 								zoneSlice.actions.setConfirmMenuOpen(false)
 							end,
 							Children = {

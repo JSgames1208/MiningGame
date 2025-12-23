@@ -18,7 +18,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "Testing",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 })
 
 AttributeServiceServer:init()
@@ -40,4 +40,5 @@ Players.PlayerAdded:Connect(function(player)
 	UpgradeServiceServer:onPlayerAdded(player)
 	InventoryServiceServer:onPlayerAdded(player)
 	QuestServiceServer:onPlayerAdded(player)
+	ZoneServiceServer:onPlayerAdded(player)
 end)

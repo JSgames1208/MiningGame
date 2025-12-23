@@ -1,17 +1,28 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local ZoneType = require(ReplicatedStorage.Shared.modules.core.types.ZoneType)
 local atom: typeof(Charm.atom) = Charm.atom
 
+-- TYPE DEFS
+
 type Atom<T> = Charm.Atom<T>
 type ZoneData = ZoneType.ZoneUIData
+
+-- STATES
 
 local lockedZoneIds: Charm.Atom<{ string }> = atom({})
 local zoneById: { [string]: Atom<ZoneData> } = {}
 
 local confirmMenuOpen: Atom<boolean> = atom(false)
 local confirmMenuZoneId: Atom<string> = atom("")
+
+-- SIGNALS
+
+local attemptUnlockSignal = Signal.new()
+
+-- ACTIONS
 
 local actions = {
 	lockZone = function(zone: ZoneData)
@@ -48,6 +59,9 @@ return {
 		lockedZoneIds = lockedZoneIds,
 		confirmMenuOpen = confirmMenuOpen,
 		confirmMenuZoneId = confirmMenuZoneId,
+	},
+	signals = {
+		attemptUnlockSignal = attemptUnlockSignal,
 	},
 	actions = actions,
 }

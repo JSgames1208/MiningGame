@@ -127,8 +127,8 @@ local DefaultPlayerData: PlayerData = {
 		completed = {},
 	},
 	zones = {
-		unlockedZones = { ["zone_1"] = true },
-		lastZone = "zone_1",
+		unlockedZones = { ["grasslands"] = true },
+		lastZone = "grasslands",
 	},
 	crafting = {
 		knownRecipes = {},

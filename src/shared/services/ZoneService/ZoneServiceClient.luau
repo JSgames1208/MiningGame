@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Registries = require(ReplicatedStorage.Shared.modules.core.registries.Registries)
+local ErrorServiceClient = require(ReplicatedStorage.Shared.services.ErrorService.ErrorServiceClient)
 local zoneSlice = require(ReplicatedStorage.Shared.ui.features.zones.state.zoneSlice)
 
 local ZoneServiceClient = {}
@@ -13,6 +14,14 @@ function ZoneServiceClient.init(self: ZoneServiceClient)
 	self.proximityConnections = {}
 
 	self:populateZoneGates()
+
+	zoneSlice.signals.attemptUnlockSignal:Connect(function(zoneId: string)
+		if not zoneId then
+			return
+		end
+
+		self:attemptUnlockZone(zoneId)
+	end)
 end
 
 function ZoneServiceClient.getGates(self: ZoneServiceClient)
@@ -47,24 +56,33 @@ function ZoneServiceClient.populateZoneGates(self: ZoneServiceClient)
 	end
 end
 
-function ZoneServiceClient.unlockZone(self: ZoneServiceClient, zoneId: string)
-	local gates = self:getGates()
+function ZoneServiceClient.unlockZone(self: ZoneServiceClient, zoneId: string, boolean: boolean, err: string)
+	if boolean then
+		print("Unlocked zone", zoneId)
+		local gates = self:getGates()
 
-	for _, gate in pairs(gates) do
-		if gate:GetAttribute("unlocks") then
-			local id = gate:GetAttribute("unlocks")
+		for _, gate in pairs(gates) do
+			if gate:GetAttribute("unlocks") then
+				local id = gate:GetAttribute("unlocks")
 
-			if id == zoneId then
-				gate:Destroy()
-				if self.proximityConnections[zoneId] then
-					self.proximityConnections[zoneId]:Disconnect()
-					self.proximityConnections[zoneId] = nil
+				if id == zoneId then
+					gate:Destroy()
+					if self.proximityConnections[zoneId] then
+						self.proximityConnections[zoneId]:Disconnect()
+						self.proximityConnections[zoneId] = nil
+					end
 				end
 			end
 		end
-	end
 
-	zoneSlice.actions.unlockZone(zoneId)
+		zoneSlice.actions.unlockZone(zoneId)
+	else
+		ErrorServiceClient:displayError(err)
+	end
+end
+
+function ZoneServiceClient.attemptUnlockZone(self: ZoneServiceClient, zoneId: string)
+	self.networker:fire("attemptUnlockZone", zoneId)
 end
 
 export type ZoneServiceClient = typeof(ZoneServiceClient) & {

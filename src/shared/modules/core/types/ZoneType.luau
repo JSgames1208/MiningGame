@@ -2,6 +2,7 @@ export type ZoneData = {
 	name: string,
 	description: string,
 	cost: number?,
+	previous: string?,
 	ores: {
 		weights: {
 			[string]: number,

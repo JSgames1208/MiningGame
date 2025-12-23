@@ -3,6 +3,7 @@ local StarterGui = game:GetService("StarterGui")
 local React = require(ReplicatedStorage.Packages.React)
 local TooltipProvider = require(ReplicatedStorage.Shared.ui.core.components.TooltipProvider)
 local DialogueScreen = require(ReplicatedStorage.Shared.ui.features.dialogue.screens.DialogueScreen)
+local ErrorScreen = require(ReplicatedStorage.Shared.ui.features.error.screens.ErrorScreen)
 local HUD = require(ReplicatedStorage.Shared.ui.features.hud.screens.HUD)
 local InventoryScreen = require(ReplicatedStorage.Shared.ui.features.inventory.screens.InventoryScreen)
 local MiningScreen = require(ReplicatedStorage.Shared.ui.features.mining.screens.MiningScreen)
@@ -33,6 +34,7 @@ local function RootUI()
 			ModifierScreen = e(ModifierScreen),
 			ZoneGateUI = e(ZoneGateUI),
 			ZoneScreen = e(ZoneScreen),
+			ErrorScreen = e(ErrorScreen),
 		}),
 	})
 end
