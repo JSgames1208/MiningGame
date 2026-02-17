@@ -1,6 +1,6 @@
 --!strict
 
--- Simple binary max-heap for Luau
+--basic maxheap implementation
 local MaxHeap = {}
 MaxHeap.__index = MaxHeap
 

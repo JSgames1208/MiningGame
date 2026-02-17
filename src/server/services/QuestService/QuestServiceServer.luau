@@ -1,4 +1,13 @@
 --!strict
+
+--[[
+Usage:
+   QuestServiceServer:init() -- sets up Networker
+   QuestServiceServer:onPlayerAdded(player) -- initializes quests for a joining player
+   QuestServiceServer:grantQuest(player, questId) -- grants a new quest
+   QuestServiceServer:completeQuest(player, questId) -- completes a quest
+]]
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
@@ -42,7 +51,12 @@ local Active: {
 } =
 	{}
 
+---------------------------------------------
+-- INITIALIZATION
+---------------------------------------------
+
 function QuestServiceServer.init(self: QuestServiceServer)
+	-- client can call these
 	self.networker = Networker.server.new("QuestService", self, {
 		self.pinQuest :: any,
 		self.unpinQuest :: any,
@@ -52,6 +66,11 @@ function QuestServiceServer.init(self: QuestServiceServer)
 	})
 end
 
+---------------------------------------------
+-- PLAYER EVENTS
+---------------------------------------------
+
+-- loads quests from data and starts them
 function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Player)
 	Active[player.UserId] = {}
 
@@ -59,8 +78,6 @@ function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Play
 	if not playerQuests then
 		return
 	end
-
-	--self.networker:fire(player, "setQuests", playerQuests)
 
 	for questId, saved in pairs(playerQuests.active) do
 		self:startQuest(player, questId, {
@@ -70,6 +87,7 @@ function QuestServiceServer.onPlayerAdded(self: QuestServiceServer, player: Play
 	end
 end
 
+-- disconnect requirement connections when player leaves
 function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: Player)
 	local quests = Active[player.UserId]
 	if not quests then
@@ -90,6 +108,11 @@ function QuestServiceServer.onPlayerRemoving(self: QuestServiceServer, player: P
 	Active[player.UserId] = nil
 end
 
+---------------------------------------------
+-- UTILS
+---------------------------------------------
+
+-- returns the current quest for a player
 function QuestServiceServer.getCurrentQuest(
 	self: QuestServiceServer,
 	player: Player,
@@ -103,6 +126,7 @@ function QuestServiceServer.getCurrentQuest(
 	return nil
 end
 
+-- returns the next available quest in a questline
 function QuestServiceServer.getNextQuest(
 	self: QuestServiceServer,
 	player: Player,
@@ -115,6 +139,10 @@ function QuestServiceServer.getNextQuest(
 	end
 	return nil
 end
+
+---------------------------------------------
+-- PINNING (used for UI display)
+---------------------------------------------
 
 function QuestServiceServer.pinQuest(self: QuestServiceServer, player: Player, questId: string)
 	local playerQuests: DataTemplate.Quests = DataService:get(player, { "quests" })
@@ -150,6 +178,12 @@ function QuestServiceServer.unpinQuest(self: QuestServiceServer, player: Player,
 	DataService:set(player, { "quests" }, playerQuests)
 end
 
+---------------------------------------------
+-- QUEST LOGIC
+---------------------------------------------
+
+-- helper function to build requirement map
+-- requirement map: { [reqId] = amount }
 local function buildRequirementMap(requirements: { { type: string, target: any, amount: number } })
 	local map: { [string]: number } = {}
 	for _, req in ipairs(requirements) do
@@ -188,6 +222,7 @@ function QuestServiceServer.startQuest(
 	}
 
 	local requirementConnections: { [string]: RBXScriptConnection? } = {}
+	-- supports multiple modules for quests with multiple requirement types
 	local moduleMap: { [string]: Base.QuestTypeModule } = {}
 
 	for _, req in ipairs(questData.requirements) do
@@ -307,6 +342,10 @@ function QuestServiceServer.completeQuest(self: QuestServiceServer, player: Play
 
 	userQuests[questId] = nil
 end
+
+---------------------------------------------
+-- GETTERS
+---------------------------------------------
 
 function QuestServiceServer.isStarted(self: QuestServiceServer, player: Player, questId: string): boolean
 	return Active[player.UserId] and Active[player.UserId][questId] ~= nil
